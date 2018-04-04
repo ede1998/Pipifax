@@ -1,4 +1,4 @@
-package me.erikhennig.pipifax.expressions;
+package me.erikhennig.pipifax.nodes.expressions;
 
 public class GreaterNode extends ComparisonExpressionNode {
 

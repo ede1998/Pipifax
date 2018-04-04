@@ -21,39 +21,38 @@ parameter_type: type
 
 block: '{' (vardecl | statement)* '}';
 
-statement: assignment
+statement: assignment ';'?
       | ifstmt
       | whilestmt
-      | funccall
+      | funccall ';'?
       ;
 ifstmt: 'if' expr block elsestmt?;
 elsestmt: 'else' block;
 whilestmt: 'while' expr block;
-assignment: lvalue '=' expr ';'?;
+assignment: lvalue '=' expr;
 lvalue: ID
       | ID ('[' expr ']')+;
-expr: INT
-      | DOUBLE
-      | STRING
-      | ID
-      | funccall
-      | ID ('[' expr ']')+
-      | '(' expr ')'
-      | expr '+' expr
-      | expr '-' expr
-      | expr '*' expr
-      | expr '/' expr
-      | expr '&&' expr
-      | expr '||' expr
-      | expr '<' expr
-      | expr '>' expr
-      | expr '<=' expr
-      | expr '>=' expr
-      | expr '==' expr
-      | expr '!=' expr
-      | '!' expr
-      | '-' expr
-      | expr '<=>' expr
+expr: INT # Literal
+      | DOUBLE # Literal
+      | STRING # Literal
+      | funccall # Call
+      | lvalue # LValueExpression
+      | '(' expr ')' # Parentheses 
+      | expr '+' expr # Addition
+      | expr '-' expr # Subtraction
+      | expr '*' expr # Multiplication
+      | expr '/' expr # Division
+      | expr '&&' expr # And
+      | expr '||' expr # Or
+      | expr '<' expr # Less
+      | expr '>' expr # Greater
+      | expr '<=' expr # LessOrEquals
+      | expr '>=' expr # GreaterOrEquals
+      | expr '==' expr # Equals
+      | expr '!=' expr # NotEquals
+      | '!' expr # Not
+      | '-' expr # Negation
+      | expr '<=>' expr # StringCompare
       ; 
 funccall: ID '(' (expr (',' expr)*)? ')';
 

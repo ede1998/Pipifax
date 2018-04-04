@@ -1,6 +1,6 @@
-package me.erikhennig.pipifax.expressions;
+package me.erikhennig.pipifax.nodes.expressions;
 
-public class BinaryExpressionNode extends ExpressionNode {
+public abstract class BinaryExpressionNode extends ExpressionNode {
   protected ExpressionNode m_leftSide;
   protected ExpressionNode m_rightSide;
   
