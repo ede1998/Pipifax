@@ -1,9 +1,9 @@
 func bubble_sort(arr *[]double, len int)
 {
-  var i int
-  var j int
-  i = 0
-  j = 0
+  var i int;
+  var j int;
+  i = 0;
+  j = 0;
   while (i < len)
   {
     while (j < i)
@@ -15,6 +15,8 @@ func bubble_sort(arr *[]double, len int)
         arr[j] = arr[j+1];
         arr[j+1] = tmp;
       }
+	  j = j + 1;
     }
+	i = i + 1;
   }
 }

@@ -14,8 +14,23 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node> {
 	@Override public Node visitVardecl(PipifaxParser.VardeclContext ctx)
 	{
 		TypeNode t = (TypeNode) ctx.type().accept(this);
-		DeclNode d = new DeclNode(ctx.ID().getText());
-		
+		VarNode d = new VarNode(ctx.ID().getText(), t);
 		return d;
+	}
+	
+	@Override public Node visitType(PipifaxParser.TypeContext ctx)
+	{
+		types tmp;
+		switch (ctx.getText())
+		{
+		case "int":
+			tmp = types.INT;
+		case "double":
+			tmp = types.DOUBLE;
+		case "string":
+			tmp = types.STRING;
+		}
+		TypeNode t = new TypeNode();
+		return t;
 	}
 }

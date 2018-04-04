@@ -2,7 +2,6 @@ grammar Pipifax;
 prog:	funcdecl
       | vardecl
       | prog prog
-      | EOF
       ;
 funcdecl: 'func' ID '('parameter')'type? block; 
 vardecl: 'var' ID type ';'?;
@@ -20,7 +19,7 @@ parameter_type: type
       | '*' '['']' type
       ;
 
-block: '{' (vardecl | statement)* '}' NEWLINE*;
+block: '{' (vardecl | statement)* '}';
 
 statement: assignment
       | ifstmt
@@ -58,7 +57,8 @@ expr: INT
       ; 
 funccall: ID '(' (expr (',' expr)*)? ')';
 
-NEWLINE : [\r\n]+ ;
+NEWLINE : [\r\n]+ -> skip;
+ENDOFFILE : EOF -> skip;
 COMMENT : '#' ~[\r\n]* '\r'? '\n' -> skip ;
 WS : [ \r\t\n]+ -> skip ;
 ID : LETTER (LETTER|'0'..'9')* ;
