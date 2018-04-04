@@ -1,0 +1,6 @@
+var myid double
+var myid1 int
+var name1 string
+var myarr [12]int
+var myarrstring [12][2]string
+

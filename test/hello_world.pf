@@ -1,0 +1,5 @@
+func hello_world(s string)
+{
+  print(s)
+}
+

@@ -1,0 +1,4 @@
+func mytestfunction (index int, test double, value string)
+{
+}
+

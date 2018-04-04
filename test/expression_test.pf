@@ -1,0 +1,19 @@
+func arithmetic(a int, b int)
+{
+   arithmetic = a - b
+   arithmetic = a + b
+   arithmetic = a * b
+   arithmetic = a / b
+   arithmetic = (a)
+   arithmetic = -b
+   arithmetic = a && b
+   arithmetic = a || b
+   arithmetic = !b
+   arithmetic = a <=> b
+   arithmetic = a < b
+   arithmetic = a > b
+   arithmetic = a == b
+   arithmetic = a != b
+   arithmetic = a >= b
+   arithmetic = a <= b
+}

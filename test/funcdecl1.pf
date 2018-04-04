@@ -1,0 +1,4 @@
+func helloWorld(var1 *double, refarray *[]int, var2 [2]string) double
+{
+}
+

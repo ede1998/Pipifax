@@ -1,0 +1,20 @@
+func bubble_sort(arr *[]double, len int)
+{
+  var i int
+  var j int
+  i = 0
+  j = 0
+  while (i < len)
+  {
+    while (j < i)
+    {
+      if (arr[j] > arr[j+1])
+      {
+        var tmp double;
+        tmp = arr[j];
+        arr[j] = arr[j+1];
+        arr[j+1] = tmp;
+      }
+    }
+  }
+}

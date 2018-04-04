@@ -1,0 +1,5 @@
+func assignToArray(arr *[]int) [5]int
+{
+  arr[5][6][1] = 4
+  arr[7] = arr[4]+arr[3]
+}
