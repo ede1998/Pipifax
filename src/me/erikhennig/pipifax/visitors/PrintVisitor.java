@@ -3,8 +3,16 @@ package me.erikhennig.pipifax.visitors;
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
 
-public abstract class Visitor
+public class PrintVisitor extends Visitor
 {
+	private String m_program = "";
+	private int m_indentLevel = 0;
+	
+	public String getProgram()
+	{
+		return m_program;
+	}
+	
 	public void visit(AssignmentNode n)
 	{
 		n.accept(this);

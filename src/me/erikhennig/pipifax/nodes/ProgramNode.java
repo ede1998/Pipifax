@@ -10,4 +10,9 @@ public class ProgramNode extends Node {
 		if (n != null)
 			m_nodes.add(n);
 	}
+	
+	public ArrayList<Node> getNodes()
+	{
+		return m_nodes;
+	}
 }
