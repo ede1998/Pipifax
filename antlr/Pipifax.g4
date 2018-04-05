@@ -32,9 +32,9 @@ whilestmt: 'while' expr block;
 assignment: lvalue '=' expr;
 lvalue: ID
       | ID ('[' expr ']')+;
-expr: INT # Literal
-      | DOUBLE # Literal
-      | STRING # Literal
+expr: INT # IntLiteral
+      | DOUBLE # DoubleLiteral
+      | STRING # StringLiteral
       | funccall # Call
       | lvalue # LValueExpression
       | '(' expr ')' # Parentheses 

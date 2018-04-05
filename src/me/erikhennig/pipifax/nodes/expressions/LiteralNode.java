@@ -1,9 +1,7 @@
 package me.erikhennig.pipifax.nodes.expressions;
 
-public class LiteralNode extends UnaryExpressionNode {
+import me.erikhennig.pipifax.nodes.Types;
 
-	public LiteralNode(ExpressionNode op) {
-		super(op);
-	}
-
+public abstract class LiteralNode extends ExpressionNode {
+	public static final Types m_type;
 }
