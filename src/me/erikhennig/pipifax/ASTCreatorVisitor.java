@@ -2,6 +2,7 @@ package me.erikhennig.pipifax;
 
 import me.erikhennig.pipifax.antlr.PipifaxBaseVisitor;
 import me.erikhennig.pipifax.antlr.PipifaxParser;
+import me.erikhennig.pipifax.nodes.FunctionNode;
 import me.erikhennig.pipifax.nodes.Node;
 import me.erikhennig.pipifax.nodes.ProgramNode;
 import me.erikhennig.pipifax.nodes.TypeNode;
@@ -46,7 +47,7 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node> {
 		switch (ctx.getText())
 		{
 		case "int":
-			t = new TypeNode(Type.INT);
+			t = new TypeNode(Types.INT);
 		case "double":
 			t = new TypeNode(Types.DOUBLE);
 		case "string":
@@ -57,4 +58,12 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node> {
 		}
 		return t;
 	}
+	
+	@Override public Node visitFuncdecl(PipifaxParser.FuncdeclContext ctx)
+	{
+		TypeNode tn = (TypeNode) ctx.type().accept(this);
+		FunctionNode fn = new FunctionNode(tn, ctx.ID().getText());
+		return fn;	
+	}
 }
+

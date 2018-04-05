@@ -8,8 +8,10 @@ public class FunctionNode extends Node {
 	private TypeNode m_returnType;
 	private ArrayList<ParameterNode> m_parameterList = new ArrayList<>();
 	private ArrayList<Node> m_statements = new ArrayList<>();
-	public FunctionNode()
+	public FunctionNode(TypeNode retType, String name)
 	{
+		m_returnType = retType;
+		m_name = name;
 	}
 	
 	public void addParameter(ParameterNode param)
