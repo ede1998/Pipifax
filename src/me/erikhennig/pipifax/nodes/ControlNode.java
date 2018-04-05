@@ -15,6 +15,7 @@ public class ControlNode extends Node {
 	
 	public void addStatement(Node n)
 	{
-		m_statements.add(n);
+		if (n != null)
+			m_statements.add(n);
 	}
 }

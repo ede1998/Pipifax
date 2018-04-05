@@ -2,3 +2,6 @@ func mytestfunction (index int, test double, value string)
 {
 }
 
+func withoutparamsbutreturnvalue() double
+{
+}

@@ -1,30 +1,27 @@
 grammar Pipifax;
-prog:	funcdecl
-      | vardecl
-      | prog prog
-      ;
-funcdecl: 'func' ID '('parameter')'type? block; 
+prog: (funcdecl | vardecl)*
+      | EOF
+     ;
+funcdecl: 'func' ID '('parameterlist')'type? block; 
 vardecl: 'var' ID type ';'?;
-type: 'int'
-      | 'double'
-      | 'string'
-      | '['INT']' type
+type: 'int' # IntType
+      | 'double' # DoubleType
+      | 'string' # StringType
+      | '['INT']' type # ArrayType
       ;
-
-parameter: ID parameter_type
-      | parameter ',' parameter
-      ;
-parameter_type: type
-      | '*' type
-      | '*' '['']' type
+parameterlist: (parameter (',' parameter)*)?;
+parameter: ID parameter_type;
+parameter_type: type # TypeParameter
+      | '*' type # ReferenceParameter
+      | '*' '['']' type # ReferenceArrayParameter
       ;
 
 block: '{' (vardecl | statement)* '}';
 
-statement: assignment ';'?
-      | ifstmt
-      | whilestmt
-      | funccall ';'?
+statement: assignment ';'? # AssignmentStatement
+      | ifstmt # IfStatement
+      | whilestmt # WhileStatement
+      | funccall ';'? # FunctionCallStatement
       ;
 ifstmt: 'if' expr block elsestmt?;
 elsestmt: 'else' block;

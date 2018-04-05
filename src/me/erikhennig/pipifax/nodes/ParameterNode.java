@@ -2,13 +2,12 @@ package me.erikhennig.pipifax.nodes;
 
 public class ParameterNode extends Node {
 	private String m_name;
-	private boolean m_isReference;
-	private TypeNode m_type;
+	private ParameterTypeNode m_type;
 	
-	public ParameterNode(String name, boolean isRef, TypeNode t)
+	
+	public ParameterNode(String name, ParameterTypeNode ptn)
 	{
 		m_name = name;
-		m_isReference = isRef;
-		m_type = t;
+		m_type = ptn;
 	}
 }

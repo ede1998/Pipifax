@@ -12,6 +12,7 @@ public class IfNode extends ControlNode {
 	
 	public void addElseStatements(Node n)
 	{
-		m_statements1.add(n);
+		if (n != null)
+			m_statements1.add(n);
 	}
 }

@@ -7,6 +7,7 @@ public class ProgramNode extends Node {
 	
 	public void addNode(Node n)
 	{
-		m_nodes.add(n);
+		if (n != null)
+			m_nodes.add(n);
 	}
 }
