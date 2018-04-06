@@ -3,6 +3,7 @@ package me.erikhennig.pipifax.nodes.expressions;
 import java.util.ArrayList;
 
 import me.erikhennig.pipifax.nodes.VariableNode;
+import me.erikhennig.pipifax.visitors.Visitor;
 
 public class LValueNode extends ExpressionNode {
     private ArrayList<ExpressionNode> m_offsets;
@@ -14,4 +15,19 @@ public class LValueNode extends ExpressionNode {
 		m_offsets = offset;
 	}
 
+	@Override
+	public void accept(Visitor v)
+	{
+		v.visit(this);
+	}
+
+	public String getName()
+	{
+		return m_name;
+	}
+
+	public ArrayList<ExpressionNode> getOffsets()
+	{
+		return m_offsets;
+	}
 }

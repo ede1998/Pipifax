@@ -1,0 +1,5 @@
+
+var d double
+
+var arr *[] int  # Here is an error
+

@@ -2,6 +2,8 @@ package me.erikhennig.pipifax.nodes;
 
 import java.util.ArrayList;
 
+import me.erikhennig.pipifax.visitors.Visitor;
+
 public class FunctionNode extends Node
 {
 
@@ -27,4 +29,29 @@ public class FunctionNode extends Node
 			m_statements.add(n);
 	}
 
+	@Override
+	public void accept(Visitor v)
+	{
+		v.visit(this);
+	}
+
+	public String getName()
+	{
+		return m_name;
+	}
+
+	public TypeNode getReturnType()
+	{
+		return m_returnType;
+	}
+
+	public ArrayList<ParameterNode> getParameterList()
+	{
+		return m_parameterList;
+	}
+
+	public ArrayList<Node> getStatements()
+	{
+		return m_statements;
+	}
 }

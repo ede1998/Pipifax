@@ -1,0 +1,3 @@
+# Deklaration einer Integervariable
+
+var i int

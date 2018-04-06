@@ -1,0 +1,7 @@
+
+func main(args *[] string) int
+{
+  if args[0] <=> "bla"
+  {
+  }
+}

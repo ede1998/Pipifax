@@ -1,7 +1,6 @@
 package me.erikhennig.pipifax.nodes;
 
-public enum Types {
-	INT,
-	DOUBLE,
-    STRING
+public enum Types
+{
+	INT, DOUBLE, STRING
 }

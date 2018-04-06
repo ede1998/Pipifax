@@ -1,0 +1,3 @@
+#Deklaration eines zweidimensionalen Arrays
+
+var ar_2d [3][42] double

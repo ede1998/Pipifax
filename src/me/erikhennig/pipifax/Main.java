@@ -13,6 +13,7 @@ import me.erikhennig.pipifax.antlr.PipifaxLexer;
 import me.erikhennig.pipifax.antlr.PipifaxParser;
 import me.erikhennig.pipifax.nodes.Node;
 import me.erikhennig.pipifax.nodes.ProgramNode;
+import me.erikhennig.pipifax.visitors.PrintVisitor;
 
 public class Main {
 
@@ -24,11 +25,16 @@ public class Main {
 			TokenStream ts = new CommonTokenStream(lexer);
 			PipifaxParser parser = new PipifaxParser(ts);
 			PipifaxParser.ProgContext ast = parser.prog();
-			System.out.println("Done");
+
+			//Construct AST
 			ASTCreatorVisitor acv = new ASTCreatorVisitor();
 			Node n = ast.accept(acv);
 			ProgramNode pn = (ProgramNode) n;
-			//System.out.println("Result = " + result);
+			
+			//Print AST
+			PrintVisitor printer = new PrintVisitor();
+			pn.accept(printer);
+			System.out.println(printer.getProgram());
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (RecognitionException e) {

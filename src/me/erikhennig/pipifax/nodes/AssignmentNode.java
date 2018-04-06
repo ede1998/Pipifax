@@ -13,4 +13,20 @@ public class AssignmentNode extends Node {
 		m_src = src;
 	}
 
+	@Override
+	public void accept(Visitor v)
+	{
+		v.visit(this);
+	}
+	
+	public ExpressionNode getSource()
+	{
+		return m_src;
+	}
+	
+	public LValueNode getDestination()
+	{
+		return m_dest;
+	}
+
 }

@@ -1,0 +1,5 @@
+func main(args *[] string) int {
+  string s
+
+  s = args[0];
+}

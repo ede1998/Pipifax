@@ -1,0 +1,4 @@
+func with_reference_parameter(s *string)
+{
+  # empty body
+}

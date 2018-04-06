@@ -1,0 +1,3 @@
+func_withArrayParamater(a_is [17] string)
+{
+}
