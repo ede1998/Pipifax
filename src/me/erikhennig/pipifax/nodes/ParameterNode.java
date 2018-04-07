@@ -2,15 +2,16 @@ package me.erikhennig.pipifax.nodes;
 
 import me.erikhennig.pipifax.visitors.Visitor;
 
-public class ParameterNode extends Node
+public class ParameterNode extends VariableNode
 {
-	private String m_name;
-	private ParameterTypeNode m_type;
+	private boolean m_isReference;
+	private boolean m_isArrayOfUnknownSize;
 
-	public ParameterNode(String name, ParameterTypeNode ptn)
+	public ParameterNode(String name, TypeNode tn, boolean isRef, boolean isArray)
 	{
-		m_name = name;
-		m_type = ptn;
+		super(name, tn);
+		m_isReference = isRef;
+		m_isArrayOfUnknownSize = isArray;
 	}
 
 	@Override
@@ -19,13 +20,13 @@ public class ParameterNode extends Node
 		v.visit(this);
 	}
 
-	public String getName()
+	public boolean isArrayOfUnknownSize()
 	{
-		return m_name;
+		return m_isArrayOfUnknownSize;
 	}
 
-	public ParameterTypeNode getType()
+	public boolean isReference()
 	{
-		return m_type;
+		return m_isReference;
 	}
 }

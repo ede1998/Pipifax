@@ -3,7 +3,6 @@ package me.erikhennig.pipifax.nodes;
 import java.util.ArrayList;
 
 import me.erikhennig.pipifax.nodes.expressions.ExpressionNode;
-import me.erikhennig.pipifax.visitors.Visitor;
 
 public abstract class ControlNode extends Node {
 	private ExpressionNode m_condition;

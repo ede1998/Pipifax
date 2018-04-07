@@ -13,6 +13,7 @@ import me.erikhennig.pipifax.antlr.PipifaxLexer;
 import me.erikhennig.pipifax.antlr.PipifaxParser;
 import me.erikhennig.pipifax.nodes.Node;
 import me.erikhennig.pipifax.nodes.ProgramNode;
+import me.erikhennig.pipifax.visitors.NameResolutionVisitor;
 import me.erikhennig.pipifax.visitors.PrintVisitor;
 
 public class Main {
@@ -35,6 +36,11 @@ public class Main {
 			PrintVisitor printer = new PrintVisitor();
 			pn.accept(printer);
 			System.out.println(printer.getProgram());
+			
+			//Resolve names
+			NameResolutionVisitor nrv = new NameResolutionVisitor();
+			pn.accept(nrv);
+			System.out.println("Name resolution successful");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (RecognitionException e) {

@@ -38,4 +38,14 @@ public class CallNode extends ExpressionNode
 		return m_arguments;
 	}
 
+	public FunctionNode getFunction()
+	{
+		return m_function;
+	}
+
+	public void setFunction(FunctionNode function)
+	{
+		m_function = function;
+	}
+
 }

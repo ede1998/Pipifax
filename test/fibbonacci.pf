@@ -1,0 +1,23 @@
+func fibbonacci_rek(n int) int
+{
+   if (n == 0) || (n == 1) || (n <= 1)
+   {
+     fibbonacci_rek = 1;
+   }
+   else
+   {
+     fibbonacci_rek = fibbonacci_rek(n-1) + fibbonacci_rek(n-2);
+   }
+ }
+ 
+ func fibbonacci_endrek(n int, f1 int, f2 int) int
+ {
+   if (n <= 0)
+   {
+     fibbonacci_endrek = f2;
+   }
+   else
+   {
+     fibbonacci_endrek = fibbonacci_endrek(n-1, f2, f1+f2);
+   }
+ }

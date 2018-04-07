@@ -1,6 +1,5 @@
 grammar Pipifax;
 prog: (funcdecl | vardecl)*
-      | EOF
      ;
 funcdecl: 'func' ID '('parameterlist')'type? block; 
 vardecl: 'var' ID type ';'?;
@@ -55,7 +54,7 @@ funccall: ID '(' (expr (',' expr)*)? ')';
 
 NEWLINE : [\r\n]+ -> skip;
 ENDOFFILE : EOF -> skip;
-COMMENT : '#' ~[\r\n]* '\r'? '\n' -> skip ;
+COMMENT : '#' ~[\r\n]* ('\r'? '\n' | EOF) -> skip ;
 WS : [ \r\t\n]+ -> skip ;
 ID : LETTER (LETTER|'0'..'9')* ;
 fragment LETTER : [a-zA-Z_] ;

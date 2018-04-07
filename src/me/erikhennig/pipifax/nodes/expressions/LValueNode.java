@@ -30,4 +30,14 @@ public class LValueNode extends ExpressionNode {
 	{
 		return m_offsets;
 	}
+
+	public VariableNode getVariable()
+	{
+		return m_variable;
+	}
+
+	public void setVariable(VariableNode variable)
+	{
+		m_variable = variable;
+	}
 }

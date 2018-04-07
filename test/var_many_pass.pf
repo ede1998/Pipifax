@@ -6,9 +6,9 @@ var dd double # endline comment
 
 var s12 string
 
-var [4554]string
+var heyhp[4554]string
 
-var [334]
+var NOTMissingname[334]
 [56] double
 
    var

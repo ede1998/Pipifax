@@ -1,4 +1,4 @@
-func arithmetic(a int, b int)
+func arithmetic(a int, b int) double
 {
    arithmetic = a - b
    arithmetic = a + b

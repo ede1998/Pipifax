@@ -2,11 +2,9 @@ package me.erikhennig.pipifax;
 
 import java.util.ArrayList;
 
-import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 
 import me.erikhennig.pipifax.antlr.PipifaxBaseVisitor;
 import me.erikhennig.pipifax.antlr.PipifaxParser;
-import me.erikhennig.pipifax.antlr.PipifaxParser.ProgContext;
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
 
@@ -81,33 +79,34 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	@Override
 	public Node visitParameter(PipifaxParser.ParameterContext ctx)
 	{
-		ParameterTypeNode ptn = (ParameterTypeNode) ctx.parameter_type().accept(this);
-		ParameterNode pn = new ParameterNode(ctx.ID().getText(), ptn);
-		return pn;
+		return ctx.parameter_type().accept(this);
 	}
 
 	@Override
 	public Node visitTypeParameter(PipifaxParser.TypeParameterContext ctx)
 	{
+		String name = ((PipifaxParser.ParameterContext) ctx.getParent()).ID().getText();
 		TypeNode tn = (TypeNode) ctx.type().accept(this);
-		ParameterTypeNode ptn = new ParameterTypeNode(tn, false, false);
-		return ptn;
+		ParameterNode pn = new ParameterNode(name, tn, false, false);
+		return pn;
 	}
 
 	@Override
 	public Node visitReferenceParameter(PipifaxParser.ReferenceParameterContext ctx)
 	{
+		String name = ((PipifaxParser.ParameterContext) ctx.getParent()).ID().getText();
 		TypeNode tn = (TypeNode) ctx.type().accept(this);
-		ParameterTypeNode ptn = new ParameterTypeNode(tn, true, false);
-		return ptn;
+		ParameterNode pn = new ParameterNode(name, tn, true, false);
+		return pn;
 	}
 
 	@Override
 	public Node visitReferenceArrayParameter(PipifaxParser.ReferenceArrayParameterContext ctx)
 	{
+		String name = ((PipifaxParser.ParameterContext) ctx.getParent()).ID().getText();
 		TypeNode tn = (TypeNode) ctx.type().accept(this);
-		ParameterTypeNode ptn = new ParameterTypeNode(tn, true, true);
-		return ptn;
+		ParameterNode pn = new ParameterNode(name, tn, true, true);
+		return pn;
 	}
 	
 	@Override

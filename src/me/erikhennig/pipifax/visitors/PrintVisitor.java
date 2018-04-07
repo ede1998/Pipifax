@@ -1,14 +1,12 @@
 package me.erikhennig.pipifax.visitors;
 
-import java.util.ArrayList;
-
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
 
 public class PrintVisitor extends Visitor
 {
 	private String m_program = "";
-	private int m_indentLevel = 0;
+	private int m_indentLevel = -1;
 
 	private static final int INDENT_MULTIPLIER = 2;
 
@@ -55,9 +53,9 @@ public class PrintVisitor extends Visitor
 	{
 		m_indentLevel++;
 		m_program += genSp() + "Function " + n.getName() + " : ";
-		if (n.getReturnType() != null)
+		if (n.getReturnVariable() != null)
 		{
-			n.getReturnType().accept(this);
+			n.getReturnVariable().getType().accept(this);
 		} else
 		{
 			m_program += "void";
@@ -113,16 +111,11 @@ public class PrintVisitor extends Visitor
 	{
 		m_indentLevel++;
 		m_program += genSp() + n.getName() + " : ";
-		n.getType().accept(this);
-		m_program += "\n";
-		m_indentLevel--;
-	}
-
-	public void visit(ParameterTypeNode n)
-	{
 		m_program += (n.isReference()) ? "*" : "";
 		m_program += (n.isArrayOfUnknownSize()) ? "[]" : "";
 		n.getType().accept(this);
+		m_program += "\n";
+		m_indentLevel--;
 	}
 
 	public void visit(ProgramNode n)

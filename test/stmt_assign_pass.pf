@@ -1,5 +1,5 @@
 func main(args *[] string) int {
-  string s
+  var s string
 
   s = args[0];
 }

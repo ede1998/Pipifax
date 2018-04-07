@@ -8,13 +8,14 @@ public class FunctionNode extends Node
 {
 
 	private String m_name;
-	private TypeNode m_returnType;
+	private VariableNode m_returnVariable = null;
 	private ArrayList<ParameterNode> m_parameterList = new ArrayList<>();
 	private ArrayList<Node> m_statements = new ArrayList<>();
 
 	public FunctionNode(TypeNode retType, String name)
 	{
-		m_returnType = retType;
+		if (retType != null)
+			m_returnVariable = new VariableNode(name, retType);
 		m_name = name;
 	}
 
@@ -40,9 +41,9 @@ public class FunctionNode extends Node
 		return m_name;
 	}
 
-	public TypeNode getReturnType()
+	public VariableNode getReturnVariable()
 	{
-		return m_returnType;
+		return m_returnVariable;
 	}
 
 	public ArrayList<ParameterNode> getParameterList()
