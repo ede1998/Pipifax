@@ -1,21 +1,19 @@
 package me.erikhennig.pipifax.nodes.expressions;
 
+import me.erikhennig.pipifax.nodes.TypeNode;
 import me.erikhennig.pipifax.nodes.Types;
 import me.erikhennig.pipifax.visitors.Visitor;
 
-public class IntegerLiteralNode extends LiteralNode {
+public class IntegerLiteralNode extends LiteralNode
+{
 	private int m_value;
 
 	public IntegerLiteralNode(int val)
 	{
 		m_value = val;
+		m_type = new TypeNode(Types.INT);
 	}
 
-	@Override
-	public Types getType() {
-		return Types.INT;
-	}
-	
 	@Override
 	public void accept(Visitor v)
 	{

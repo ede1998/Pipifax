@@ -33,23 +33,25 @@ expr: INT # IntLiteral
       | STRING # StringLiteral
       | funccall # Call
       | lvalue # LValueExpression
-      | '(' expr ')' # Parentheses 
-      | expr '+' expr # Addition
-      | expr '-' expr # Subtraction
+      | '(' expr ')' # Parentheses
+      | '-' expr # Negation
+	  | '(int)' expr # IntCast
+      | '(double)' expr # DoubleCast
       | expr '*' expr # Multiplication
       | expr '/' expr # Division
-      | expr '&&' expr # And
-      | expr '||' expr # Or
+      | expr '+' expr # Addition
+      | expr '-' expr # Subtraction
       | expr '<' expr # Less
       | expr '>' expr # Greater
       | expr '<=' expr # LessOrEquals
       | expr '>=' expr # GreaterOrEquals
       | expr '==' expr # Equals
       | expr '!=' expr # NotEquals
-      | '!' expr # Not
-      | '-' expr # Negation
       | expr '<=>' expr # StringCompare
-      ; 
+      | '!' expr # Not
+      | expr '&&' expr # And
+      | expr '||' expr # Or
+	  ;
 funccall: ID '(' (expr (',' expr)*)? ')';
 
 NEWLINE : [\r\n]+ -> skip;

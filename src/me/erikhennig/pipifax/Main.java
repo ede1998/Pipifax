@@ -15,6 +15,7 @@ import me.erikhennig.pipifax.nodes.Node;
 import me.erikhennig.pipifax.nodes.ProgramNode;
 import me.erikhennig.pipifax.visitors.NameResolutionVisitor;
 import me.erikhennig.pipifax.visitors.PrintVisitor;
+import me.erikhennig.pipifax.visitors.TypeCheckingVisitor;
 
 public class Main {
 
@@ -40,7 +41,12 @@ public class Main {
 			//Resolve names
 			NameResolutionVisitor nrv = new NameResolutionVisitor();
 			pn.accept(nrv);
-			System.out.println("Name resolution successful");
+			System.out.println("Name resolution successful.");
+			
+			//Type checking
+			TypeCheckingVisitor tcv = new TypeCheckingVisitor();
+			pn.accept(tcv);
+			System.out.println("Type checking done.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (RecognitionException e) {

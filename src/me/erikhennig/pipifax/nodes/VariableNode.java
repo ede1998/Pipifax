@@ -5,7 +5,7 @@ import me.erikhennig.pipifax.visitors.Visitor;
 public class VariableNode extends Node
 {
 	private String m_name;
-	private TypeNode m_type;
+	protected TypeNode m_type;
 
 	public VariableNode(String text, TypeNode tn)
 	{

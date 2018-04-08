@@ -51,65 +51,28 @@ public abstract class Visitor
 		n.getStatements().forEach((subnode) -> subnode.accept(this));
 	}
 
-	public void visit(AdditionNode n)
+	public void visit(BinaryExpressionNode n)
 	{
 		n.getLeftSide().accept(this);
 		n.getRightSide().accept(this);
 	}
-
-	public void visit(AndNode n)
+	
+	public void visit(UnaryExpressionNode n)
 	{
-		n.getLeftSide().accept(this);
-		n.getRightSide().accept(this);
+		n.getOperand().accept(this);
 	}
-
+	
 	public void visit(CallNode n)
 	{
 		n.getArguments().forEach((subnode) -> subnode.accept(this));
-	}
-
-	public void visit(DivisionNode n)
-	{
-		n.getLeftSide().accept(this);
-		n.getRightSide().accept(this);
 	}
 
 	public void visit(DoubleLiteralNode n)
 	{
 	}
 
-	public void visit(EqualsNode n)
-	{
-		n.getLeftSide().accept(this);
-		n.getRightSide().accept(this);
-	}
-
-	public void visit(GreaterNode n)
-	{
-		n.getLeftSide().accept(this);
-		n.getRightSide().accept(this);
-	}
-
-	public void visit(GreaterOrEqualsNode n)
-	{
-		n.getLeftSide().accept(this);
-		n.getRightSide().accept(this);
-	}
-
 	public void visit(IntegerLiteralNode n)
 	{
-	}
-
-	public void visit(LessNode n)
-	{
-		n.getLeftSide().accept(this);
-		n.getRightSide().accept(this);
-	}
-
-	public void visit(LessOrEqualsNode n)
-	{
-		n.getLeftSide().accept(this);
-		n.getRightSide().accept(this);
 	}
 
 	public void visit(LValueNode n)
@@ -117,47 +80,7 @@ public abstract class Visitor
 		n.getOffsets().forEach((subnode) -> subnode.accept(this));
 	}
 
-	public void visit(MultiplicationNode n)
-	{
-		n.getLeftSide().accept(this);
-		n.getRightSide().accept(this);
-	}
-
-	public void visit(NegationNode n)
-	{
-		n.getOperand().accept(this);
-	}
-
-	public void visit(NotEqualsNode n)
-	{
-		n.getLeftSide().accept(this);
-		n.getRightSide().accept(this);
-	}
-
-	public void visit(NotNode n)
-	{
-		n.getOperand().accept(this);
-	}
-
-	public void visit(OrNode n)
-	{
-		n.getLeftSide().accept(this);
-		n.getRightSide().accept(this);
-	}
-
-	public void visit(StringCompareNode n)
-	{
-		n.getLeftSide().accept(this);
-		n.getRightSide().accept(this);
-	}
-
 	public void visit(StringLiteralNode n)
 	{
-	}
-
-	public void visit(SubtractionNode n)
-	{
-		n.getLeftSide().accept(this);
-		n.getRightSide().accept(this);
 	}
 }

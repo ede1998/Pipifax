@@ -12,6 +12,11 @@ public class ParameterNode extends VariableNode
 		super(name, tn);
 		m_isReference = isRef;
 		m_isArrayOfUnknownSize = isArray;
+
+		if (m_isArrayOfUnknownSize)
+		{
+			m_type.addDimension(0);
+		}
 	}
 
 	@Override

@@ -1,19 +1,30 @@
 func arithmetic(a int, b int) double
 {
-   arithmetic = a - b
-   arithmetic = a + b
-   arithmetic = a * b
-   arithmetic = a / b
-   arithmetic = (a)
-   arithmetic = -b
-   arithmetic = a && b
-   arithmetic = a || b
-   arithmetic = !b
-   arithmetic = a <=> b
-   arithmetic = a < b
-   arithmetic = a > b
-   arithmetic = a == b
-   arithmetic = a != b
-   arithmetic = a >= b
-   arithmetic = a <= b
+   arithmetic = (double) (a - b);
+   arithmetic = (double) (a + b);
+   arithmetic = (double)a * (double) b;
+}
+
+func intcast(a double, b double) int
+{
+   intcast = (int) (a / b);
+   intcast = (int) (a);
+   intcast = (int)-b;
+   intcast = (int) a && (int) b;
+   intcast = (int) a ||  (int) b;
+   intcast = ! (int) b;
+}
+ 
+func strcmp(b string, a string) int
+{
+   strcmp = a <=> b;
+}
+func other(a int, b int) int
+{
+   other = a < b;
+   other = a > b;
+   other = a == b;
+   other = a != b;
+   other = a >= b;
+   other = a <= b;
 }

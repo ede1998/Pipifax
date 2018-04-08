@@ -28,5 +28,10 @@ public class AssignmentNode extends Node {
 	{
 		return m_dest;
 	}
+	
+	public boolean checkType()
+	{
+		return TypeNode.isSameType(m_src.getType(), m_dest.getType());
+	}
 
 }

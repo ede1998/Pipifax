@@ -148,20 +148,6 @@ public class PrintVisitor extends Visitor
 		m_indentLevel--;
 	}
 
-	public void visit(AdditionNode n)
-	{
-		n.getLeftSide().accept(this);
-		m_program += " + ";
-		n.getRightSide().accept(this);
-	}
-
-	public void visit(AndNode n)
-	{
-		n.getLeftSide().accept(this);
-		m_program += " && ";
-		n.getRightSide().accept(this);
-	}
-
 	public void visit(CallNode n)
 	{
 		m_indentLevel++;
@@ -177,11 +163,76 @@ public class PrintVisitor extends Visitor
 		m_indentLevel--;
 	}
 
-	public void visit(DivisionNode n)
+	@Override
+	public void visit(BinaryExpressionNode n)
 	{
+		String symbol = "";
+		switch (n.getOperation())
+		{
+		case ADDITION:
+			symbol = " + ";
+			break;
+		case SUBTRACTION:
+			symbol = " - ";
+			break;
+		case MULTIPLICATION:
+			symbol = " * ";
+			break;
+		case DIVISION:
+			symbol = " / ";
+			break;
+		case EQUALS:
+			symbol = " == ";
+			break;
+		case NOTEQUALS:
+			symbol = " != ";
+			break;
+		case LESS:
+			symbol = " < ";
+			break;
+		case LESSOREQUALS:
+			symbol = " <= ";
+			break;
+		case GREATER:
+			symbol = " > ";
+			break;
+		case GREATEROREQUALS:
+			symbol = " >= ";
+			break;
+		case AND:
+			symbol = " && ";
+			break;
+		case OR:
+			symbol = " || ";
+			break;
+		case STRINGCOMPARE:
+			symbol = " <=> ";
+			break;
+		}
 		n.getLeftSide().accept(this);
-		m_program += " / ";
+		m_program += symbol;
 		n.getRightSide().accept(this);
+	}
+	
+	@Override
+	public void visit(UnaryExpressionNode n)
+	{
+	    switch (n.getOperation())
+	    {
+	    case INTCAST:
+	    	m_program += " (int) ";
+	    	break;
+	    case DOUBLECAST:
+	    	m_program += " (double) ";
+	    	break;
+	    case NEGATION:
+	    	m_program += " - ";
+	    	break;
+	    case NOT:
+	    	m_program += " ! ";
+	    	break;
+	    }
+		super.visit(n);
 	}
 
 	public void visit(DoubleLiteralNode n)
@@ -189,44 +240,9 @@ public class PrintVisitor extends Visitor
 		m_program += n.getValue();
 	}
 
-	public void visit(EqualsNode n)
-	{
-		n.getLeftSide().accept(this);
-		m_program += " == ";
-		n.getRightSide().accept(this);
-	}
-
-	public void visit(GreaterNode n)
-	{
-		n.getLeftSide().accept(this);
-		m_program += " > ";
-		n.getRightSide().accept(this);
-	}
-
-	public void visit(GreaterOrEqualsNode n)
-	{
-		n.getLeftSide().accept(this);
-		m_program += " >= ";
-		n.getRightSide().accept(this);
-	}
-
 	public void visit(IntegerLiteralNode n)
 	{
 		m_program += n.getValue();
-	}
-
-	public void visit(LessNode n)
-	{
-		n.getLeftSide().accept(this);
-		m_program += " < ";
-		n.getRightSide().accept(this);
-	}
-
-	public void visit(LessOrEqualsNode n)
-	{
-		n.getLeftSide().accept(this);
-		m_program += " <= ";
-		n.getRightSide().accept(this);
 	}
 
 	public void visit(LValueNode n)
@@ -239,56 +255,9 @@ public class PrintVisitor extends Visitor
 			m_program += "]";
 		}
 	}
-
-	public void visit(MultiplicationNode n)
-	{
-		n.getLeftSide().accept(this);
-		m_program += " * ";
-		n.getRightSide().accept(this);
-	}
-
-	public void visit(NegationNode n)
-	{
-		m_program += "-";
-		n.getOperand().accept(this);
-	}
-
-	public void visit(NotEqualsNode n)
-	{
-		n.getLeftSide().accept(this);
-		m_program += " != ";
-		n.getRightSide().accept(this);
-	}
-
-	public void visit(NotNode n)
-	{
-		m_program += "!";
-		n.getOperand().accept(this);
-	}
-
-	public void visit(OrNode n)
-	{
-		n.getLeftSide().accept(this);
-		m_program += " || ";
-		n.getRightSide().accept(this);
-	}
-
-	public void visit(StringCompareNode n)
-	{
-		n.getLeftSide().accept(this);
-		m_program += " <=> ";
-		n.getRightSide().accept(this);
-	}
-
+	
 	public void visit(StringLiteralNode n)
 	{
 		m_program += n.getValue();
-	}
-
-	public void visit(SubtractionNode n)
-	{
-		n.getLeftSide().accept(this);
-		m_program += " - ";
-		n.getRightSide().accept(this);
 	}
 }

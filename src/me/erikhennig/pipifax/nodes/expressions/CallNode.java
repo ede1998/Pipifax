@@ -48,4 +48,10 @@ public class CallNode extends ExpressionNode
 		m_function = function;
 	}
 
+	@Override
+	public boolean checkType()
+	{
+		m_type = (m_function.getReturnVariable() != null) ? m_function.getReturnVariable().getType() : null;
+		return true;
+	}
 }
