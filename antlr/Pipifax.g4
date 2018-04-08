@@ -35,8 +35,8 @@ expr: INT # IntLiteral
       | lvalue # LValueExpression
       | '(' expr ')' # Parentheses
       | '-' expr # Negation
-	  | '(int)' expr # IntCast
-      | '(double)' expr # DoubleCast
+      | INTCASTOP expr # IntCast
+      | DOUBLECASTOP expr # DoubleCast
       | expr '*' expr # Multiplication
       | expr '/' expr # Division
       | expr '+' expr # Addition
@@ -59,6 +59,8 @@ ENDOFFILE : EOF -> skip;
 COMMENT : '#' ~[\r\n]* ('\r'? '\n' | EOF) -> skip ;
 WS : [ \r\t\n]+ -> skip ;
 ID : LETTER (LETTER|'0'..'9')* ;
+DOUBLECASTOP: '(' WS* 'double' WS* ')';
+INTCASTOP: '(' WS* 'int' WS* ')';
 fragment LETTER : [a-zA-Z_] ;
 INT     : [0-9]+ ;
 DOUBLE : INT ('.'INT)?('e'[+-]?INT)?;
