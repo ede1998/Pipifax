@@ -1,0 +1,4 @@
+func mod(a int, b int) int
+{
+  mod = a % b;
+}

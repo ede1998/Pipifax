@@ -1,6 +1,7 @@
 package me.erikhennig.pipifax.visitors;
 
 import me.erikhennig.pipifax.nodes.AssignmentNode;
+import me.erikhennig.pipifax.nodes.ControlNode;
 import me.erikhennig.pipifax.nodes.expressions.*;
 
 public class TypeCheckingVisitor extends Visitor
@@ -17,7 +18,8 @@ public class TypeCheckingVisitor extends Visitor
 	public void visit(CallNode n)
 	{
 		super.visit(n);
-		n.checkType();
+		if (!n.checkType())
+			System.err.println("Type Check Error: Invalid arguments for function call");
 	}
 
 	@Override
@@ -43,5 +45,13 @@ public class TypeCheckingVisitor extends Visitor
 		if (!n.checkType())
 			System.err.println("Type Check Error: LValue type error");
 
+	}
+
+	@Override
+	public void visit(ControlNode n)
+	{
+		super.visit(n);
+		if (!n.checkType())
+			System.err.println("Type Check Error: Control Node needs int type");
 	}
 }

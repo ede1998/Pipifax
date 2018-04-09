@@ -50,6 +50,26 @@ public abstract class Visitor
 		n.getCondition().accept(this);
 		n.getStatements().forEach((subnode) -> subnode.accept(this));
 	}
+	
+	public void visit(ForNode n)
+	{
+		if (n.getInitialAssignment() != null)
+			n.getInitialAssignment().accept(this);
+		n.getCondition().accept(this);
+		if (n.getLoopedAssignment() != null)
+			n.getLoopedAssignment().accept(this);
+		n.getStatements().forEach((subnode) -> subnode.accept(this));
+	}
+	
+	public void visit(ControlNode n)
+	{
+		if (n instanceof ForNode)
+			visit((ForNode) n);
+		else if (n instanceof WhileNode)
+			visit((WhileNode) n);
+		else if (n instanceof IfNode)
+			visit((IfNode) n);
+	}
 
 	public void visit(BinaryExpressionNode n)
 	{

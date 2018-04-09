@@ -61,7 +61,7 @@ public class PrintVisitor extends Visitor
 			m_program += "void";
 		}
 		m_program += "\n";
-		
+
 		m_indentLevel++;
 		if (!n.getParameterList().isEmpty())
 		{
@@ -148,6 +148,26 @@ public class PrintVisitor extends Visitor
 		m_indentLevel--;
 	}
 
+	public void visit(ForNode n)
+	{
+		m_indentLevel++;
+		m_program += genSp() + "For ";
+		n.getCondition().accept(this);
+		m_program += "\n";
+		if (n.getInitialAssignment() != null)
+			n.getInitialAssignment().accept(this);
+		if (n.getLoopedAssignment() != null)
+			n.getLoopedAssignment().accept(this);
+		m_indentLevel++;
+		m_program += genSp() + "Statements:\n";
+		for (Node tmp : n.getStatements())
+		{
+			tmp.accept(this);
+		}
+		m_indentLevel--;
+		m_indentLevel--;
+	}
+
 	public void visit(CallNode n)
 	{
 		m_indentLevel++;
@@ -181,6 +201,9 @@ public class PrintVisitor extends Visitor
 		case DIVISION:
 			symbol = " / ";
 			break;
+		case MODULO:
+			symbol = " % ";
+			break;
 		case EQUALS:
 			symbol = " == ";
 			break;
@@ -208,30 +231,33 @@ public class PrintVisitor extends Visitor
 		case STRINGCOMPARE:
 			symbol = " <=> ";
 			break;
+		case CONCATENATION:
+			symbol = " ... ";
+			break;
 		}
 		n.getLeftSide().accept(this);
 		m_program += symbol;
 		n.getRightSide().accept(this);
 	}
-	
+
 	@Override
 	public void visit(UnaryExpressionNode n)
 	{
-	    switch (n.getOperation())
-	    {
-	    case INTCAST:
-	    	m_program += " (int) ";
-	    	break;
-	    case DOUBLECAST:
-	    	m_program += " (double) ";
-	    	break;
-	    case NEGATION:
-	    	m_program += " - ";
-	    	break;
-	    case NOT:
-	    	m_program += " ! ";
-	    	break;
-	    }
+		switch (n.getOperation())
+		{
+		case INTCAST:
+			m_program += " (int) ";
+			break;
+		case DOUBLECAST:
+			m_program += " (double) ";
+			break;
+		case NEGATION:
+			m_program += " - ";
+			break;
+		case NOT:
+			m_program += " ! ";
+			break;
+		}
 		super.visit(n);
 	}
 
@@ -255,7 +281,7 @@ public class PrintVisitor extends Visitor
 			m_program += "]";
 		}
 	}
-	
+
 	public void visit(StringLiteralNode n)
 	{
 		m_program += n.getValue();

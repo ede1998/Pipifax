@@ -1,0 +1,13 @@
+func type_checking_call_parameters()
+{
+  var myint int;
+  var mydouble double;
+  var mystr string;
+  var myarr [5]string;
+  
+  many_params((int)mydouble, mydouble, mystr, myint, myarr);
+}
+
+func many_params(i int, k double, l string, m *int, n *[]string) 
+{
+}

@@ -21,10 +21,12 @@ statement: assignment ';'? # AssignmentStatement
       | ifstmt # IfStatement
       | whilestmt # WhileStatement
       | funccall ';'? # FunctionCallStatement
+      | forstmt # ForStatement
       ;
 ifstmt: 'if' expr block elsestmt?;
 elsestmt: 'else' block;
 whilestmt: 'while' expr block;
+forstmt: 'for' '(' (initassign = assignment)? ';' expr ';' (loopedassign = assignment)? ')' block;
 assignment: lvalue '=' expr;
 lvalue: ID
       | ID ('[' expr ']')+;
@@ -39,8 +41,10 @@ expr: INT # IntLiteral
       | DOUBLECASTOP expr # DoubleCast
       | expr '*' expr # Multiplication
       | expr '/' expr # Division
+      | expr '%' expr # Modulo
       | expr '+' expr # Addition
       | expr '-' expr # Subtraction
+      | expr '...' expr # StringConcat
       | expr '<' expr # Less
       | expr '>' expr # Greater
       | expr '<=' expr # LessOrEquals
@@ -51,7 +55,7 @@ expr: INT # IntLiteral
       | '!' expr # Not
       | expr '&&' expr # And
       | expr '||' expr # Or
-	  ;
+      ;
 funccall: ID '(' (expr (',' expr)*)? ')';
 
 NEWLINE : [\r\n]+ -> skip;

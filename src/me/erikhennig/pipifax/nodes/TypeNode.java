@@ -59,8 +59,29 @@ public class TypeNode extends Node
 		for (Iterator<Integer> iter1 = tn1.m_dimensions.iterator(), iter2 = tn2.m_dimensions.iterator(); iter1
 				.hasNext();)
 		{
+			int i1 = iter1.next(), i2 = iter2.next();
+			if ((i1 == 0) || (i2 == 0))
+				continue;
 			isSame &= iter1.next() == iter2.next();
 		}
 		return isSame;
+	}
+	
+	private static TypeNode m_basicTypeINT = new TypeNode(Types.INT);
+	private static TypeNode m_basicTypeSTRING = new TypeNode(Types.STRING);
+	private	static TypeNode m_basicTypeDOUBLE = new TypeNode(Types.DOUBLE);
+	
+	public static boolean isSameType(TypeNode tn, Types basicType)
+	{
+		switch (basicType)
+		{
+		case INT:
+			return isSameType(tn, m_basicTypeINT);
+		case STRING:
+			return isSameType(tn, m_basicTypeSTRING);
+		case DOUBLE:
+			return isSameType(tn, m_basicTypeDOUBLE);
+		}
+		return false;
 	}
 }

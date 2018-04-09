@@ -72,15 +72,7 @@ public class NameResolutionVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(IfNode n)
-	{
-		m_currentScope = m_currentScope.enterScope();
-		super.visit(n);
-		m_currentScope = m_currentScope.leaveScope();
-	}
-
-	@Override
-	public void visit(WhileNode n)
+	public void visit(ControlNode n)
 	{
 		m_currentScope = m_currentScope.enterScope();
 		super.visit(n);

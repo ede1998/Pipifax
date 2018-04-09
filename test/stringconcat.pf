@@ -1,0 +1,8 @@
+func repeat_string(str string, n int) string
+{
+  repeat_string = "";
+  for ( ; n > 0; n = n - 1)
+  {
+    repeat_string = repeat_string ... str;
+  }
+}

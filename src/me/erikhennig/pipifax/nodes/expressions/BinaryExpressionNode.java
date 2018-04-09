@@ -47,9 +47,11 @@ public class BinaryExpressionNode extends ExpressionNode
 		case SUBTRACTION:
 		case MULTIPLICATION:
 		case DIVISION:
-		case AND:
-		case OR:
 			return checkArithmeticType();
+		case MODULO:
+	    case AND:
+		case OR:
+			return checkIntOnlyType();
 		case EQUALS:
 		case NOTEQUALS:
 		case LESS:
@@ -59,14 +61,38 @@ public class BinaryExpressionNode extends ExpressionNode
 			return checkComparisonType();
 		case STRINGCOMPARE:
 			return checkStringCompareType();
+		case CONCATENATION:
+			return checkConcatenationType();
 		}
 		return false;
+	}
+
+	private boolean checkIntOnlyType()
+	{
+		boolean retVal = TypeNode.isSameType(m_leftSide.getType(), m_rightSide.getType());
+		retVal &= TypeNode.isSameType(m_leftSide.getType(), Types.INT);
+		if (retVal)
+		{
+			m_type = new TypeNode(Types.INT);
+		}
+		return retVal;
+	}
+
+	private boolean checkConcatenationType()
+	{
+		boolean retVal = TypeNode.isSameType(m_leftSide.getType(), m_rightSide.getType());
+		retVal &= TypeNode.isSameType(m_leftSide.getType(), Types.STRING);
+		if (retVal)
+		{
+			m_type = new TypeNode(Types.STRING);
+		}
+		return retVal;
 	}
 
 	private boolean checkStringCompareType()
 	{
 		boolean retVal = TypeNode.isSameType(m_leftSide.getType(), m_rightSide.getType());
-		retVal &= TypeNode.isSameType(m_leftSide.getType(), new TypeNode(Types.STRING));
+		retVal &= TypeNode.isSameType(m_leftSide.getType(), Types.STRING);
 		if (retVal)
 		{
 			m_type = new TypeNode(Types.INT);
@@ -77,8 +103,8 @@ public class BinaryExpressionNode extends ExpressionNode
 	private boolean checkComparisonType()
 	{
 		boolean retVal = TypeNode.isSameType(m_leftSide.getType(), m_rightSide.getType());
-		retVal &= TypeNode.isSameType(m_leftSide.getType(), new TypeNode(Types.DOUBLE))
-				|| TypeNode.isSameType(m_leftSide.getType(), new TypeNode(Types.INT));
+		retVal &= TypeNode.isSameType(m_leftSide.getType(), Types.DOUBLE)
+				|| TypeNode.isSameType(m_leftSide.getType(), Types.INT);
 		if (retVal)
 		{
 			m_type = new TypeNode(Types.INT);
@@ -89,8 +115,8 @@ public class BinaryExpressionNode extends ExpressionNode
 	private boolean checkArithmeticType()
 	{
 		boolean retVal = TypeNode.isSameType(m_leftSide.getType(), m_rightSide.getType());
-		retVal &= TypeNode.isSameType(m_leftSide.getType(), new TypeNode(Types.DOUBLE))
-				|| TypeNode.isSameType(m_leftSide.getType(), new TypeNode(Types.INT));
+		retVal &= TypeNode.isSameType(m_leftSide.getType(), Types.DOUBLE)
+				|| TypeNode.isSameType(m_leftSide.getType(), Types.INT);
 		if (retVal)
 		{
 			m_type = m_leftSide.getType();

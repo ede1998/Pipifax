@@ -50,8 +50,8 @@ public class UnaryExpressionNode extends ExpressionNode
 
 	private boolean checkIntCastType()
 	{
-		boolean retVal = TypeNode.isSameType(m_operand.getType(), new TypeNode(Types.INT))
-				|| TypeNode.isSameType(m_operand.getType(), new TypeNode(Types.DOUBLE));
+		boolean retVal = TypeNode.isSameType(m_operand.getType(), Types.INT)
+				|| TypeNode.isSameType(m_operand.getType(), Types.DOUBLE);
 		if (retVal)
 		{
 			m_type = new TypeNode(Types.INT);
@@ -61,8 +61,8 @@ public class UnaryExpressionNode extends ExpressionNode
 
 	private boolean checkDoubleCastType()
 	{
-		boolean retVal = TypeNode.isSameType(m_operand.getType(), new TypeNode(Types.INT))
-				|| TypeNode.isSameType(m_operand.getType(), new TypeNode(Types.DOUBLE));
+		boolean retVal = TypeNode.isSameType(m_operand.getType(), Types.INT)
+				|| TypeNode.isSameType(m_operand.getType(), Types.DOUBLE);
 		if (retVal)
 		{
 			m_type = new TypeNode(Types.DOUBLE);
@@ -72,8 +72,8 @@ public class UnaryExpressionNode extends ExpressionNode
 
 	private boolean checkNegationType()
 	{
-		boolean retVal = TypeNode.isSameType(m_operand.getType(), new TypeNode(Types.INT))
-				|| TypeNode.isSameType(m_operand.getType(), new TypeNode(Types.DOUBLE));
+		boolean retVal = TypeNode.isSameType(m_operand.getType(), Types.INT)
+				|| TypeNode.isSameType(m_operand.getType(), Types.DOUBLE);
 		if (retVal)
 		{
 			m_type = m_operand.getType();
@@ -83,7 +83,7 @@ public class UnaryExpressionNode extends ExpressionNode
 
 	private boolean checkNotType()
 	{
-		boolean retVal = TypeNode.isSameType(m_operand.getType(), new TypeNode(Types.INT));
+		boolean retVal = TypeNode.isSameType(m_operand.getType(), Types.INT);
 		if (retVal)
 		{
 			m_type = new TypeNode(Types.INT);

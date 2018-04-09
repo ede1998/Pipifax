@@ -1,8 +1,11 @@
 package me.erikhennig.pipifax.nodes.expressions;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import me.erikhennig.pipifax.nodes.FunctionNode;
+import me.erikhennig.pipifax.nodes.ParameterNode;
+import me.erikhennig.pipifax.nodes.TypeNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 
 public class CallNode extends ExpressionNode
@@ -52,6 +55,17 @@ public class CallNode extends ExpressionNode
 	public boolean checkType()
 	{
 		m_type = (m_function.getReturnVariable() != null) ? m_function.getReturnVariable().getType() : null;
-		return true;
+
+		boolean areValidArgs = m_function.getParameterList().size() == m_arguments.size();
+		if (!areValidArgs)
+			return false;
+		Iterator<ExpressionNode> exp = m_arguments.iterator();
+		Iterator<ParameterNode> param = m_function.getParameterList().iterator();
+		for (; exp.hasNext();)
+		{
+			areValidArgs &= TypeNode.isSameType(param.next().getType(), exp.next().getType());
+		}
+
+		return areValidArgs;
 	}
 }

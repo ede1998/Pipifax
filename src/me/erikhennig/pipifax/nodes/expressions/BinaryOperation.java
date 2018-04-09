@@ -6,6 +6,7 @@ public enum BinaryOperation
 	SUBTRACTION,
 	MULTIPLICATION,
 	DIVISION,
+	MODULO,
 	
 	AND,
 	OR,
@@ -17,5 +18,6 @@ public enum BinaryOperation
 	GREATER,
 	GREATEROREQUALS,
 	
-	STRINGCOMPARE
+	STRINGCOMPARE,
+	CONCATENATION
 }

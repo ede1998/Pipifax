@@ -61,10 +61,9 @@ public class LValueNode extends ExpressionNode
 
 	private boolean checkArrayAccessType()
 	{
-		TypeNode tn = new TypeNode(Types.INT);
 		for (ExpressionNode en : m_offsets)
 		{
-			if (!TypeNode.isSameType(en.getType(), tn))
+			if (!TypeNode.isSameType(en.getType(), Types.INT))
 				return false;
 		}
 		return true;
