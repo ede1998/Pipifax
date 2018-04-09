@@ -25,11 +25,15 @@ statement: assignment ';'? # AssignmentStatement
       | whilestmt # WhileStatement
       | funccall ';'? # FunctionCallStatement
       | forstmt # ForStatement
+      | switchstmt # SwitchStatement
       ;
 ifstmt: 'if' expr statements elsestmt?;
 elsestmt: 'else' statements;
 whilestmt: 'while' expr statements;
 forstmt: 'for' '(' (initassign = assignment)? ';' expr ';' (loopedassign = assignment)? ')' statements;
+switchstmt: 'switch' expr '{' casestmt* defaultstmt?'}';
+casestmt: 'case' expr statements;
+defaultstmt: 'default' statements;
 assignment: lvalue '=' expr;
 lvalue: ID
       | ID ('[' expr ']')+;

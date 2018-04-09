@@ -1,6 +1,11 @@
 package me.erikhennig.pipifax.visitors;
 
 import me.erikhennig.pipifax.nodes.*;
+import me.erikhennig.pipifax.nodes.controls.CaseNode;
+import me.erikhennig.pipifax.nodes.controls.ForNode;
+import me.erikhennig.pipifax.nodes.controls.IfNode;
+import me.erikhennig.pipifax.nodes.controls.SwitchNode;
+import me.erikhennig.pipifax.nodes.controls.WhileNode;
 import me.erikhennig.pipifax.nodes.expressions.*;
 
 public class PrintVisitor extends Visitor
@@ -165,6 +170,41 @@ public class PrintVisitor extends Visitor
 			tmp.accept(this);
 		}
 		m_indentLevel--;
+		m_indentLevel--;
+	}
+
+	public void visit(SwitchNode n)
+	{
+		m_indentLevel++;
+		m_program += genSp() + "Switch ";
+		n.getCondition().accept(this);
+		m_program += "\n";
+
+		for (Node tmp : n.getStatements())
+		{
+			tmp.accept(this);
+		}
+
+		m_indentLevel++;
+		m_program += (n.getDefaultStatements().size() != 0) ? genSp() + "Default\n" : "";
+		for (Node tmp : n.getDefaultStatements())
+		{
+			tmp.accept(this);
+		}
+		m_indentLevel--;
+		m_indentLevel--;
+	}
+
+	public void visit(CaseNode n)
+	{
+		m_indentLevel++;
+		m_program += genSp() + "Case: ";
+		n.getCondition().accept(this);
+		m_program += "\n";
+		for (Node tmp : n.getStatements())
+		{
+			tmp.accept(this);
+		}
 		m_indentLevel--;
 	}
 

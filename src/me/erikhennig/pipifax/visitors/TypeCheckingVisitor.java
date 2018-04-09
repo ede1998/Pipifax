@@ -1,7 +1,7 @@
 package me.erikhennig.pipifax.visitors;
 
 import me.erikhennig.pipifax.nodes.AssignmentNode;
-import me.erikhennig.pipifax.nodes.ControlNode;
+import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
 
 public class TypeCheckingVisitor extends Visitor
@@ -44,14 +44,37 @@ public class TypeCheckingVisitor extends Visitor
 		super.visit(n);
 		if (!n.checkType())
 			System.err.println("Type Check Error: LValue type error");
-
 	}
 
 	@Override
-	public void visit(ControlNode n)
+	public void visit(WhileNode n)
 	{
 		super.visit(n);
 		if (!n.checkType())
-			System.err.println("Type Check Error: Control Node needs int type");
+			System.err.println("Type Check Error: While Node needs int type");
+	}
+
+	@Override
+	public void visit(IfNode n)
+	{
+		super.visit(n);
+		if (!n.checkType())
+			System.err.println("Type Check Error: If Node needs int type");
+	}
+
+	@Override
+	public void visit(ForNode n)
+	{
+		super.visit(n);
+		if (!n.checkType())
+			System.err.println("Type Check Error: For Node needs int type");
+	}
+
+	@Override
+	public void visit(SwitchNode n)
+	{
+		super.visit(n);
+		if (!n.checkType())
+			System.err.println("Type Check Error: Switch Node needs int type");
 	}
 }

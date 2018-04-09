@@ -2,13 +2,14 @@ package me.erikhennig.pipifax.visitors;
 
 import me.erikhennig.pipifax.nameresolution.Scope;
 import me.erikhennig.pipifax.nodes.*;
+import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.CallNode;
 import me.erikhennig.pipifax.nodes.expressions.LValueNode;
 
 public class NameResolutionVisitor extends Visitor
 {
 	private Scope m_currentScope = new Scope();
-	private boolean m_isGlobalIteration = true; // used for duplicate traversal to lookup global names before they are
+	private boolean m_isGlobalIteration = true; // used for duplicate traversal to lookup global function names before they are
 												// defined
 
 	@Override
@@ -72,10 +73,48 @@ public class NameResolutionVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(ControlNode n)
+	public void visit(IfNode n)
+	{
+		n.getCondition().accept(this);
+
+		m_currentScope = m_currentScope.enterScope();
+		n.getStatements().forEach((subnode) -> subnode.accept(this));
+		m_currentScope = m_currentScope.leaveScope();
+
+		m_currentScope = m_currentScope.enterScope();
+		n.getElseStatements().forEach((subnode) -> subnode.accept(this));
+		m_currentScope = m_currentScope.leaveScope();
+	}
+
+	@Override
+	public void visit(WhileNode n)
 	{
 		m_currentScope = m_currentScope.enterScope();
 		super.visit(n);
+		m_currentScope = m_currentScope.leaveScope();
+	}
+
+	@Override
+	public void visit(ForNode n)
+	{
+		m_currentScope = m_currentScope.enterScope();
+		super.visit(n);
+		m_currentScope = m_currentScope.leaveScope();
+	}
+
+	@Override
+	public void visit(SwitchNode n)
+	{
+		n.getCondition().accept(this);
+		n.getStatements().forEach((subnode) ->
+		{
+			m_currentScope = m_currentScope.enterScope();
+			subnode.accept(this);
+			m_currentScope = m_currentScope.leaveScope();
+		});
+
+		m_currentScope = m_currentScope.enterScope();
+		n.getDefaultStatements().forEach((subnode) -> subnode.accept(this));
 		m_currentScope = m_currentScope.leaveScope();
 	}
 }

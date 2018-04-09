@@ -1,0 +1,35 @@
+func scopetest(i int)
+{
+  if (i == 2)
+  {
+    var i int;
+	i = 4;
+  }
+  else
+  {
+    var i int;
+	i = 6;
+  }
+}
+
+func scopetest1(i string) string
+{
+  var tmp string;
+  tmp = "blabla";
+  switch (i)
+  {
+    case "test" {
+	  var i int;
+	  i = 5;
+	}
+	case tmp {
+	  var i double;
+	  i = 6.31e11;
+	}
+	default
+	{
+	  var i [3]int;
+	  i[2] = -4;
+	}
+  }
+}

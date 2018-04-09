@@ -1,6 +1,7 @@
 package me.erikhennig.pipifax.visitors;
 
 import me.erikhennig.pipifax.nodes.*;
+import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
 
 public abstract class Visitor
@@ -50,7 +51,7 @@ public abstract class Visitor
 		n.getCondition().accept(this);
 		n.getStatements().forEach((subnode) -> subnode.accept(this));
 	}
-	
+
 	public void visit(ForNode n)
 	{
 		if (n.getInitialAssignment() != null)
@@ -60,15 +61,18 @@ public abstract class Visitor
 			n.getLoopedAssignment().accept(this);
 		n.getStatements().forEach((subnode) -> subnode.accept(this));
 	}
-	
-	public void visit(ControlNode n)
+
+	public void visit(SwitchNode n)
 	{
-		if (n instanceof ForNode)
-			visit((ForNode) n);
-		else if (n instanceof WhileNode)
-			visit((WhileNode) n);
-		else if (n instanceof IfNode)
-			visit((IfNode) n);
+		n.getCondition().accept(this);
+		n.getStatements().forEach((subnode) -> subnode.accept(this));
+		n.getDefaultStatements().forEach((subnode) -> subnode.accept(this));
+	}
+
+	public void visit(CaseNode n)
+	{
+		n.getCondition().accept(this);
+		n.getStatements().forEach((subnode) -> subnode.accept(this));
 	}
 
 	public void visit(BinaryExpressionNode n)
@@ -76,12 +80,12 @@ public abstract class Visitor
 		n.getLeftSide().accept(this);
 		n.getRightSide().accept(this);
 	}
-	
+
 	public void visit(UnaryExpressionNode n)
 	{
 		n.getOperand().accept(this);
 	}
-	
+
 	public void visit(CallNode n)
 	{
 		n.getArguments().forEach((subnode) -> subnode.accept(this));

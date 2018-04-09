@@ -1,4 +1,4 @@
-package me.erikhennig.pipifax.nodes;
+package me.erikhennig.pipifax.nodes.controls;
 
 import me.erikhennig.pipifax.nodes.expressions.ExpressionNode;
 import me.erikhennig.pipifax.visitors.Visitor;

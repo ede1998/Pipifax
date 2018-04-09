@@ -5,9 +5,16 @@ import java.util.ArrayList;
 import me.erikhennig.pipifax.antlr.PipifaxBaseVisitor;
 import me.erikhennig.pipifax.antlr.PipifaxParser;
 import me.erikhennig.pipifax.antlr.PipifaxParser.AssignmentContext;
+import me.erikhennig.pipifax.antlr.PipifaxParser.CasestmtContext;
 import me.erikhennig.pipifax.antlr.PipifaxParser.ModuloContext;
 import me.erikhennig.pipifax.antlr.PipifaxParser.StringConcatContext;
+import me.erikhennig.pipifax.antlr.PipifaxParser.SwitchStatementContext;
 import me.erikhennig.pipifax.nodes.*;
+import me.erikhennig.pipifax.nodes.controls.CaseNode;
+import me.erikhennig.pipifax.nodes.controls.ForNode;
+import me.erikhennig.pipifax.nodes.controls.IfNode;
+import me.erikhennig.pipifax.nodes.controls.SwitchNode;
+import me.erikhennig.pipifax.nodes.controls.WhileNode;
 import me.erikhennig.pipifax.nodes.expressions.*;
 
 public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
@@ -231,6 +238,62 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		}
 
 		return fn;
+	}
+
+	@Override
+	public Node visitSwitchStatement(SwitchStatementContext ctx1)
+	{
+		PipifaxParser.SwitchstmtContext ctx = ctx1.switchstmt();
+		ExpressionNode en = (ExpressionNode) ctx.expr().accept(this);
+		SwitchNode sn = new SwitchNode(en);
+
+		// case-Part
+		for (int i = 0; i < ctx.casestmt().size(); i++)
+		{
+			CaseNode n = (CaseNode) ctx.casestmt(i).accept(this);
+			sn.addStatement(n);
+		}
+
+		// default-Part
+		if (ctx.defaultstmt() != null)
+		{
+			PipifaxParser.StatementsContext sctx = ctx.defaultstmt().statements();
+			if (sctx.block() != null)
+				for (int i = 0; i < sctx.block().getChildCount(); i++)
+				{
+					Node n = sctx.block().getChild(i).accept(this);
+					sn.addDefaultStatement(n);
+				}
+			else
+			{
+				Node n = sctx.statement().accept(this);
+				sn.addDefaultStatement(n);
+			}
+		}
+
+		return sn;
+	}
+
+	@Override
+	public Node visitCasestmt(CasestmtContext ctx)
+	{
+		ExpressionNode en = (ExpressionNode) ctx.expr().accept(this);
+		CaseNode cn = new CaseNode(en);
+
+		PipifaxParser.StatementsContext sctx = ctx.statements();
+		if (sctx.block() != null)
+			for (int i = 0; i < sctx.block().getChildCount(); i++)
+			{
+				Node n = sctx.block().getChild(i).accept(this);
+				cn.addStatement(n);
+			}
+		else
+		{
+			Node n = sctx.statement().accept(this);
+			cn.addStatement(n);
+		}
+
+		return cn;
 	}
 
 	@Override

@@ -1,7 +1,8 @@
-package me.erikhennig.pipifax.nodes;
+package me.erikhennig.pipifax.nodes.controls;
 
 import java.util.ArrayList;
 
+import me.erikhennig.pipifax.nodes.Node;
 import me.erikhennig.pipifax.nodes.expressions.ExpressionNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 

@@ -1,12 +1,15 @@
-package me.erikhennig.pipifax.nodes;
+package me.erikhennig.pipifax.nodes.controls;
 
 import java.util.ArrayList;
 
+import me.erikhennig.pipifax.nodes.Node;
+import me.erikhennig.pipifax.nodes.TypeNode;
+import me.erikhennig.pipifax.nodes.Types;
 import me.erikhennig.pipifax.nodes.expressions.ExpressionNode;
 
 public abstract class ControlNode extends Node
 {
-	private ExpressionNode m_condition;
+	protected ExpressionNode m_condition;
 	protected ArrayList<Node> m_statements = new ArrayList<>();
 
 	public ControlNode(ExpressionNode cond)
@@ -14,10 +17,11 @@ public abstract class ControlNode extends Node
 		m_condition = cond;
 	}
 
-	public void addStatement(Node n)
+	public boolean addStatement(Node n)
 	{
 		if (n != null)
 			m_statements.add(n);
+		return true;
 	}
 
 	public ExpressionNode getCondition()
@@ -32,6 +36,7 @@ public abstract class ControlNode extends Node
 
 	public boolean checkType()
 	{
-		return TypeNode.isSameType(m_condition.getType(), Types.INT);
+		return TypeNode.isSameType(m_condition.getType(), Types.INT)
+				|| TypeNode.isSameType(m_condition.getType(), Types.STRING);
 	}
 }

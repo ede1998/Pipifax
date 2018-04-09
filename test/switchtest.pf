@@ -1,0 +1,20 @@
+func switchcheck(selector *int) string
+{
+  switch(selector)
+  {
+   case 0 switchcheck = "hello World!";
+   case 1 {
+     switchcheck = "this is a test.";
+	 switchcheck = switchcheck ... " No I really mean it";
+	}
+  }
+}
+
+func switchstring(selector string) int
+{
+  switch (selector)
+  {
+    case "test" switchstring = 5;
+	default switchstring = -24;
+  }
+}
