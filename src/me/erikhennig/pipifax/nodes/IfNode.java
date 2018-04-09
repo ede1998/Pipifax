@@ -11,7 +11,7 @@ public class IfNode extends ControlNode {
 		super(cond);
 	}
 	
-	public void addElseStatements(Node n)
+	public void addElseStatement(Node n)
 	{
 		if (n != null)
 			m_statements1.add(n);

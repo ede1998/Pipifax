@@ -16,6 +16,9 @@ parameter_type: type # TypeParameter
       ;
 
 block: '{' (vardecl | statement)* '}';
+statements: statement 
+      | block
+      ;
 
 statement: assignment ';'? # AssignmentStatement
       | ifstmt # IfStatement
@@ -23,10 +26,10 @@ statement: assignment ';'? # AssignmentStatement
       | funccall ';'? # FunctionCallStatement
       | forstmt # ForStatement
       ;
-ifstmt: 'if' expr block elsestmt?;
-elsestmt: 'else' block;
-whilestmt: 'while' expr block;
-forstmt: 'for' '(' (initassign = assignment)? ';' expr ';' (loopedassign = assignment)? ')' block;
+ifstmt: 'if' expr statements elsestmt?;
+elsestmt: 'else' statements;
+whilestmt: 'while' expr statements;
+forstmt: 'for' '(' (initassign = assignment)? ';' expr ';' (loopedassign = assignment)? ')' statements;
 assignment: lvalue '=' expr;
 lvalue: ID
       | ID ('[' expr ']')+;

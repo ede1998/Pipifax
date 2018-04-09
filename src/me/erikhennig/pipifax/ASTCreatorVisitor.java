@@ -136,20 +136,37 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		ExpressionNode en = (ExpressionNode) ctx.expr().accept(this);
 		IfNode in = new IfNode(en);
 
+		PipifaxParser.StatementsContext sctx = ctx.statements();
 		// If-Part
-		if (ctx.block() != null)
-			for (int i = 0; i < ctx.block().getChildCount(); i++)
+		if (sctx.block() != null)
+			for (int i = 0; i < sctx.block().getChildCount(); i++)
 			{
-				Node n = ctx.block().getChild(i).accept(this);
+				Node n = sctx.block().getChild(i).accept(this);
 				in.addStatement(n);
 			}
+		else
+		{
+			Node n = sctx.statement().accept(this);
+			in.addStatement(n);
+		}
 
 		// else-Part
-		if ((ctx.elsestmt() != null) && (ctx.elsestmt().block() != null))
-			for (int i = 0; i < ctx.elsestmt().block().getChildCount(); i++)
+		if (ctx.elsestmt() != null)
+		{
+			sctx = ctx.elsestmt().statements();
+			if (sctx.block() != null)
+				for (int i = 0; i < sctx.block().getChildCount(); i++)
+				{
+					Node n = sctx.block().getChild(i).accept(this);
+					in.addElseStatement(n);
+				}
+			else
 			{
-				in.addElseStatements(ctx.elsestmt().block().getChild(i).accept(this));
+				Node n = sctx.statement().accept(this);
+				in.addElseStatement(n);
 			}
+		}
+
 		return in;
 	}
 
@@ -160,12 +177,20 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 
 		ExpressionNode en = (ExpressionNode) ctx.expr().accept(this);
 		WhileNode wn = new WhileNode(en);
-		if (ctx.block() != null)
-			for (int i = 0; i < ctx.block().getChildCount(); i++)
+
+		PipifaxParser.StatementsContext sctx = ctx.statements();
+		if (sctx.block() != null)
+			for (int i = 0; i < sctx.block().getChildCount(); i++)
 			{
-				Node n = ctx.block().getChild(i).accept(this);
+				Node n = sctx.block().getChild(i).accept(this);
 				wn.addStatement(n);
 			}
+		else
+		{
+			Node n = sctx.statement().accept(this);
+			wn.addStatement(n);
+		}
+
 		return wn;
 	}
 
@@ -182,21 +207,29 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	public Node visitForStatement(PipifaxParser.ForStatementContext ctx1)
 	{
 		PipifaxParser.ForstmtContext ctx = ctx1.forstmt();
-		
+
 		AssignmentNode an1 = null;
 		AssignmentNode an2 = null;
-		if (ctx.initassign != null)		
-			 an1 = (AssignmentNode) ctx.initassign.accept(this);
+		if (ctx.initassign != null)
+			an1 = (AssignmentNode) ctx.initassign.accept(this);
 		ExpressionNode en = (ExpressionNode) ctx.expr().accept(this);
 		if (ctx.loopedassign != null)
 			an2 = (AssignmentNode) ctx.loopedassign.accept(this);
 		ForNode fn = new ForNode(an1, en, an2);
-		if (ctx.block() != null)
-			for (int i = 0; i < ctx.block().getChildCount(); i++)
+
+		PipifaxParser.StatementsContext sctx = ctx.statements();
+		if (sctx.block() != null)
+			for (int i = 0; i < sctx.block().getChildCount(); i++)
 			{
-				Node n = ctx.block().getChild(i).accept(this);
+				Node n = sctx.block().getChild(i).accept(this);
 				fn.addStatement(n);
 			}
+		else
+		{
+			Node n = sctx.statement().accept(this);
+			fn.addStatement(n);
+		}
+
 		return fn;
 	}
 
@@ -288,7 +321,7 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		ExpressionNode r = (ExpressionNode) ctx.expr(1).accept(this);
 		return new BinaryExpressionNode(l, r, BinaryOperation.MODULO);
 	}
-	
+
 	@Override
 	public Node visitStringConcat(StringConcatContext ctx)
 	{
