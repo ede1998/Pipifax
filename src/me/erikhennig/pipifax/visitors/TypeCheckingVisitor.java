@@ -66,7 +66,7 @@ public class TypeCheckingVisitor extends Visitor
 		}
 
 		if (!retVal)
-			System.err.println(
+			printErrorAndFail(
 					"Type Check Error: Binary Expression " + n.getOperationAsString() + " can't take those types");
 	}
 
@@ -93,9 +93,9 @@ public class TypeCheckingVisitor extends Visitor
 			}
 
 		if (!areValidArgs)
-			System.err.println("Type Check Error: Invalid argument types for function call");
+			printErrorAndFail("Type Check Error: Invalid argument types for function call");
 		if (!isValidArgNumber)
-			System.err.println("Type Check Error: Invalid number of arguments for function call");
+			printErrorAndFail("Type Check Error: Invalid number of arguments for function call");
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public class TypeCheckingVisitor extends Visitor
 	{
 		super.visit(n);
 		if (!n.getSource().getType().checkType(n.getDestination().getType()))
-			System.err.println("Type Check Error: Conflicting types in Assignment to " + n.getDestination().getName());
+			printErrorAndFail("Type Check Error: Conflicting types in Assignment to " + n.getDestination().getName());
 	}
 
 	@Override
@@ -112,7 +112,7 @@ public class TypeCheckingVisitor extends Visitor
 		super.visit(n);
 		if (n.getExpression() != null)
 			if (!n.getType().checkType(n.getExpression().getType()))
-				System.err.println("Type Check Error: Conflicting types in initial Assignment to " + n.getName());
+				printErrorAndFail("Type Check Error: Conflicting types in initial Assignment to " + n.getName());
 	}
 
 	@Override
@@ -148,7 +148,7 @@ public class TypeCheckingVisitor extends Visitor
 		}
 
 		if (!retVal)
-			System.err.println("Type Check Error: Unary Expression can't take this type");
+			printErrorAndFail("Type Check Error: Unary Expression can't take this type");
 	}
 
 	@Override
@@ -184,9 +184,9 @@ public class TypeCheckingVisitor extends Visitor
 			n.setType(potentialtype);
 
 		if (!enoughDimensions)
-			System.err.println("Type Check Error: LValue-ArrayAccess requests more dimensions than variable offers");
+			printErrorAndFail("Type Check Error: LValue-ArrayAccess requests more dimensions than variable offers");
 		if (!onlyIntsInOffsets)
-			System.err.println("Type Check Error: LValue offsets has non integer types");
+			printErrorAndFail("Type Check Error: LValue offsets has non integer types");
 	}
 
 	@Override
@@ -196,7 +196,7 @@ public class TypeCheckingVisitor extends Visitor
 		TypeNode type = n.getCondition().getType();
 		boolean retVal = type.checkType(TypeNode.getInt());
 		if (!retVal)
-			System.err.println("Type Check Error: While Node needs int type");
+			printErrorAndFail("Type Check Error: While Node needs int type");
 	}
 
 	@Override
@@ -206,7 +206,7 @@ public class TypeCheckingVisitor extends Visitor
 		TypeNode type = n.getCondition().getType();
 		boolean retVal = type.checkType(TypeNode.getInt());
 		if (!retVal)
-			System.err.println("Type Check Error: If Node needs int type");
+			printErrorAndFail("Type Check Error: If Node needs int type");
 	}
 
 	@Override
@@ -216,7 +216,7 @@ public class TypeCheckingVisitor extends Visitor
 		TypeNode type = n.getCondition().getType();
 		boolean retVal = type.checkType(TypeNode.getInt());
 		if (!retVal)
-			System.err.println("Type Check Error: For Node needs int type");
+			printErrorAndFail("Type Check Error: For Node needs int type");
 	}
 
 	@Override
@@ -237,8 +237,8 @@ public class TypeCheckingVisitor extends Visitor
 		}
 
 		if (!retVal)
-			System.err.println("Type Check Error: Switch Node needs int or string type");
+			printErrorAndFail("Type Check Error: Switch Node needs int or string type");
 		if (!areCaseTypesCorrect)
-			System.err.println("Type Check Error: Case Type of case " + position + " differs from switch type");
+			printErrorAndFail("Type Check Error: Case Type of case " + position + " differs from switch type");
 	}
 }

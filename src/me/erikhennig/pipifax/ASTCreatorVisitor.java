@@ -8,6 +8,7 @@ import me.erikhennig.pipifax.antlr.PipifaxParser.AssignmentContext;
 import me.erikhennig.pipifax.antlr.PipifaxParser.BlockContext;
 import me.erikhennig.pipifax.antlr.PipifaxParser.CasestmtContext;
 import me.erikhennig.pipifax.antlr.PipifaxParser.IfstmtContext;
+import me.erikhennig.pipifax.antlr.PipifaxParser.IncludedeclContext;
 import me.erikhennig.pipifax.antlr.PipifaxParser.ModuloContext;
 import me.erikhennig.pipifax.antlr.PipifaxParser.StatementAssignmentContext;
 import me.erikhennig.pipifax.antlr.PipifaxParser.StatementBlockContext;
@@ -32,6 +33,12 @@ import me.erikhennig.pipifax.nodes.types.UnsizedArrayTypeNode;
 
 public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 {
+	private Program m_program;
+
+	public ASTCreatorVisitor(Program prog)
+	{
+		m_program = prog;
+	}
 
 	@Override
 	public Node visitProg(PipifaxParser.ProgContext ctx)
@@ -44,6 +51,15 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 			pn.addNode(n);
 		}
 		return pn;
+	}
+
+	@Override
+	public Node visitIncludedecl(IncludedeclContext ctx)
+	{
+		String str = ctx.STRING().getText().substring(1, ctx.STRING().getText().length() - 1);
+		if (!m_program.add(str))
+			System.err.println("Invalid include: " + str);
+		return null;
 	}
 
 	@Override

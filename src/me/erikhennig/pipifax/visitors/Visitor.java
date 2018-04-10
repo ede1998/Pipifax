@@ -7,6 +7,19 @@ import me.erikhennig.pipifax.nodes.types.*;
 
 public abstract class Visitor
 {
+	private boolean m_success = true;
+
+	public boolean wasSuccessful()
+	{
+		return m_success;
+	}
+	
+	protected void printErrorAndFail(String errstr)
+	{
+		System.err.println(errstr);
+		m_success = false;
+	}
+
 	public void visit(AssignmentNode n)
 	{
 		n.getDestination().accept(this);

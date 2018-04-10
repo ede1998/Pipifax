@@ -1,6 +1,6 @@
 grammar Pipifax;
-prog: (funcdecl | vardecl)*
-     ;
+prog: includedecl* (funcdecl | vardecl)*;
+includedecl: '<' 'include' STRING '>';
 funcdecl: 'func' ID '('parameterlist')'type? block; 
 vardecl: 'var' ID type ('=' expr)? ';'?;
 type: 'int' # IntType
@@ -74,5 +74,5 @@ DOUBLECASTOP: '(' WS* 'double' WS* ')';
 INTCASTOP: '(' WS* 'int' WS* ')';
 fragment LETTER : [a-zA-Z_] ;
 INT     : [0-9]+ ;
-DOUBLE : INT ('.'INT)?('e'[+-]?INT)?;
+DOUBLE : INT ('.'INT?)?('e'[+-]?INT)?;
 STRING : '"'~["]*'"';

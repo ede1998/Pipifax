@@ -7,9 +7,15 @@ import me.erikhennig.pipifax.nodes.expressions.LValueNode;
 
 public class NameResolutionVisitor extends Visitor
 {
-	private Scope m_currentScope = new Scope();
-	private boolean m_isGlobalIteration = true; // used for duplicate traversal to lookup global function names before they are
+	private Scope m_currentScope;
+	private boolean m_isGlobalIteration = true; // used for duplicate traversal to lookup global function names before
+												// they are
 												// defined
+
+	public NameResolutionVisitor(Scope s)
+	{
+		m_currentScope = s;
+	}
 
 	@Override
 	public void visit(ProgramNode n)
@@ -25,7 +31,7 @@ public class NameResolutionVisitor extends Visitor
 	{
 		FunctionNode fn = m_currentScope.getFunction(n.getName());
 		if (fn == null)
-			System.err.println("Name lookup failed for function " + n.getName());
+			printErrorAndFail("Name lookup failed for function " + n.getName());
 		n.setFunction(fn);
 		super.visit(n);
 	}
@@ -36,7 +42,7 @@ public class NameResolutionVisitor extends Visitor
 		if (m_isGlobalIteration)
 		{
 			if (!m_currentScope.registerFunction(n))
-				System.err.println("Name already defined for function " + n.getName());
+				printErrorAndFail("Name already defined for function " + n.getName());
 		} else
 		{
 			m_currentScope = m_currentScope.enterScope();
@@ -50,7 +56,7 @@ public class NameResolutionVisitor extends Visitor
 	{
 		VariableNode vn = m_currentScope.getVariable(n.getName());
 		if (vn == null)
-			System.err.println("Name lookup failed for variable " + n.getName());
+			printErrorAndFail("Name lookup failed for variable " + n.getName());
 		n.setVariable(vn);
 		super.visit(n);
 	}
@@ -59,7 +65,7 @@ public class NameResolutionVisitor extends Visitor
 	public void visit(ParameterNode n)
 	{
 		if (!m_currentScope.registerVariable(n))
-			System.err.println("Name already defined for parameter " + n.getName());
+			printErrorAndFail("Name already defined for parameter " + n.getName());
 	}
 
 	@Override
@@ -69,9 +75,9 @@ public class NameResolutionVisitor extends Visitor
 			return;
 		super.visit(n);
 		if (!m_currentScope.registerVariable(n))
-			System.err.println("Name already defined for variable " + n.getName());
+			printErrorAndFail("Name already defined for variable " + n.getName());
 	}
-	
+
 	public void visit(BlockNode n)
 	{
 		m_currentScope = m_currentScope.enterScope();

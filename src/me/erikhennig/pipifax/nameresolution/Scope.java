@@ -8,15 +8,11 @@ import me.erikhennig.pipifax.nodes.VariableNode;
 
 public class Scope
 {
-	private Scope m_OuterScope;
+	private Scope m_OuterScope = null;;
 	private Hashtable<String, VariableNode> m_variables = new Hashtable<>();
 	private Hashtable<String, FunctionNode> m_functions = new Hashtable<>();
-
-	public Scope()
-	{
-		m_OuterScope = null;
-	}
-
+	
+	public Scope() {}
 	public Scope enterScope()
 	{
 		return new Scope(this);
