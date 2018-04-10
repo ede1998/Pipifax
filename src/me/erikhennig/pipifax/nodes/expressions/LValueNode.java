@@ -3,8 +3,6 @@ package me.erikhennig.pipifax.nodes.expressions;
 import java.util.ArrayList;
 
 import me.erikhennig.pipifax.nodes.VariableNode;
-import me.erikhennig.pipifax.nodes.types.TypeNode;
-import me.erikhennig.pipifax.nodes.types.Types;
 import me.erikhennig.pipifax.visitors.Visitor;
 
 public class LValueNode extends ExpressionNode
@@ -43,29 +41,5 @@ public class LValueNode extends ExpressionNode
 	public void setVariable(VariableNode variable)
 	{
 		m_variable = variable;
-	}
-
-	@Override
-	public boolean checkType()
-	{
-		int varDimensions = m_variable.getType().getDimensions().size();
-		int lvalDimensions = m_offsets.size();
-		if (lvalDimensions <= varDimensions)
-		{
-			m_type = new TypeNode(m_variable.getType(), varDimensions - lvalDimensions);
-		} else
-			return false;
-
-		return checkArrayAccessType();
-	}
-
-	private boolean checkArrayAccessType()
-	{
-		for (ExpressionNode en : m_offsets)
-		{
-			if (!TypeNode.isSameType(en.getType(), Types.INT))
-				return false;
-		}
-		return true;
 	}
 }

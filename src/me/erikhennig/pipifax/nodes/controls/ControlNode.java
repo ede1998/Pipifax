@@ -1,7 +1,5 @@
 package me.erikhennig.pipifax.nodes.controls;
 
-import java.util.ArrayList;
-
 import me.erikhennig.pipifax.nodes.BlockNode;
 import me.erikhennig.pipifax.nodes.Node;
 import me.erikhennig.pipifax.nodes.expressions.ExpressionNode;
@@ -14,6 +12,7 @@ public abstract class ControlNode extends Node
 	public ControlNode(ExpressionNode cond, BlockNode bn)
 	{
 		m_condition = cond;
+		m_statements = bn;
 	}
 
 	public boolean addStatement(Node n)

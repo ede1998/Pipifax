@@ -17,39 +17,43 @@ import me.erikhennig.pipifax.visitors.NameResolutionVisitor;
 import me.erikhennig.pipifax.visitors.PrintVisitor;
 import me.erikhennig.pipifax.visitors.TypeCheckingVisitor;
 
-public class Main {
-
-	public static void main(String[] args) {
+public class Main
+{
+	public static void main(String[] args)
+	{
 		CharStream stream;
-		try {
+		try
+		{
 			stream = CharStreams.fromFileName(args[0]);
 			Lexer lexer = new PipifaxLexer(stream);
 			TokenStream ts = new CommonTokenStream(lexer);
 			PipifaxParser parser = new PipifaxParser(ts);
 			PipifaxParser.ProgContext ast = parser.prog();
 
-			//Construct AST
+			// Construct AST
 			ASTCreatorVisitor acv = new ASTCreatorVisitor();
 			Node n = ast.accept(acv);
 			ProgramNode pn = (ProgramNode) n;
-			
-			//Print AST
+
+			// Print AST
 			PrintVisitor printer = new PrintVisitor();
 			pn.accept(printer);
 			System.out.println(printer.getProgram());
-			
-			//Resolve names
+
+			// Resolve names
 			NameResolutionVisitor nrv = new NameResolutionVisitor();
 			pn.accept(nrv);
 			System.out.println("Name resolution successful.");
-			
-			//Type checking
+
+			// Type checking
 			TypeCheckingVisitor tcv = new TypeCheckingVisitor();
 			pn.accept(tcv);
 			System.out.println("Type checking done.");
-		} catch (IOException e) {
+		} catch (IOException e)
+		{
 			e.printStackTrace();
-		} catch (RecognitionException e) {
+		} catch (RecognitionException e)
+		{
 			System.err.println("Syntax error: " + e);
 		}
 

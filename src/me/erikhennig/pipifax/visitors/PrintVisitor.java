@@ -50,7 +50,7 @@ public class PrintVisitor extends Visitor
 	{
 		m_indentLevel++;
 		m_program += genSp() + "Function " + n.getName() + " : ";
-		n.getReturnVariable().accept(this);
+		n.getReturnVariable().getType().accept(this);
 		m_program += "\n";
 
 		m_indentLevel++;
@@ -69,51 +69,60 @@ public class PrintVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(DoubleTypeNode n) {
+	public void visit(DoubleTypeNode n)
+	{
 		m_program += "double";
 	}
-	
+
 	@Override
-	public void visit(IntTypeNode n) {
+	public void visit(IntTypeNode n)
+	{
 		m_program += "int";
 	}
-	
+
 	@Override
-	public void visit(StringTypeNode n) {
+	public void visit(StringTypeNode n)
+	{
 		m_program += "string";
 	}
-	
+
 	@Override
-	public void visit(VoidTypeNode n) {
+	public void visit(VoidTypeNode n)
+	{
 		m_program += "void";
 	}
 
 	@Override
-	public void visit(RefTypeNode n) {
+	public void visit(RefTypeNode n)
+	{
 		m_program += "*";
+		super.visit(n);
 	}
-	
+
 	@Override
-	public void visit(SizedArrayTypeNode n) {
+	public void visit(SizedArrayTypeNode n)
+	{
 		m_program += "[";
 		m_program += n.getSize();
 		m_program += "]";
 	}
-	
+
 	@Override
-	public void visit(UnsizedArrayTypeNode n) {
+	public void visit(UnsizedArrayTypeNode n)
+	{
 		m_program += "[]";
 	}
-	
+
 	@Override
-	public void visit(BlockNode n) {
+	public void visit(BlockNode n)
+	{
 		m_indentLevel++;
-		m_program += genSp() + "{";
+		m_program += genSp() + "{\n";
 		super.visit(n);
-		m_program += genSp() + "}";
+		m_program += genSp() + "}\n";
 		m_indentLevel--;
 	}
-	
+
 	public void visit(IfNode n)
 	{
 		m_indentLevel++;
@@ -225,55 +234,7 @@ public class PrintVisitor extends Visitor
 	@Override
 	public void visit(BinaryExpressionNode n)
 	{
-		String symbol = "";
-		switch (n.getOperation())
-		{
-		case ADDITION:
-			symbol = " + ";
-			break;
-		case SUBTRACTION:
-			symbol = " - ";
-			break;
-		case MULTIPLICATION:
-			symbol = " * ";
-			break;
-		case DIVISION:
-			symbol = " / ";
-			break;
-		case MODULO:
-			symbol = " % ";
-			break;
-		case EQUALS:
-			symbol = " == ";
-			break;
-		case NOTEQUALS:
-			symbol = " != ";
-			break;
-		case LESS:
-			symbol = " < ";
-			break;
-		case LESSOREQUALS:
-			symbol = " <= ";
-			break;
-		case GREATER:
-			symbol = " > ";
-			break;
-		case GREATEROREQUALS:
-			symbol = " >= ";
-			break;
-		case AND:
-			symbol = " && ";
-			break;
-		case OR:
-			symbol = " || ";
-			break;
-		case STRINGCOMPARE:
-			symbol = " <=> ";
-			break;
-		case CONCATENATION:
-			symbol = " ... ";
-			break;
-		}
+		String symbol = " " + n.getOperationAsString() + " ";
 		n.getLeftSide().accept(this);
 		m_program += symbol;
 		n.getRightSide().accept(this);

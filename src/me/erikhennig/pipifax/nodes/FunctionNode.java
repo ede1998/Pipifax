@@ -11,12 +11,13 @@ public class FunctionNode extends Node
 	private String m_name;
 	private VariableNode m_returnVariable = null;
 	private ArrayList<ParameterNode> m_parameterList = new ArrayList<>();
-	private BlockNode m_statements = new BlockNode();
+	private BlockNode m_statements;
 
-	public FunctionNode(TypeNode retType, String name)
+	public FunctionNode(TypeNode retType, String name, BlockNode bn)
 	{
 		m_returnVariable = new VariableNode(name, retType);
 		m_name = name;
+		m_statements = bn;
 	}
 
 	public void addParameter(ParameterNode param)

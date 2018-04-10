@@ -16,16 +16,16 @@ parameter_type: type # TypeParameter
       ;
 
 block: '{' (vardecl | statement)* '}';
-statements: statement 
-      | block
+statements: statement # StatementSingle
+      | block # StatementBlock
       ;
 
-statement: assignment ';'?
-      | ifstmt
-      | whilestmt
-      | funccall ';'?
-      | forstmt
-      | switchstmt
+statement: assignment ';'? # StatementAssignment
+      | ifstmt # StatementIf
+      | whilestmt # StatementWhile
+      | funccall ';'? # StatementCall
+      | forstmt # StatementFor
+      | switchstmt # StatementSwitch
       ;
 ifstmt: 'if' expr statements elsestmt?;
 elsestmt: 'else' statements;

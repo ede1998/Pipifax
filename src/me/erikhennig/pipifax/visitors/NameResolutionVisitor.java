@@ -2,7 +2,6 @@ package me.erikhennig.pipifax.visitors;
 
 import me.erikhennig.pipifax.nameresolution.Scope;
 import me.erikhennig.pipifax.nodes.*;
-import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.CallNode;
 import me.erikhennig.pipifax.nodes.expressions.LValueNode;
 

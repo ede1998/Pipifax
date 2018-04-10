@@ -10,7 +10,7 @@ public abstract class TypeNode extends Node
 	{
 		return m_intType;
 	}
-	
+
 	private static DoubleTypeNode m_doubleType = new DoubleTypeNode();
 
 	public static DoubleTypeNode getDouble()
@@ -24,14 +24,13 @@ public abstract class TypeNode extends Node
 	{
 		return m_stringType;
 	}
-	
+
 	private static VoidTypeNode m_voidType = new VoidTypeNode();
 
 	public static VoidTypeNode getVoid()
 	{
 		return m_voidType;
 	}
-	
+
 	public abstract boolean checkType(TypeNode tn);
-	
 }

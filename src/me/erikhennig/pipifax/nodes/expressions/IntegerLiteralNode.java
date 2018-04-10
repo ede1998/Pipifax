@@ -1,7 +1,6 @@
 package me.erikhennig.pipifax.nodes.expressions;
 
 import me.erikhennig.pipifax.nodes.types.TypeNode;
-import me.erikhennig.pipifax.nodes.types.Types;
 import me.erikhennig.pipifax.visitors.Visitor;
 
 public class IntegerLiteralNode extends LiteralNode

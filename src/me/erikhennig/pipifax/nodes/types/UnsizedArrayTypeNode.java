@@ -15,6 +15,6 @@ public class UnsizedArrayTypeNode extends ArrayTypeNode {
 
 	@Override
 	public boolean checkType(TypeNode tn) {
-		return tn instanceof UnsizedArrayTypeNode;
+		return tn instanceof ArrayTypeNode;
 	}
 }

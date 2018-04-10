@@ -5,7 +5,7 @@ import me.erikhennig.pipifax.nodes.types.TypeNode;
 
 public abstract class ExpressionNode extends Node
 {
-	protected TypeNode m_type = null;
+	protected TypeNode m_type = TypeNode.getVoid();
 
 	public TypeNode getType()
 	{

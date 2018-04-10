@@ -5,9 +5,18 @@ import java.util.ArrayList;
 import me.erikhennig.pipifax.antlr.PipifaxBaseVisitor;
 import me.erikhennig.pipifax.antlr.PipifaxParser;
 import me.erikhennig.pipifax.antlr.PipifaxParser.AssignmentContext;
+import me.erikhennig.pipifax.antlr.PipifaxParser.BlockContext;
 import me.erikhennig.pipifax.antlr.PipifaxParser.CasestmtContext;
 import me.erikhennig.pipifax.antlr.PipifaxParser.IfstmtContext;
 import me.erikhennig.pipifax.antlr.PipifaxParser.ModuloContext;
+import me.erikhennig.pipifax.antlr.PipifaxParser.StatementAssignmentContext;
+import me.erikhennig.pipifax.antlr.PipifaxParser.StatementBlockContext;
+import me.erikhennig.pipifax.antlr.PipifaxParser.StatementCallContext;
+import me.erikhennig.pipifax.antlr.PipifaxParser.StatementForContext;
+import me.erikhennig.pipifax.antlr.PipifaxParser.StatementIfContext;
+import me.erikhennig.pipifax.antlr.PipifaxParser.StatementSingleContext;
+import me.erikhennig.pipifax.antlr.PipifaxParser.StatementSwitchContext;
+import me.erikhennig.pipifax.antlr.PipifaxParser.StatementWhileContext;
 import me.erikhennig.pipifax.antlr.PipifaxParser.StringConcatContext;
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.controls.CaseNode;
@@ -35,6 +44,34 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 			pn.addNode(n);
 		}
 		return pn;
+	}
+
+	@Override
+	public Node visitStatementBlock(StatementBlockContext ctx)
+	{
+		return ctx.block().accept(this);
+	}
+
+	@Override
+	public Node visitStatementSingle(StatementSingleContext ctx)
+	{
+		BlockNode bn = new BlockNode();
+		Node n = ctx.statement().accept(this);
+		bn.addStatement(n);
+		return bn;
+	}
+
+	@Override
+	public Node visitBlock(BlockContext ctx)
+	{
+		BlockNode bn = new BlockNode();
+		for (int i = 0; i < ctx.getChildCount(); i++)
+		{
+			Node n = ctx.getChild(i).accept(this);
+			bn.addStatement(n);
+		}
+
+		return bn;
 	}
 
 	@Override
@@ -76,16 +113,12 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	public Node visitFuncdecl(PipifaxParser.FuncdeclContext ctx)
 	{
 		TypeNode returnType = (ctx.type() != null) ? (TypeNode) ctx.type().accept(this) : TypeNode.getVoid();
-		FunctionNode fn = new FunctionNode(returnType, ctx.ID().getText());
+		BlockNode bn = (BlockNode) ctx.block().accept(this);
+		FunctionNode fn = new FunctionNode(returnType, ctx.ID().getText(), bn);
 		for (PipifaxParser.ParameterContext pc : ctx.parameterlist().parameter())
 		{
 			ParameterNode pn = (ParameterNode) pc.accept(this);
 			fn.addParameter(pn);
-		}
-		for (int i = 0; i < ctx.block().getChildCount(); i++)
-		{
-			Node n = ctx.block().getChild(i).accept(this);
-			fn.addStatement(n);
 		}
 		return fn;
 	}
@@ -114,7 +147,7 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		ParameterNode pn = new ParameterNode(name, rtn);
 		return pn;
 	}
-	
+
 	@Override
 	public Node visitReferenceArrayParameter(PipifaxParser.ReferenceArrayParameterContext ctx)
 	{
@@ -135,8 +168,7 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		if (ctx.elsestmt() != null)
 		{
 			bn1 = (BlockNode) ctx.elsestmt().statements().accept(this);
-		}
-		else
+		} else
 		{
 			bn1 = new BlockNode();
 		}
@@ -181,7 +213,7 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	public Node visitSwitchstmt(PipifaxParser.SwitchstmtContext ctx)
 	{
 		ExpressionNode en = (ExpressionNode) ctx.expr().accept(this);
-		
+
 		// case-Part
 		BlockNode bn2 = new BlockNode();
 		for (int i = 0; i < ctx.casestmt().size(); i++)
@@ -195,7 +227,7 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 			bn = (BlockNode) ctx.defaultstmt().accept(this);
 		else
 			bn = new BlockNode();
-		
+
 		SwitchNode sn = new SwitchNode(en, bn2, bn);
 
 		return sn;
@@ -206,9 +238,9 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	{
 		ExpressionNode en = (ExpressionNode) ctx.expr().accept(this);
 		BlockNode bn = (BlockNode) ctx.statements().accept(this);
-		
+
 		CaseNode cn = new CaseNode(en, bn);
-		
+
 		return cn;
 	}
 
@@ -240,7 +272,8 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	@Override
 	public Node visitStringLiteral(PipifaxParser.StringLiteralContext ctx)
 	{
-		return new StringLiteralNode(ctx.STRING().getText());
+		String str = ctx.STRING().getText();
+		return new StringLiteralNode(str.substring(1, str.length() - 1));
 	}
 
 	@Override
@@ -420,5 +453,41 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 			}
 
 		return cn;
+	}
+
+	@Override
+	public Node visitStatementAssignment(StatementAssignmentContext ctx)
+	{
+		return ctx.assignment().accept(this);
+	}
+
+	@Override
+	public Node visitStatementCall(StatementCallContext ctx)
+	{
+		return ctx.funccall().accept(this);
+	}
+
+	@Override
+	public Node visitStatementFor(StatementForContext ctx)
+	{
+		return ctx.forstmt().accept(this);
+	}
+
+	@Override
+	public Node visitStatementIf(StatementIfContext ctx)
+	{
+		return ctx.ifstmt().accept(this);
+	}
+
+	@Override
+	public Node visitStatementSwitch(StatementSwitchContext ctx)
+	{
+		return ctx.switchstmt().accept(this);
+	}
+
+	@Override
+	public Node visitStatementWhile(StatementWhileContext ctx)
+	{
+		return ctx.whilestmt().accept(this);
 	}
 }

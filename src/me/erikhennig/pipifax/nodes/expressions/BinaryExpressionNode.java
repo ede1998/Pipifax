@@ -1,6 +1,5 @@
 package me.erikhennig.pipifax.nodes.expressions;
 
-import me.erikhennig.pipifax.nodes.types.TypeNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 
 public class BinaryExpressionNode extends ExpressionNode
@@ -35,5 +34,43 @@ public class BinaryExpressionNode extends ExpressionNode
 	public void accept(Visitor v)
 	{
 		v.visit(this);
+	}
+
+	public String getOperationAsString()
+	{
+		switch (m_operation)
+		{
+		case ADDITION:
+			return "+";
+		case SUBTRACTION:
+			return "-";
+		case MULTIPLICATION:
+			return "*";
+		case DIVISION:
+			return "/";
+		case MODULO:
+			return "%";
+		case EQUALS:
+			return "==";
+		case NOTEQUALS:
+			return "!=";
+		case LESS:
+			return "<";
+		case LESSOREQUALS:
+			return "<=";
+		case GREATER:
+			return ">";
+		case GREATEROREQUALS:
+			return ">=";
+		case AND:
+			return "&&";
+		case OR:
+			return "||";
+		case STRINGCOMPARE:
+			return "<=>";
+		case CONCATENATION:
+			return "...";
+		}
+		return "";
 	}
 }
