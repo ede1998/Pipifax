@@ -78,7 +78,10 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	public Node visitVardecl(PipifaxParser.VardeclContext ctx)
 	{
 		TypeNode t = (TypeNode) ctx.type().accept(this);
-		VariableNode d = new VariableNode(ctx.ID().getText(), t);
+		ExpressionNode en = null;
+		if (ctx.expr() != null)
+			en = (ExpressionNode) ctx.expr().accept(this);
+		VariableNode d = new VariableNode(ctx.ID().getText(), t, en);
 		return d;
 	}
 

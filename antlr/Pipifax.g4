@@ -2,7 +2,7 @@ grammar Pipifax;
 prog: (funcdecl | vardecl)*
      ;
 funcdecl: 'func' ID '('parameterlist')'type? block; 
-vardecl: 'var' ID type ';'?;
+vardecl: 'var' ID type ('=' expr)? ';'?;
 type: 'int' # IntType
       | 'double' # DoubleType
       | 'string' # StringType

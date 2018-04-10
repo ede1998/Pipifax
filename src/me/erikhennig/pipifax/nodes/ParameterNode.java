@@ -7,7 +7,7 @@ public class ParameterNode extends VariableNode
 {
 	public ParameterNode(String name, TypeNode tn)
 	{
-		super(name, tn);
+		super(name, tn, null);
 	}
 
 	@Override

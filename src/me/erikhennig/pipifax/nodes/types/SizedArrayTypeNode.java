@@ -24,6 +24,8 @@ public class SizedArrayTypeNode extends ArrayTypeNode
 	{
 		if (tn instanceof SizedArrayTypeNode)
 			return ((SizedArrayTypeNode) tn).m_size == m_size;
+		else if (tn instanceof UnsizedArrayTypeNode)
+			return true;
 		return false;
 	}
 

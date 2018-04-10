@@ -7,6 +7,7 @@ import me.erikhennig.pipifax.nodes.AssignmentNode;
 import me.erikhennig.pipifax.nodes.FunctionNode;
 import me.erikhennig.pipifax.nodes.Node;
 import me.erikhennig.pipifax.nodes.ParameterNode;
+import me.erikhennig.pipifax.nodes.VariableNode;
 import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
 import me.erikhennig.pipifax.nodes.types.ArrayTypeNode;
@@ -65,7 +66,8 @@ public class TypeCheckingVisitor extends Visitor
 		}
 
 		if (!retVal)
-			System.err.println("Type Check Error: Binary Expression " + n.getOperationAsString() + " can't take those types");
+			System.err.println(
+					"Type Check Error: Binary Expression " + n.getOperationAsString() + " can't take those types");
 	}
 
 	@Override
@@ -101,7 +103,16 @@ public class TypeCheckingVisitor extends Visitor
 	{
 		super.visit(n);
 		if (!n.getSource().getType().checkType(n.getDestination().getType()))
-			System.err.println("Type Check Error: Conflicting types in Assignment");
+			System.err.println("Type Check Error: Conflicting types in Assignment to " + n.getDestination().getName());
+	}
+
+	@Override
+	public void visit(VariableNode n)
+	{
+		super.visit(n);
+		if (n.getExpression() != null)
+			if (!n.getType().checkType(n.getExpression().getType()))
+				System.err.println("Type Check Error: Conflicting types in initial Assignment to " + n.getName());
 	}
 
 	@Override
@@ -165,9 +176,9 @@ public class TypeCheckingVisitor extends Visitor
 				break;
 			}
 		}
-		/* //necessary if Pointertypes are introduced or sth
-		 * if (vtn instanceof RefTypeNode) { potentialtype = new
-		 * RefTypeNode(potentialtype); }
+		/*
+		 * //necessary if Pointertypes are introduced or sth if (vtn instanceof
+		 * RefTypeNode) { potentialtype = new RefTypeNode(potentialtype); }
 		 */
 		if (enoughDimensions && onlyIntsInOffsets)
 			n.setType(potentialtype);
@@ -217,7 +228,7 @@ public class TypeCheckingVisitor extends Visitor
 		ArrayList<Node> nodes = n.getStatements().getStatements();
 		boolean retVal = type.checkType(TypeNode.getInt()) || type.checkType(TypeNode.getString());
 		boolean areCaseTypesCorrect = true;
-		
+
 		int position = 0;
 		for (Iterator<Node> iter = nodes.iterator(); iter.hasNext(); position++)
 		{
@@ -227,7 +238,7 @@ public class TypeCheckingVisitor extends Visitor
 
 		if (!retVal)
 			System.err.println("Type Check Error: Switch Node needs int or string type");
-	    if (!areCaseTypesCorrect)
-	    	System.err.println("Type Check Error: Case Type of case " + position + " differs from switch type");
+		if (!areCaseTypesCorrect)
+			System.err.println("Type Check Error: Case Type of case " + position + " differs from switch type");
 	}
 }

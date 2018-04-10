@@ -15,7 +15,7 @@ public class FunctionNode extends Node
 
 	public FunctionNode(TypeNode retType, String name, BlockNode bn)
 	{
-		m_returnVariable = new VariableNode(name, retType);
+		m_returnVariable = new VariableNode(name, retType, null);
 		m_name = name;
 		m_statements = bn;
 	}

@@ -67,6 +67,7 @@ public class NameResolutionVisitor extends Visitor
 	{
 		if (m_isGlobalIteration)
 			return;
+		super.visit(n);
 		if (!m_currentScope.registerVariable(n))
 			System.err.println("Name already defined for variable " + n.getName());
 	}

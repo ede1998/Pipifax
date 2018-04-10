@@ -16,24 +16,24 @@ public abstract class Visitor
 	public void visit(IntTypeNode n)
 	{
 	}
-	
+
 	public void visit(StringTypeNode n)
 	{
 	}
-	
+
 	public void visit(DoubleTypeNode n)
 	{
 	}
-	
+
 	public void visit(VoidTypeNode n)
 	{
 	}
-	
+
 	public void visit(SizedArrayTypeNode n)
 	{
 		n.getType().accept(this);
 	}
-	
+
 	public void visit(UnsizedArrayTypeNode n)
 	{
 		n.getType().accept(this);
@@ -43,7 +43,7 @@ public abstract class Visitor
 	{
 		n.getType().accept(this);
 	}
-	
+
 	public void visit(FunctionNode n)
 	{
 		if (n.getReturnVariable() != null)
@@ -72,6 +72,8 @@ public abstract class Visitor
 	public void visit(VariableNode n)
 	{
 		n.getType().accept(this);
+		if (n.getExpression() != null)
+			n.getExpression().accept(this);
 	}
 
 	public void visit(WhileNode n)
@@ -136,7 +138,8 @@ public abstract class Visitor
 	{
 	}
 
-	public void visit(BlockNode n) {
+	public void visit(BlockNode n)
+	{
 		n.getStatements().forEach((subnode) -> subnode.accept(this));
 	}
 }

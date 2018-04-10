@@ -1,0 +1,8 @@
+func initvalue(myarr *[][3]int)
+{
+  var i int = 4;
+  var k double = 3.61;
+  var s string = "55";
+  var arr [3][3]int = myarr;
+}
+  

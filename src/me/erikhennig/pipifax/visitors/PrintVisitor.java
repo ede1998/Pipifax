@@ -158,6 +158,11 @@ public class PrintVisitor extends Visitor
 		m_indentLevel++;
 		m_program += genSp() + n.getName() + " : ";
 		n.getType().accept(this);
+		if (n.getExpression() != null)
+		{
+			m_program += " = ";
+			n.getExpression().accept(this);
+		}
 		m_program += "\n";
 		m_indentLevel--;
 	}
