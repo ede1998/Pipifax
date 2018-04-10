@@ -1,7 +1,7 @@
 package me.erikhennig.pipifax.nodes.expressions;
 
 import me.erikhennig.pipifax.nodes.Node;
-import me.erikhennig.pipifax.nodes.TypeNode;
+import me.erikhennig.pipifax.nodes.types.TypeNode;
 
 public abstract class ExpressionNode extends Node
 {
@@ -11,6 +11,9 @@ public abstract class ExpressionNode extends Node
 	{
 		return m_type;
 	}
-
-	public abstract boolean checkType();
+	
+	public void setType(TypeNode t)
+	{
+		m_type = t;
+	}
 }

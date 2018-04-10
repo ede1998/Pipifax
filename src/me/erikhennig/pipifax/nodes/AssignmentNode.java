@@ -2,6 +2,7 @@ package me.erikhennig.pipifax.nodes;
 
 import me.erikhennig.pipifax.nodes.expressions.ExpressionNode;
 import me.erikhennig.pipifax.nodes.expressions.LValueNode;
+import me.erikhennig.pipifax.nodes.types.TypeNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 
 public class AssignmentNode extends Node {
@@ -28,10 +29,4 @@ public class AssignmentNode extends Node {
 	{
 		return m_dest;
 	}
-	
-	public boolean checkType()
-	{
-		return TypeNode.isSameType(m_src.getType(), m_dest.getType());
-	}
-
 }

@@ -2,6 +2,7 @@ package me.erikhennig.pipifax.nodes;
 
 import java.util.ArrayList;
 
+import me.erikhennig.pipifax.nodes.types.TypeNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 
 public class FunctionNode extends Node
@@ -10,12 +11,11 @@ public class FunctionNode extends Node
 	private String m_name;
 	private VariableNode m_returnVariable = null;
 	private ArrayList<ParameterNode> m_parameterList = new ArrayList<>();
-	private ArrayList<Node> m_statements = new ArrayList<>();
+	private BlockNode m_statements = new BlockNode();
 
 	public FunctionNode(TypeNode retType, String name)
 	{
-		if (retType != null)
-			m_returnVariable = new VariableNode(name, retType);
+		m_returnVariable = new VariableNode(name, retType);
 		m_name = name;
 	}
 
@@ -26,8 +26,7 @@ public class FunctionNode extends Node
 
 	public void addStatement(Node n)
 	{
-		if (n != null)
-			m_statements.add(n);
+		m_statements.addStatement(n);
 	}
 
 	@Override
@@ -51,7 +50,7 @@ public class FunctionNode extends Node
 		return m_parameterList;
 	}
 
-	public ArrayList<Node> getStatements()
+	public BlockNode getStatements()
 	{
 		return m_statements;
 	}

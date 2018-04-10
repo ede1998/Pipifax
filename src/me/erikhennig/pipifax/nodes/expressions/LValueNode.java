@@ -2,9 +2,9 @@ package me.erikhennig.pipifax.nodes.expressions;
 
 import java.util.ArrayList;
 
-import me.erikhennig.pipifax.nodes.TypeNode;
-import me.erikhennig.pipifax.nodes.Types;
 import me.erikhennig.pipifax.nodes.VariableNode;
+import me.erikhennig.pipifax.nodes.types.TypeNode;
+import me.erikhennig.pipifax.nodes.types.Types;
 import me.erikhennig.pipifax.visitors.Visitor;
 
 public class LValueNode extends ExpressionNode

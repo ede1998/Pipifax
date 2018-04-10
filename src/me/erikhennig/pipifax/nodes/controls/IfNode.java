@@ -1,21 +1,21 @@
 package me.erikhennig.pipifax.nodes.controls;
 
-import java.util.ArrayList;
-
+import me.erikhennig.pipifax.nodes.BlockNode;
 import me.erikhennig.pipifax.nodes.Node;
 import me.erikhennig.pipifax.nodes.expressions.ExpressionNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 
 public class IfNode extends ControlNode {
-    private ArrayList<Node> m_statements1 = new ArrayList<>();
-	public IfNode(ExpressionNode cond) {
-		super(cond);
+    private BlockNode m_statements1;
+    
+	public IfNode(ExpressionNode cond, BlockNode bn, BlockNode bn1) {
+		super(cond, bn);
+		m_statements1 = bn1;
 	}
 	
 	public void addElseStatement(Node n)
 	{
-		if (n != null)
-			m_statements1.add(n);
+		m_statements1.addStatement(n);
 	}
 	
 	@Override
@@ -24,7 +24,7 @@ public class IfNode extends ControlNode {
 		v.visit(this);
 	}
 	
-	public ArrayList<Node> getElseStatements()
+	public BlockNode getElseStatements()
 	{
 		return m_statements1;
 	}

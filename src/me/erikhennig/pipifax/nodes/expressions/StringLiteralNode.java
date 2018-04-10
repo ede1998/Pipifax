@@ -1,7 +1,7 @@
 package me.erikhennig.pipifax.nodes.expressions;
 
-import me.erikhennig.pipifax.nodes.TypeNode;
-import me.erikhennig.pipifax.nodes.Types;
+import me.erikhennig.pipifax.nodes.types.TypeNode;
+import me.erikhennig.pipifax.nodes.types.Types;
 import me.erikhennig.pipifax.visitors.Visitor;
 
 public class StringLiteralNode extends LiteralNode
@@ -11,7 +11,7 @@ public class StringLiteralNode extends LiteralNode
 	public StringLiteralNode(String val)
 	{
 		m_value = val;
-		m_type = new TypeNode(Types.STRING);
+		m_type = TypeNode.getString();
 	}
 
 	@Override

@@ -20,12 +20,12 @@ statements: statement
       | block
       ;
 
-statement: assignment ';'? # AssignmentStatement
-      | ifstmt # IfStatement
-      | whilestmt # WhileStatement
-      | funccall ';'? # FunctionCallStatement
-      | forstmt # ForStatement
-      | switchstmt # SwitchStatement
+statement: assignment ';'?
+      | ifstmt
+      | whilestmt
+      | funccall ';'?
+      | forstmt
+      | switchstmt
       ;
 ifstmt: 'if' expr statements elsestmt?;
 elsestmt: 'else' statements;

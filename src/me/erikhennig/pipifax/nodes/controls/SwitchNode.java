@@ -1,21 +1,18 @@
 package me.erikhennig.pipifax.nodes.controls;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
+import me.erikhennig.pipifax.nodes.BlockNode;
 import me.erikhennig.pipifax.nodes.Node;
-import me.erikhennig.pipifax.nodes.TypeNode;
-import me.erikhennig.pipifax.nodes.Types;
 import me.erikhennig.pipifax.nodes.expressions.ExpressionNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 
 public class SwitchNode extends ControlNode
 {
-	ArrayList<Node> m_defaultStatements = new ArrayList<>();
+	private BlockNode m_defaultStatements;
 
-	public SwitchNode(ExpressionNode cond)
+	public SwitchNode(ExpressionNode cond, BlockNode bn, BlockNode bn1)
 	{
-		super(cond);
+		super(cond, bn);
+		m_defaultStatements = bn1;
 	}
 
 	@Override
@@ -29,30 +26,18 @@ public class SwitchNode extends ControlNode
 	{
 		if (n instanceof CaseNode)
 		{
-			m_statements.add(n);
+			m_statements.addStatement(n);
 			return true;
 		}
 		return false;
 	}
 
-	public boolean checkType()
-	{
-		boolean retVal = TypeNode.isSameType(m_condition.getType(), Types.INT)
-				|| TypeNode.isSameType(m_condition.getType(), Types.STRING);
-		for (Iterator<Node> iter = m_statements.iterator(); iter.hasNext();)
-		{
-			retVal &= TypeNode.isSameType(m_condition.getType(), ((CaseNode) iter.next()).getCondition().getType());
-		}
-		return retVal;
-	}
-
 	public void addDefaultStatement(Node n)
 	{
-		if (n != null)
-			m_defaultStatements.add(n);
+		m_defaultStatements.addStatement(n);
 	}
 
-	public ArrayList<Node> getDefaultStatements()
+	public BlockNode getDefaultStatements()
 	{
 		return m_defaultStatements;
 	}

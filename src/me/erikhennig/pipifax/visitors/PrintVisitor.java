@@ -7,6 +7,13 @@ import me.erikhennig.pipifax.nodes.controls.IfNode;
 import me.erikhennig.pipifax.nodes.controls.SwitchNode;
 import me.erikhennig.pipifax.nodes.controls.WhileNode;
 import me.erikhennig.pipifax.nodes.expressions.*;
+import me.erikhennig.pipifax.nodes.types.DoubleTypeNode;
+import me.erikhennig.pipifax.nodes.types.IntTypeNode;
+import me.erikhennig.pipifax.nodes.types.RefTypeNode;
+import me.erikhennig.pipifax.nodes.types.SizedArrayTypeNode;
+import me.erikhennig.pipifax.nodes.types.StringTypeNode;
+import me.erikhennig.pipifax.nodes.types.UnsizedArrayTypeNode;
+import me.erikhennig.pipifax.nodes.types.VoidTypeNode;
 
 public class PrintVisitor extends Visitor
 {
@@ -21,21 +28,6 @@ public class PrintVisitor extends Visitor
 		for (int i = 0; i < m_indentLevel * INDENT_MULTIPLIER; i++)
 			s += " ";
 		return s;
-	}
-
-	private static String typesToString(Types t)
-	{
-		switch (t)
-		{
-		case INT:
-			return "INT";
-		case DOUBLE:
-			return "DOUBLE";
-		case STRING:
-			return "STRING";
-		default:
-			return "";
-		}
 	}
 
 	public String getProgram()
@@ -58,13 +50,7 @@ public class PrintVisitor extends Visitor
 	{
 		m_indentLevel++;
 		m_program += genSp() + "Function " + n.getName() + " : ";
-		if (n.getReturnVariable() != null)
-		{
-			n.getReturnVariable().getType().accept(this);
-		} else
-		{
-			m_program += "void";
-		}
+		n.getReturnVariable().accept(this);
 		m_program += "\n";
 
 		m_indentLevel++;
@@ -77,38 +63,67 @@ public class PrintVisitor extends Visitor
 			}
 		}
 		m_program += genSp() + "Statements\n";
-		for (Node tmp : n.getStatements())
-		{
-			tmp.accept(this);
-		}
+		n.getStatements().accept(this);
 		m_indentLevel--;
 		m_indentLevel--;
 	}
 
-	public void visit(TypeNode n)
-	{
-		m_program += typesToString(n.getBaseType());
-		for (int i : n.getDimensions())
-		{
-			m_program += "[" + i + "]";
-		}
+	@Override
+	public void visit(DoubleTypeNode n) {
+		m_program += "double";
+	}
+	
+	@Override
+	public void visit(IntTypeNode n) {
+		m_program += "int";
+	}
+	
+	@Override
+	public void visit(StringTypeNode n) {
+		m_program += "string";
+	}
+	
+	@Override
+	public void visit(VoidTypeNode n) {
+		m_program += "void";
 	}
 
+	@Override
+	public void visit(RefTypeNode n) {
+		m_program += "*";
+	}
+	
+	@Override
+	public void visit(SizedArrayTypeNode n) {
+		m_program += "[";
+		m_program += n.getSize();
+		m_program += "]";
+	}
+	
+	@Override
+	public void visit(UnsizedArrayTypeNode n) {
+		m_program += "[]";
+	}
+	
+	@Override
+	public void visit(BlockNode n) {
+		m_indentLevel++;
+		m_program += genSp() + "{";
+		super.visit(n);
+		m_program += genSp() + "}";
+		m_indentLevel--;
+	}
+	
 	public void visit(IfNode n)
 	{
 		m_indentLevel++;
 		m_program += genSp() + "If ";
 		n.getCondition().accept(this);
 		m_program += "\n";
-		for (Node tmp : n.getStatements())
-		{
-			tmp.accept(this);
-		}
-		m_program += (!n.getElseStatements().isEmpty()) ? genSp() + "Else\n" : "";
-		for (Node tmp : n.getElseStatements())
-		{
-			tmp.accept(this);
-		}
+		n.getStatements().accept(this);
+		m_program += (!n.getElseStatements().getStatements().isEmpty()) ? genSp() + "Else\n" : "";
+		if (!n.getElseStatements().getStatements().isEmpty())
+			n.getElseStatements().accept(this);
 		m_indentLevel--;
 	}
 
@@ -116,8 +131,6 @@ public class PrintVisitor extends Visitor
 	{
 		m_indentLevel++;
 		m_program += genSp() + n.getName() + " : ";
-		m_program += (n.isReference()) ? "*" : "";
-		m_program += (n.isArrayOfUnknownSize()) ? "[]" : "";
 		n.getType().accept(this);
 		m_program += "\n";
 		m_indentLevel--;
@@ -146,10 +159,7 @@ public class PrintVisitor extends Visitor
 		m_program += genSp() + "While ";
 		n.getCondition().accept(this);
 		m_program += "\n";
-		for (Node tmp : n.getStatements())
-		{
-			tmp.accept(this);
-		}
+		n.getStatements().accept(this);
 		m_indentLevel--;
 	}
 
@@ -165,10 +175,7 @@ public class PrintVisitor extends Visitor
 			n.getLoopedAssignment().accept(this);
 		m_indentLevel++;
 		m_program += genSp() + "Statements:\n";
-		for (Node tmp : n.getStatements())
-		{
-			tmp.accept(this);
-		}
+		n.getStatements().accept(this);
 		m_indentLevel--;
 		m_indentLevel--;
 	}
@@ -180,17 +187,12 @@ public class PrintVisitor extends Visitor
 		n.getCondition().accept(this);
 		m_program += "\n";
 
-		for (Node tmp : n.getStatements())
-		{
-			tmp.accept(this);
-		}
+		n.getStatements().accept(this);
 
 		m_indentLevel++;
-		m_program += (n.getDefaultStatements().size() != 0) ? genSp() + "Default\n" : "";
-		for (Node tmp : n.getDefaultStatements())
-		{
-			tmp.accept(this);
-		}
+		m_program += (!n.getDefaultStatements().getStatements().isEmpty()) ? genSp() + "Default\n" : "";
+		if (!n.getDefaultStatements().getStatements().isEmpty())
+			n.getDefaultStatements().accept(this);
 		m_indentLevel--;
 		m_indentLevel--;
 	}
@@ -201,10 +203,7 @@ public class PrintVisitor extends Visitor
 		m_program += genSp() + "Case: ";
 		n.getCondition().accept(this);
 		m_program += "\n";
-		for (Node tmp : n.getStatements())
-		{
-			tmp.accept(this);
-		}
+		n.getStatements().accept(this);
 		m_indentLevel--;
 	}
 

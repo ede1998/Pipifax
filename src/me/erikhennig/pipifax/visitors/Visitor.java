@@ -3,6 +3,7 @@ package me.erikhennig.pipifax.visitors;
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
+import me.erikhennig.pipifax.nodes.types.*;
 
 public abstract class Visitor
 {
@@ -12,23 +13,50 @@ public abstract class Visitor
 		n.getSource().accept(this);
 	}
 
-	public void visit(TypeNode n)
+	public void visit(IntTypeNode n)
 	{
 	}
+	
+	public void visit(StringTypeNode n)
+	{
+	}
+	
+	public void visit(DoubleTypeNode n)
+	{
+	}
+	
+	public void visit(VoidTypeNode n)
+	{
+	}
+	
+	public void visit(SizedArrayTypeNode n)
+	{
+		n.getType().accept(this);
+	}
+	
+	public void visit(UnsizedArrayTypeNode n)
+	{
+		n.getType().accept(this);
+	}
 
+	public void visit(RefTypeNode n)
+	{
+		n.getType().accept(this);
+	}
+	
 	public void visit(FunctionNode n)
 	{
 		if (n.getReturnVariable() != null)
 			n.getReturnVariable().accept(this);
 		n.getParameterList().forEach((subnode) -> subnode.accept(this));
-		n.getStatements().forEach((subnode) -> subnode.accept(this));
+		n.getStatements().accept(this);
 	}
 
 	public void visit(IfNode n)
 	{
 		n.getCondition().accept(this);
-		n.getStatements().forEach((subnode) -> subnode.accept(this));
-		n.getElseStatements().forEach((subnode) -> subnode.accept(this));
+		n.getStatements().accept(this);
+		n.getElseStatements().accept(this);
 	}
 
 	public void visit(ParameterNode n)
@@ -49,7 +77,7 @@ public abstract class Visitor
 	public void visit(WhileNode n)
 	{
 		n.getCondition().accept(this);
-		n.getStatements().forEach((subnode) -> subnode.accept(this));
+		n.getStatements().accept(this);
 	}
 
 	public void visit(ForNode n)
@@ -59,20 +87,20 @@ public abstract class Visitor
 		n.getCondition().accept(this);
 		if (n.getLoopedAssignment() != null)
 			n.getLoopedAssignment().accept(this);
-		n.getStatements().forEach((subnode) -> subnode.accept(this));
+		n.getStatements().accept(this);
 	}
 
 	public void visit(SwitchNode n)
 	{
 		n.getCondition().accept(this);
-		n.getStatements().forEach((subnode) -> subnode.accept(this));
-		n.getDefaultStatements().forEach((subnode) -> subnode.accept(this));
+		n.getStatements().accept(this);
+		n.getDefaultStatements().accept(this);
 	}
 
 	public void visit(CaseNode n)
 	{
 		n.getCondition().accept(this);
-		n.getStatements().forEach((subnode) -> subnode.accept(this));
+		n.getStatements().accept(this);
 	}
 
 	public void visit(BinaryExpressionNode n)
@@ -106,5 +134,9 @@ public abstract class Visitor
 
 	public void visit(StringLiteralNode n)
 	{
+	}
+
+	public void visit(BlockNode n) {
+		n.getStatements().forEach((subnode) -> subnode.accept(this));
 	}
 }

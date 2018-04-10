@@ -1,14 +1,15 @@
 package me.erikhennig.pipifax.nodes.controls;
 
+import me.erikhennig.pipifax.nodes.BlockNode;
 import me.erikhennig.pipifax.nodes.expressions.ExpressionNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 
 public class CaseNode extends ControlNode
 {
 
-	public CaseNode(ExpressionNode cond)
+	public CaseNode(ExpressionNode cond, BlockNode bn)
 	{
-		super(cond);
+		super(cond, bn);
 	}
 
 	@Override

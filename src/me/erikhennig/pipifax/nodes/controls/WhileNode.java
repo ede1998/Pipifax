@@ -1,12 +1,13 @@
 package me.erikhennig.pipifax.nodes.controls;
 
+import me.erikhennig.pipifax.nodes.BlockNode;
 import me.erikhennig.pipifax.nodes.expressions.ExpressionNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 
 public class WhileNode extends ControlNode {
 
-	public WhileNode(ExpressionNode cond) {
-		super(cond);
+	public WhileNode(ExpressionNode cond, BlockNode bn) {
+		super(cond, bn);
 	}
 
 	@Override

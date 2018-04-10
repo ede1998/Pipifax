@@ -1,6 +1,7 @@
 package me.erikhennig.pipifax.nodes.controls;
 
 import me.erikhennig.pipifax.nodes.AssignmentNode;
+import me.erikhennig.pipifax.nodes.BlockNode;
 import me.erikhennig.pipifax.nodes.expressions.ExpressionNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 
@@ -9,9 +10,9 @@ public class ForNode extends ControlNode
 	private AssignmentNode m_initialAssignment;
 	private AssignmentNode m_loopedAssignment;
 
-	public ForNode(AssignmentNode initialAssign, ExpressionNode cond, AssignmentNode loopedAssign)
+	public ForNode(AssignmentNode initialAssign, ExpressionNode cond, AssignmentNode loopedAssign, BlockNode bn)
 	{
-		super(cond);
+		super(cond, bn);
 		m_initialAssignment = initialAssign;
 		m_loopedAssignment = loopedAssign;
 	}

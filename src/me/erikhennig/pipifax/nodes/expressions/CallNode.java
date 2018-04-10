@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 import me.erikhennig.pipifax.nodes.FunctionNode;
 import me.erikhennig.pipifax.nodes.ParameterNode;
-import me.erikhennig.pipifax.nodes.TypeNode;
+import me.erikhennig.pipifax.nodes.types.TypeNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 
 public class CallNode extends ExpressionNode

@@ -1,5 +1,6 @@
 package me.erikhennig.pipifax.nodes;
 
+import me.erikhennig.pipifax.nodes.types.TypeNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 
 public class VariableNode extends Node
