@@ -1,0 +1,5 @@
+< include "includetest1.pf" >
+func test0()
+{
+  test1();
+}

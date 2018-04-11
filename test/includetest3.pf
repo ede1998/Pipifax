@@ -1,0 +1,7 @@
+<include "includetest0.pf" >
+<include "includetest1.pf" >
+
+func call() {
+  test0();
+  test1();
+}

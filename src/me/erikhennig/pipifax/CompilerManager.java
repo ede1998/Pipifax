@@ -1,6 +1,7 @@
 package me.erikhennig.pipifax;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -35,6 +36,8 @@ public class CompilerManager
 		do
 		{
 			notdone = false;
+			
+			ArrayList<String> filesToAdd = new ArrayList<>();
 			// try to compile each file
 			for (Iterator<Program> iter = progs.iterator(); iter.hasNext();)
 			{
@@ -52,10 +55,12 @@ public class CompilerManager
 					String s = iter1.next();
 					if (!m_programs.containsKey(s))
 					{
-						m_programs.put(s, new Program(s));
+						filesToAdd.add(s);
 					}
 				}
 			}
+			for (String s: filesToAdd)
+				m_programs.put(s, new Program(s));
 		} while (notdone);
 	}
 
