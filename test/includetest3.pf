@@ -1,5 +1,5 @@
-<include "includetest0.pf" >
-<include "includetest1.pf" >
+<include "dontcompile/includetest0.pf" >
+<include "D:/Users/Erik/eclipse-workspace/Pipifax/test/dontcompile/includetest1.pf" >
 
 func call() {
   test0();

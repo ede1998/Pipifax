@@ -175,4 +175,8 @@ public class Program
 		System.out.println(printer.getProgram());
 	}
 
+	public String getProgramPath()
+	{
+		return m_programPath;
+	}
 }

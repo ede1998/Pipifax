@@ -26,6 +26,7 @@ public class CompilerManager
 	{
 		buildASTs();
 		checkSemantics();
+		checkSuccess();
 	}
 
 	private void buildASTs()
@@ -72,6 +73,16 @@ public class CompilerManager
 			p.checkSemantics();
 			p.print();
 			removeFromIncludes(p);
+		}
+	}
+	
+	private void checkSuccess()
+	{
+		for (Iterator<Program> iter = m_programs.values().iterator(); iter.hasNext();)
+		{
+			Program p = iter.next();
+			if (!p.isChecked())
+				System.err.println("Could not compile program " + p.getProgramPath() + "\nInvalid includes:" + p.getIncludes().toString());
 		}
 	}
 
