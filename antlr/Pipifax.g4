@@ -3,10 +3,15 @@ prog: includedecl* (funcdecl | vardecl)*;
 includedecl: '<' 'include' STRING '>';
 funcdecl: 'func' ID '('parameterlist')'type? block; 
 vardecl: 'var' ID type ('=' expr)? ';'?;
-type: 'int' # IntType
+struct: 'struct' ID '{' memberdecl+ '}';
+memberdecl: ID type;
+basetype: 'int' # IntType
       | 'double' # DoubleType
       | 'string' # StringType
       | '['INT']' type # ArrayType
+      ;
+type: basetype # BaseType
+      | ID # CustomType
       ;
 parameterlist: (parameter (',' parameter)*)?;
 parameter: ID parameter_type;
@@ -14,7 +19,6 @@ parameter_type: type # TypeParameter
       | '*' type # ReferenceParameter
       | '*' '['']' type # ReferenceArrayParameter
       ;
-
 block: '{' (vardecl | statement)* '}';
 statements: statement # StatementSingle
       | block # StatementBlock
@@ -36,7 +40,10 @@ casestmt: 'case' expr statements;
 defaultstmt: 'default' statements;
 assignment: lvalue '=' expr;
 lvalue: ID
-      | ID ('[' expr ']')+;
+      | ID ('[' expr ']')+
+      | lvalue sublvalue
+      ;
+sublvalue: ('.' lvalue)+;
 expr: INT # IntLiteral
       | DOUBLE # DoubleLiteral
       | STRING # StringLiteral
@@ -63,7 +70,7 @@ expr: INT # IntLiteral
       | expr '&&' expr # And
       | expr '||' expr # Or
       ;
-funccall: ID '(' (expr (',' expr)*)? ')';
+funccall: ID '(' (expr (',' expr)*)? ')' sublvalue?;
 
 NEWLINE : [\r\n]+ -> skip;
 ENDOFFILE : EOF -> skip;
