@@ -6,6 +6,7 @@ public class Main
 	{
 		CompilerManager cm = new CompilerManager(args[0]);
 		cm.compile();
+		//cm.printPrograms();
 	}
 
 }

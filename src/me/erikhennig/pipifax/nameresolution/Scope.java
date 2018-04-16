@@ -3,14 +3,15 @@ package me.erikhennig.pipifax.nameresolution;
 import java.util.Hashtable;
 
 import me.erikhennig.pipifax.nodes.FunctionNode;
+import me.erikhennig.pipifax.nodes.NamedNode;
 import me.erikhennig.pipifax.nodes.Node;
+import me.erikhennig.pipifax.nodes.StructNode;
 import me.erikhennig.pipifax.nodes.VariableNode;
 
 public class Scope
 {
 	private Scope m_OuterScope = null;;
-	private Hashtable<String, VariableNode> m_variables = new Hashtable<>();
-	private Hashtable<String, FunctionNode> m_functions = new Hashtable<>();
+	private Hashtable<String, NamedNode> m_symbols = new Hashtable<>();
 	
 	public Scope() {}
 	public Scope enterScope()
@@ -23,14 +24,9 @@ public class Scope
 		return m_OuterScope;
 	}
 
-	public boolean registerVariable(VariableNode vn)
+	public boolean register(NamedNode nn)
 	{
-		return m_variables.put(vn.getName(), vn) == null;
-	}
-
-	public boolean registerFunction(FunctionNode fn)
-	{
-		return m_functions.put(fn.getName(), fn) == null;
+		return m_symbols.put(nn.getName(), nn) == null;
 	}
 
 	public Scope getOuterScope()
@@ -50,6 +46,14 @@ public class Scope
 			vn = m_OuterScope.getVariable(name);
 		return vn;
 	}
+	
+	public StructNode getStruct(String name)
+	{
+		StructNode sn = fetchStruct(name);
+		if ((sn == null) && (m_OuterScope != null))
+			sn = m_OuterScope.getStruct(name);
+		return sn;
+	}
 
 	public FunctionNode getFunction(String name)
 	{
@@ -59,9 +63,17 @@ public class Scope
 		return fn;
 	}
 
+	private StructNode fetchStruct(String name)
+	{
+		Node n = m_symbols.get(name);
+		if (n instanceof StructNode)
+			return (StructNode) n;
+		return null;
+	}
+	
 	private VariableNode fetchVariable(String name)
 	{
-		Node n = m_variables.get(name);
+		Node n = m_symbols.get(name);
 		if (n instanceof VariableNode)
 			return (VariableNode) n;
 		return null;
@@ -69,7 +81,7 @@ public class Scope
 
 	private FunctionNode fetchFunction(String name)
 	{
-		Node n = m_functions.get(name);
+		Node n = m_symbols.get(name);
 		if (n instanceof FunctionNode)
 			return (FunctionNode) n;
 		return null;

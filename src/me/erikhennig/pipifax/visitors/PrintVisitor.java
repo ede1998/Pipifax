@@ -1,5 +1,7 @@
 package me.erikhennig.pipifax.visitors;
 
+import java.util.Iterator;
+
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.controls.CaseNode;
 import me.erikhennig.pipifax.nodes.controls.ForNode;
@@ -7,6 +9,7 @@ import me.erikhennig.pipifax.nodes.controls.IfNode;
 import me.erikhennig.pipifax.nodes.controls.SwitchNode;
 import me.erikhennig.pipifax.nodes.controls.WhileNode;
 import me.erikhennig.pipifax.nodes.expressions.*;
+import me.erikhennig.pipifax.nodes.types.CustomTypeNode;
 import me.erikhennig.pipifax.nodes.types.DoubleTypeNode;
 import me.erikhennig.pipifax.nodes.types.IntTypeNode;
 import me.erikhennig.pipifax.nodes.types.RefTypeNode;
@@ -93,6 +96,12 @@ public class PrintVisitor extends Visitor
 	}
 
 	@Override
+	public void visit(CustomTypeNode customTypeNode)
+	{
+		m_program += customTypeNode.getName();
+	}
+
+	@Override
 	public void visit(RefTypeNode n)
 	{
 		m_program += "*";
@@ -105,12 +114,14 @@ public class PrintVisitor extends Visitor
 		m_program += "[";
 		m_program += n.getSize();
 		m_program += "]";
+		super.visit(n);
 	}
 
 	@Override
 	public void visit(UnsizedArrayTypeNode n)
 	{
 		m_program += "[]";
+		super.visit(n);
 	}
 
 	@Override
@@ -232,6 +243,13 @@ public class PrintVisitor extends Visitor
 			en.accept(this);
 			m_program += "\n";
 		}
+
+		Iterator<SubLValueNode> iter = n.getChildren().iterator();
+		while (iter.hasNext())
+		{
+			m_program += ".";
+			iter.next().accept(this);
+		}
 		m_indentLevel--;
 		m_indentLevel--;
 	}
@@ -278,6 +296,21 @@ public class PrintVisitor extends Visitor
 
 	public void visit(LValueNode n)
 	{
+		Iterator<SubLValueNode> iter = n.getChildren().iterator();
+		// ToplevelNode
+		iter.next().accept(this);
+
+		// SublevelNodes
+		while (iter.hasNext())
+		{
+			m_program += ".";
+			iter.next().accept(this);
+		}
+	}
+
+	@Override
+	public void visit(SubLValueNode n)
+	{
 		m_program += n.getName();
 		for (ExpressionNode en : n.getOffsets())
 		{
@@ -290,5 +323,21 @@ public class PrintVisitor extends Visitor
 	public void visit(StringLiteralNode n)
 	{
 		m_program += n.getValue();
+	}
+
+	@Override
+	public void visit(StructNode sn)
+	{
+		m_indentLevel++;
+		m_program += "Struct: " + sn.getName() + "\n";
+		m_indentLevel++;
+		sn.getMembers().forEach((name, tn) ->
+		{
+			m_program += genSp() + name + " : ";
+			tn.accept(this);
+			m_program += "\n";
+		});
+		m_indentLevel--;
+		m_indentLevel--;
 	}
 }

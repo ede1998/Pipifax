@@ -11,6 +11,7 @@ import me.erikhennig.pipifax.nodes.VariableNode;
 import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
 import me.erikhennig.pipifax.nodes.types.ArrayTypeNode;
+import me.erikhennig.pipifax.nodes.types.CustomTypeNode;
 import me.erikhennig.pipifax.nodes.types.RefTypeNode;
 import me.erikhennig.pipifax.nodes.types.TypeNode;
 
@@ -79,7 +80,7 @@ public class TypeCheckingVisitor extends Visitor
 		ArrayList<ParameterNode> parameters = func.getParameterList();
 		ArrayList<ExpressionNode> arguments = n.getArguments();
 
-		n.setType(func.getReturnVariable().getType());
+		n.setType(n.getChildren().get(n.getChildren().size() - 1).getType());
 
 		boolean isValidArgNumber = parameters.size() == arguments.size();
 		boolean areValidArgs = true;
@@ -87,7 +88,7 @@ public class TypeCheckingVisitor extends Visitor
 		Iterator<ExpressionNode> exp = arguments.iterator();
 		Iterator<ParameterNode> param = parameters.iterator();
 		if (isValidArgNumber)
-			for (; exp.hasNext();)
+			while (exp.hasNext())
 			{
 				areValidArgs &= param.next().getType().checkType(exp.next().getType());
 			}
@@ -103,7 +104,8 @@ public class TypeCheckingVisitor extends Visitor
 	{
 		super.visit(n);
 		if (!n.getSource().getType().checkType(n.getDestination().getType()))
-			printErrorAndFail("Type Check Error: Conflicting types in Assignment to " + n.getDestination().getName());
+			printErrorAndFail("Type Check Error: Conflicting types in Assignment to "
+					+ n.getDestination().getChildren().get(0).getName());
 	}
 
 	@Override
@@ -156,11 +158,41 @@ public class TypeCheckingVisitor extends Visitor
 	{
 		super.visit(n);
 
+		// type = type of last child
+		n.setType(n.getChildren().get(n.getChildren().size() - 1).getType());
+	}
+
+	@Override
+	public void visit(SubLValueNode n)
+	{
+		super.visit(n);
+
+		TypeNode predType;
+		if (n.getPredecessor() != null)
+			predType = n.getPredecessor().getType();
+		else if (n.getParent() instanceof LValueNode)
+			predType = ((LValueNode) n.getParent()).getVariable().getType();
+		else
+			predType = ((CallNode) n.getParent()).getFunction().getReturnVariable().getType();
+
 		boolean enoughDimensions = true;
 		boolean onlyIntsInOffsets = true;
-		TypeNode vtn = n.getVariable().getType();
+		TypeNode potentialtype = (predType instanceof RefTypeNode) ? ((RefTypeNode) predType).getType() : predType;
 
-		TypeNode potentialtype = (vtn instanceof RefTypeNode) ? ((RefTypeNode) vtn).getType() : vtn;
+		// if first node: leave unchanged; no problem can be deducted here;
+		// else:
+		if (n.getPredecessor() != null)
+		{
+			// if predecessor is customtype everythings all right
+			if (predType instanceof CustomTypeNode)
+			{
+				potentialtype = ((CustomTypeNode) potentialtype).getTypeDefinition().getType(n.getName());
+			}
+			// if predecessor is simple type, we have a problem
+			else
+				potentialtype = TypeNode.getVoid();
+		}
+
 		for (ExpressionNode en : n.getOffsets())
 		{
 			if (!en.getType().checkType(TypeNode.getInt()))
@@ -184,9 +216,13 @@ public class TypeCheckingVisitor extends Visitor
 			n.setType(potentialtype);
 
 		if (!enoughDimensions)
-			printErrorAndFail("Type Check Error: LValue-ArrayAccess requests more dimensions than variable offers");
+			printErrorAndFail("Type Check Error: LValue-ArrayAccess" + n.getName()
+					+ " requests more dimensions than variable offers");
 		if (!onlyIntsInOffsets)
-			printErrorAndFail("Type Check Error: LValue offsets has non integer types");
+			printErrorAndFail("Type Check Error: LValue offsets of " + n.getName() + " has non integer types");
+
+		if (potentialtype.checkType(TypeNode.getVoid()))
+			printErrorAndFail("Type Check Error: LValue " + n.getName() + " does not exist as part of a struct");
 	}
 
 	@Override

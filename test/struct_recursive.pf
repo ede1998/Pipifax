@@ -1,0 +1,18 @@
+struct inners {
+	member3 string;
+    member4 [4]int;
+}
+
+struct s {
+   member1 int;
+   member2 double;
+   myinnerstruct inners;
+}
+
+func usagetest()
+{
+  var mystruc s;
+  mystruc.member1 = 5;
+  mystruc.member2 = 3.4;
+  mystruc.myinnerstruct.member3 = "bla";
+}

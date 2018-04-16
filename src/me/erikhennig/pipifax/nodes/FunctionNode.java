@@ -5,18 +5,16 @@ import java.util.ArrayList;
 import me.erikhennig.pipifax.nodes.types.TypeNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 
-public class FunctionNode extends Node
+public class FunctionNode extends NamedNode
 {
-
-	private String m_name;
 	private VariableNode m_returnVariable = null;
 	private ArrayList<ParameterNode> m_parameterList = new ArrayList<>();
 	private BlockNode m_statements;
 
 	public FunctionNode(TypeNode retType, String name, BlockNode bn)
 	{
+		super(name);
 		m_returnVariable = new VariableNode(name, retType, null);
-		m_name = name;
 		m_statements = bn;
 	}
 
@@ -34,11 +32,6 @@ public class FunctionNode extends Node
 	public void accept(Visitor v)
 	{
 		v.visit(this);
-	}
-
-	public String getName()
-	{
-		return m_name;
 	}
 
 	public VariableNode getReturnVariable()

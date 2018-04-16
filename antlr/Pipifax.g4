@@ -1,16 +1,14 @@
 grammar Pipifax;
-prog: includedecl* (funcdecl | vardecl)*;
+prog: includedecl* (funcdecl | vardecl | struct)*;
 includedecl: '<' 'include' STRING '>';
 funcdecl: 'func' ID '('parameterlist')'type? block; 
 vardecl: 'var' ID type ('=' expr)? ';'?;
 struct: 'struct' ID '{' memberdecl+ '}';
-memberdecl: ID type;
-basetype: 'int' # IntType
+memberdecl: ID type';'?;
+type: 'int' # IntType
       | 'double' # DoubleType
       | 'string' # StringType
       | '['INT']' type # ArrayType
-      ;
-type: basetype # BaseType
       | ID # CustomType
       ;
 parameterlist: (parameter (',' parameter)*)?;
@@ -38,12 +36,20 @@ forstmt: 'for' '(' (initassign = assignment)? ';' expr ';' (loopedassign = assig
 switchstmt: 'switch' expr '{' casestmt* defaultstmt?'}';
 casestmt: 'case' expr statements;
 defaultstmt: 'default' statements;
-assignment: lvalue '=' expr;
-lvalue: ID
-      | ID ('[' expr ']')+
-      | lvalue sublvalue
+assignment: lvalue '=' expr # Assign
+      | lvalue '+=' expr # AdditionAssign
+      | lvalue '-=' expr # SubtractionAssign
+      | lvalue '*=' expr # MultiplicationAssign
+      | lvalue '/=' expr # DivisionAssign
+      | lvalue '&=' expr # AndAssign
+      | lvalue '|=' expr # OrAssign
+      | lvalue '%=' expr # ModuloAssign
+      | lvalue '...=' expr # StringAssign
       ;
-sublvalue: ('.' lvalue)+;
+lvalue: ID ('[' expr ']')* sublvalues;
+sublvalue: '.' ID ('[' expr ']')*;
+sublvalues: sublvalue*;
+ 
 expr: INT # IntLiteral
       | DOUBLE # DoubleLiteral
       | STRING # StringLiteral
@@ -70,7 +76,7 @@ expr: INT # IntLiteral
       | expr '&&' expr # And
       | expr '||' expr # Or
       ;
-funccall: ID '(' (expr (',' expr)*)? ')' sublvalue?;
+funccall: ID '(' (expr (',' expr)*)? ')'('[' offsets+=expr ']')* sublvalues; 
 
 NEWLINE : [\r\n]+ -> skip;
 ENDOFFILE : EOF -> skip;

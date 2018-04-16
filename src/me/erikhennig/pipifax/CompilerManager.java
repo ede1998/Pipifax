@@ -25,8 +25,18 @@ public class CompilerManager
 	public void compile()
 	{
 		buildASTs();
+		printPrograms();
 		checkSemantics();
 		checkSuccess();
+	}
+
+	public void printPrograms()
+	{
+		m_programs.forEach((path, prog) ->
+		{
+			System.out.println(path + "\n");
+			prog.print();
+		});
 	}
 
 	private void buildASTs()
@@ -37,7 +47,7 @@ public class CompilerManager
 		do
 		{
 			notdone = false;
-			
+
 			ArrayList<String> filesToAdd = new ArrayList<>();
 			// try to compile each file
 			for (Iterator<Program> iter = progs.iterator(); iter.hasNext();)
@@ -60,7 +70,7 @@ public class CompilerManager
 					}
 				}
 			}
-			for (String s: filesToAdd)
+			for (String s : filesToAdd)
 				m_programs.put(s, new Program(s));
 		} while (notdone);
 	}
@@ -75,14 +85,15 @@ public class CompilerManager
 			removeFromIncludes(p);
 		}
 	}
-	
+
 	private void checkSuccess()
 	{
 		for (Iterator<Program> iter = m_programs.values().iterator(); iter.hasNext();)
 		{
 			Program p = iter.next();
 			if (!p.isChecked())
-				System.err.println("Could not compile program " + p.getProgramPath() + "\nInvalid includes:" + p.getIncludes().toString());
+				System.err.println("Could not compile program " + p.getProgramPath() + "\nInvalid includes:"
+						+ p.getIncludes().toString());
 		}
 	}
 

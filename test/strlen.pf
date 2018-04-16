@@ -1,0 +1,30 @@
+struct stringset {
+  minimum string;
+  maximum string;
+}
+
+func strlen(str string) int
+{
+  var lenmin string = "";
+  var lenmax string = "";
+  strlen = 0;
+  while (str <=> lenmin) < 0
+  {
+     lenmin = genStr(5).minimum;
+    # wont work this way
+  }
+}
+
+func genStr(len int) stringset
+{
+  var i int;
+  genStr.minimum = "";
+  genStr.maximum = "";
+  var startmin string = "\a";
+  var startmax string = "~";
+  for (i = 0; i < len; i += 1)
+  {
+      genStr.minimum ...= startmin;
+	  genStr.maximum ...= startmax;
+  }
+}

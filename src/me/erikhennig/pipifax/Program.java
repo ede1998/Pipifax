@@ -18,10 +18,9 @@ import org.antlr.v4.runtime.TokenStream;
 import me.erikhennig.pipifax.antlr.PipifaxLexer;
 import me.erikhennig.pipifax.antlr.PipifaxParser;
 import me.erikhennig.pipifax.nameresolution.Scope;
-import me.erikhennig.pipifax.nodes.FunctionNode;
+import me.erikhennig.pipifax.nodes.NamedNode;
 import me.erikhennig.pipifax.nodes.Node;
 import me.erikhennig.pipifax.nodes.ProgramNode;
-import me.erikhennig.pipifax.nodes.VariableNode;
 import me.erikhennig.pipifax.visitors.NameResolutionVisitor;
 import me.erikhennig.pipifax.visitors.PrintVisitor;
 import me.erikhennig.pipifax.visitors.TypeCheckingVisitor;
@@ -29,8 +28,7 @@ import me.erikhennig.pipifax.visitors.TypeCheckingVisitor;
 public class Program
 {
 	private ProgramNode m_program;
-	private Hashtable<String, VariableNode> m_variables = new Hashtable<>();
-	private Hashtable<String, FunctionNode> m_functions = new Hashtable<>();
+	private Hashtable<String, NamedNode> m_symbols = new Hashtable<>();
 	private String m_programPath;
 	private ArrayList<String> m_includes = new ArrayList<>();
 	private ArrayList<Program> m_readyInclude = new ArrayList<>();
@@ -102,19 +100,12 @@ public class Program
 
 	private void addPublicSymbols()
 	{
-		// Only 1 variable and 1 function with same name can be stored in hashmaps
+		// Only 1 symbol with same name can be stored in hashmap
 		// -> no problem when function is declared multiple times
 		for (Node n : m_program.getNodes())
 		{
-			if (n instanceof VariableNode)
-			{
-				VariableNode vn = (VariableNode) n;
-				m_variables.put(vn.getName(), vn);
-			} else if (n instanceof FunctionNode)
-			{
-				FunctionNode fn = (FunctionNode) n;
-				m_functions.put(fn.getName(), fn);
-			}
+			NamedNode nn = (NamedNode) n;
+			m_symbols.put(nn.getName(), nn);
 		}
 	}
 
@@ -149,19 +140,12 @@ public class Program
 		Scope s = new Scope();
 		for (Program p : m_readyInclude)
 		{
-			Collection<FunctionNode> fns = p.m_functions.values();
-			for (Iterator<FunctionNode> iter = fns.iterator(); iter.hasNext();)
+			Collection<NamedNode> nnc = p.m_symbols.values();
+			for (Iterator<NamedNode> iter = nnc.iterator(); iter.hasNext();)
 			{
-				FunctionNode fn = iter.next();
-				if (!s.registerFunction(fn))
-					System.err.println("Function already exists in global scope: " + fn.getName());
-			}
-			Collection<VariableNode> vars = p.m_variables.values();
-			for (Iterator<VariableNode> iter = vars.iterator(); iter.hasNext();)
-			{
-				VariableNode vn = iter.next();
-				if (!s.registerVariable(vn))
-					System.err.println("Variable already exists in global scope: " + vn.getName());
+				NamedNode nn = iter.next();
+				if (!s.register(nn))
+					System.err.println("Name already exists in global scope: " + nn.getName());
 			}
 		}
 		return s;

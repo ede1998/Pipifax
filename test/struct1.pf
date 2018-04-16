@@ -1,0 +1,6 @@
+struct myfirststruct {
+   member1 int;
+   member2 double;
+   member3 string;
+   member4 [4]int;
+}

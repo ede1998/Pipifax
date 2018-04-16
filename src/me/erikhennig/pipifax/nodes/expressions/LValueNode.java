@@ -7,30 +7,18 @@ import me.erikhennig.pipifax.visitors.Visitor;
 
 public class LValueNode extends ExpressionNode
 {
-	private ArrayList<ExpressionNode> m_offsets;
 	private VariableNode m_variable;
-	private String m_name;
+	private ArrayList<SubLValueNode> m_children;
 
-	public LValueNode(String name, ArrayList<ExpressionNode> offset)
+	public LValueNode(ArrayList<SubLValueNode> children)
 	{
-		m_name = name;
-		m_offsets = offset;
+		m_children = children;
 	}
 
 	@Override
 	public void accept(Visitor v)
 	{
 		v.visit(this);
-	}
-
-	public String getName()
-	{
-		return m_name;
-	}
-
-	public ArrayList<ExpressionNode> getOffsets()
-	{
-		return m_offsets;
 	}
 
 	public VariableNode getVariable()
@@ -41,5 +29,10 @@ public class LValueNode extends ExpressionNode
 	public void setVariable(VariableNode variable)
 	{
 		m_variable = variable;
+	}
+
+	public ArrayList<SubLValueNode> getChildren()
+	{
+		return m_children;
 	}
 }

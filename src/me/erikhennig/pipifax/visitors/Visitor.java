@@ -13,7 +13,7 @@ public abstract class Visitor
 	{
 		return m_success;
 	}
-	
+
 	protected void printErrorAndFail(String errstr)
 	{
 		System.err.println(errstr);
@@ -39,6 +39,10 @@ public abstract class Visitor
 	}
 
 	public void visit(VoidTypeNode n)
+	{
+	}
+
+	public void visit(CustomTypeNode customTypeNode)
 	{
 	}
 
@@ -132,6 +136,7 @@ public abstract class Visitor
 	public void visit(CallNode n)
 	{
 		n.getArguments().forEach((subnode) -> subnode.accept(this));
+		n.getChildren().forEach((subnode) -> subnode.accept(this));
 	}
 
 	public void visit(DoubleLiteralNode n)
@@ -144,6 +149,11 @@ public abstract class Visitor
 
 	public void visit(LValueNode n)
 	{
+		n.getChildren().forEach((subnode) -> subnode.accept(this));
+	}
+
+	public void visit(SubLValueNode n)
+	{
 		n.getOffsets().forEach((subnode) -> subnode.accept(this));
 	}
 
@@ -154,5 +164,10 @@ public abstract class Visitor
 	public void visit(BlockNode n)
 	{
 		n.getStatements().forEach((subnode) -> subnode.accept(this));
+	}
+
+	public void visit(StructNode sn)
+	{
+		sn.getTypeMembers().forEach((subnode) -> subnode.accept(this));
 	}
 }
