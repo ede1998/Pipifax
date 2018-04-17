@@ -1,13 +1,13 @@
-package me.erikhennig.pipifax.nodes.expressions.lvalues;
+package me.erikhennig.pipifax.nodes.expressions.values;
 
 import me.erikhennig.pipifax.nodes.expressions.ExpressionNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 
-public class ArrayAccessNode extends LValueNode {
+public class ArrayAccessNode extends ValueNode {
 	private ExpressionNode m_offset;
-	private LValueNode m_base;
+	private ValueNode m_base;
 	
-	public ArrayAccessNode(LValueNode base, ExpressionNode offset) {
+	public ArrayAccessNode(ValueNode base, ExpressionNode offset) {
 		m_base = base;
 		m_offset = offset;
 	}
@@ -22,9 +22,15 @@ public class ArrayAccessNode extends LValueNode {
 		return m_offset;
 	}
 	
-	public LValueNode getBase()
+	public ValueNode getBase()
 	{
 		return m_base;
+	}
+
+	@Override
+	public boolean isLValue()
+	{
+		return m_base.isLValue();
 	}
 	
 }

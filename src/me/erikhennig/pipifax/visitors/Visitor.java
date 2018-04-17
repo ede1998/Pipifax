@@ -3,9 +3,10 @@ package me.erikhennig.pipifax.visitors;
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
-import me.erikhennig.pipifax.nodes.expressions.lvalues.ArrayAccessNode;
-import me.erikhennig.pipifax.nodes.expressions.lvalues.StructAccessNode;
-import me.erikhennig.pipifax.nodes.expressions.lvalues.VariableAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.values.ArrayAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.values.CallNode;
+import me.erikhennig.pipifax.nodes.expressions.values.StructAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.values.VariableAccessNode;
 import me.erikhennig.pipifax.nodes.types.*;
 
 public abstract class Visitor

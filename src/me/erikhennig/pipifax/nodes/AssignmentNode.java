@@ -1,15 +1,15 @@
 package me.erikhennig.pipifax.nodes;
 
 import me.erikhennig.pipifax.nodes.expressions.ExpressionNode;
-import me.erikhennig.pipifax.nodes.expressions.lvalues.LValueNode;
+import me.erikhennig.pipifax.nodes.expressions.values.ValueNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 
 public class AssignmentNode extends Node
 {
 	private ExpressionNode m_src;
-	private LValueNode m_dest;
+	private ValueNode m_dest;
 
-	public AssignmentNode(LValueNode dest, ExpressionNode src)
+	public AssignmentNode(ValueNode dest, ExpressionNode src)
 	{
 		m_dest = dest;
 		m_src = src;
@@ -26,7 +26,7 @@ public class AssignmentNode extends Node
 		return m_src;
 	}
 
-	public LValueNode getDestination()
+	public ValueNode getDestination()
 	{
 		return m_dest;
 	}

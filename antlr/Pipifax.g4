@@ -49,11 +49,11 @@ assignment: lvalue '=' expr # Assign
 lvalue: ID # VarAccess 
       | lvalue '[' expr ']' # ArrayAccess
       | lvalue '.' ID # StructAccess
+      | funccall # FunctionAccess
       ; 
 expr: INT # IntLiteral
       | DOUBLE # DoubleLiteral
       | STRING # StringLiteral
-      | funccall # Call
       | lvalue # LValueExpression
       | '(' expr ')' # Parentheses
       | '-' expr # Negation
@@ -76,7 +76,7 @@ expr: INT # IntLiteral
       | expr '&&' expr # And
       | expr '||' expr # Or
       ;
-funccall: ID '(' (expr (',' expr)*)? ')'('[' offsets+=expr ']')*; 
+funccall: ID '(' (expr (',' expr)*)? ')';
 
 NEWLINE : [\r\n]+ -> skip;
 ENDOFFILE : EOF -> skip;

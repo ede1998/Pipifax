@@ -7,9 +7,10 @@ import me.erikhennig.pipifax.nodes.controls.IfNode;
 import me.erikhennig.pipifax.nodes.controls.SwitchNode;
 import me.erikhennig.pipifax.nodes.controls.WhileNode;
 import me.erikhennig.pipifax.nodes.expressions.*;
-import me.erikhennig.pipifax.nodes.expressions.lvalues.ArrayAccessNode;
-import me.erikhennig.pipifax.nodes.expressions.lvalues.StructAccessNode;
-import me.erikhennig.pipifax.nodes.expressions.lvalues.VariableAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.values.ArrayAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.values.CallNode;
+import me.erikhennig.pipifax.nodes.expressions.values.StructAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.values.VariableAccessNode;
 import me.erikhennig.pipifax.nodes.types.CustomTypeNode;
 import me.erikhennig.pipifax.nodes.types.DoubleTypeNode;
 import me.erikhennig.pipifax.nodes.types.IntTypeNode;
@@ -296,7 +297,7 @@ public class PrintVisitor extends Visitor
 	
 	@Override
 	public void visit(ArrayAccessNode n) {
-		super.visit(n);
+		n.getBase().accept(this);
 		m_program += "[";
 		n.getOffset().accept(this);
 		m_program += "]";

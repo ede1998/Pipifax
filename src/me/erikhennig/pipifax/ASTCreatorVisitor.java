@@ -2,13 +2,15 @@ package me.erikhennig.pipifax;
 
 import me.erikhennig.pipifax.antlr.PipifaxBaseVisitor;
 import me.erikhennig.pipifax.antlr.PipifaxParser;
+import me.erikhennig.pipifax.antlr.PipifaxParser.FunctionAccessContext;
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
-import me.erikhennig.pipifax.nodes.expressions.lvalues.ArrayAccessNode;
-import me.erikhennig.pipifax.nodes.expressions.lvalues.LValueNode;
-import me.erikhennig.pipifax.nodes.expressions.lvalues.StructAccessNode;
-import me.erikhennig.pipifax.nodes.expressions.lvalues.VariableAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.values.ArrayAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.values.CallNode;
+import me.erikhennig.pipifax.nodes.expressions.values.StructAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.values.ValueNode;
+import me.erikhennig.pipifax.nodes.expressions.values.VariableAccessNode;
 import me.erikhennig.pipifax.nodes.types.*;
 
 public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
@@ -213,7 +215,7 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	@Override
 	public Node visitAssign(PipifaxParser.AssignContext ctx)
 	{
-		LValueNode dest = (LValueNode) ctx.lvalue().accept(this);
+		ValueNode dest = (ValueNode) ctx.lvalue().accept(this);
 		ExpressionNode src = (ExpressionNode) ctx.expr().accept(this);
 		AssignmentNode an = new AssignmentNode(dest, src);
 		return an;
@@ -222,8 +224,8 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	@Override
 	public Node visitAdditionAssign(PipifaxParser.AdditionAssignContext ctx)
 	{
-		LValueNode dest = (LValueNode) ctx.lvalue().accept(this);
-		ExpressionNode left = (LValueNode) ctx.lvalue().accept(this);
+		ValueNode dest = (ValueNode) ctx.lvalue().accept(this);
+		ExpressionNode left = (ValueNode) ctx.lvalue().accept(this);
 		ExpressionNode right = (ExpressionNode) ctx.expr().accept(this);
 		ExpressionNode src = new BinaryExpressionNode(left, right, BinaryOperation.ADDITION);
 		AssignmentNode an = new AssignmentNode(dest, src);
@@ -233,8 +235,8 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	@Override
 	public Node visitSubtractionAssign(PipifaxParser.SubtractionAssignContext ctx)
 	{
-		LValueNode dest = (LValueNode) ctx.lvalue().accept(this);
-		ExpressionNode left = (LValueNode) ctx.lvalue().accept(this);
+		ValueNode dest = (ValueNode) ctx.lvalue().accept(this);
+		ExpressionNode left = (ValueNode) ctx.lvalue().accept(this);
 		ExpressionNode right = (ExpressionNode) ctx.expr().accept(this);
 		ExpressionNode src = new BinaryExpressionNode(left, right, BinaryOperation.SUBTRACTION);
 		AssignmentNode an = new AssignmentNode(dest, src);
@@ -244,8 +246,8 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	@Override
 	public Node visitMultiplicationAssign(PipifaxParser.MultiplicationAssignContext ctx)
 	{
-		LValueNode dest = (LValueNode) ctx.lvalue().accept(this);
-		ExpressionNode left = (LValueNode) ctx.lvalue().accept(this);
+		ValueNode dest = (ValueNode) ctx.lvalue().accept(this);
+		ExpressionNode left = (ValueNode) ctx.lvalue().accept(this);
 		ExpressionNode right = (ExpressionNode) ctx.expr().accept(this);
 		ExpressionNode src = new BinaryExpressionNode(left, right, BinaryOperation.MULTIPLICATION);
 		AssignmentNode an = new AssignmentNode(dest, src);
@@ -255,8 +257,8 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	@Override
 	public Node visitDivisionAssign(PipifaxParser.DivisionAssignContext ctx)
 	{
-		LValueNode dest = (LValueNode) ctx.lvalue().accept(this);
-		ExpressionNode left = (LValueNode) ctx.lvalue().accept(this);
+		ValueNode dest = (ValueNode) ctx.lvalue().accept(this);
+		ExpressionNode left = (ValueNode) ctx.lvalue().accept(this);
 		ExpressionNode right = (ExpressionNode) ctx.expr().accept(this);
 		ExpressionNode src = new BinaryExpressionNode(left, right, BinaryOperation.DIVISION);
 		AssignmentNode an = new AssignmentNode(dest, src);
@@ -266,8 +268,8 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	@Override
 	public Node visitAndAssign(PipifaxParser.AndAssignContext ctx)
 	{
-		LValueNode dest = (LValueNode) ctx.lvalue().accept(this);
-		ExpressionNode left = (LValueNode) ctx.lvalue().accept(this);
+		ValueNode dest = (ValueNode) ctx.lvalue().accept(this);
+		ExpressionNode left = (ValueNode) ctx.lvalue().accept(this);
 		ExpressionNode right = (ExpressionNode) ctx.expr().accept(this);
 		ExpressionNode src = new BinaryExpressionNode(left, right, BinaryOperation.AND);
 		AssignmentNode an = new AssignmentNode(dest, src);
@@ -277,8 +279,8 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	@Override
 	public Node visitOrAssign(PipifaxParser.OrAssignContext ctx)
 	{
-		LValueNode dest = (LValueNode) ctx.lvalue().accept(this);
-		ExpressionNode left = (LValueNode) ctx.lvalue().accept(this);
+		ValueNode dest = (ValueNode) ctx.lvalue().accept(this);
+		ExpressionNode left = (ValueNode) ctx.lvalue().accept(this);
 		ExpressionNode right = (ExpressionNode) ctx.expr().accept(this);
 		ExpressionNode src = new BinaryExpressionNode(left, right, BinaryOperation.OR);
 		AssignmentNode an = new AssignmentNode(dest, src);
@@ -288,8 +290,8 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	@Override
 	public Node visitModuloAssign(PipifaxParser.ModuloAssignContext ctx)
 	{
-		LValueNode dest = (LValueNode) ctx.lvalue().accept(this);
-		ExpressionNode left = (LValueNode) ctx.lvalue().accept(this);
+		ValueNode dest = (ValueNode) ctx.lvalue().accept(this);
+		ExpressionNode left = (ValueNode) ctx.lvalue().accept(this);
 		ExpressionNode right = (ExpressionNode) ctx.expr().accept(this);
 		ExpressionNode src = new BinaryExpressionNode(left, right, BinaryOperation.MODULO);
 		AssignmentNode an = new AssignmentNode(dest, src);
@@ -299,8 +301,8 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	@Override
 	public Node visitStringAssign(PipifaxParser.StringAssignContext ctx)
 	{
-		LValueNode dest = (LValueNode) ctx.lvalue().accept(this);
-		ExpressionNode left = (LValueNode) ctx.lvalue().accept(this);
+		ValueNode dest = (ValueNode) ctx.lvalue().accept(this);
+		ExpressionNode left = (ValueNode) ctx.lvalue().accept(this);
 		ExpressionNode right = (ExpressionNode) ctx.expr().accept(this);
 		ExpressionNode src = new BinaryExpressionNode(left, right, BinaryOperation.CONCATENATION);
 		AssignmentNode an = new AssignmentNode(dest, src);
@@ -359,7 +361,7 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	
 	@Override
 	public Node visitArrayAccess(PipifaxParser.ArrayAccessContext ctx) {
-		LValueNode lvn = (LValueNode) ctx.lvalue().accept(this);
+		ValueNode lvn = (ValueNode) ctx.lvalue().accept(this);
 		ExpressionNode en = (ExpressionNode) ctx.expr().accept(this);
 		ArrayAccessNode aan = new ArrayAccessNode(lvn, en);
 		return aan;
@@ -367,7 +369,7 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	
 	@Override
 	public Node visitStructAccess(PipifaxParser.StructAccessContext ctx) {
-		LValueNode lvn = (LValueNode) ctx.lvalue().accept(this);
+		ValueNode lvn = (ValueNode) ctx.lvalue().accept(this);
 		StructAccessNode san = new StructAccessNode(lvn, ctx.ID().getText());
 		return san;
 	}
@@ -376,6 +378,12 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	public Node visitVarAccess(PipifaxParser.VarAccessContext ctx) {
 		VariableAccessNode van = new VariableAccessNode(ctx.ID().getText());
 		return van;
+	}
+	
+	@Override
+	public Node visitFunctionAccess(PipifaxParser.FunctionAccessContext ctx)
+	{
+		return ctx.funccall().accept(this);
 	}
 
 	@Override
@@ -395,12 +403,6 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	{
 		String str = ctx.STRING().getText();
 		return new StringLiteralNode(str.substring(1, str.length() - 1));
-	}
-
-	@Override
-	public Node visitCall(PipifaxParser.CallContext ctx)
-	{
-		return ctx.funccall().accept(this);
 	}
 
 	@Override

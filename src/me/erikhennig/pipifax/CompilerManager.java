@@ -81,7 +81,6 @@ public class CompilerManager
 		while ((p = findSuitableProgram()) != null)
 		{
 			p.checkSemantics();
-			p.print();
 			removeFromIncludes(p);
 		}
 	}

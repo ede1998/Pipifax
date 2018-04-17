@@ -1,14 +1,14 @@
-package me.erikhennig.pipifax.nodes.expressions.lvalues;
+package me.erikhennig.pipifax.nodes.expressions.values;
 
 import me.erikhennig.pipifax.nodes.StructComponentNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 
-public class StructAccessNode extends LValueNode {
-	private LValueNode m_base;
+public class StructAccessNode extends ValueNode {
+	private ValueNode m_base;
 	private StructComponentNode m_component;
 	private String m_name;
 	
-	public StructAccessNode(LValueNode base, String name)
+	public StructAccessNode(ValueNode base, String name)
 	{		
 		m_base = base;
 		m_name = name;
@@ -29,7 +29,7 @@ public class StructAccessNode extends LValueNode {
 		v.visit(this);
 	}
 	
-	public LValueNode getBase()
+	public ValueNode getBase()
 	{
 		return m_base;
 	}
@@ -37,5 +37,11 @@ public class StructAccessNode extends LValueNode {
 	public String getName()
 	{
 		return m_name;
+	}
+
+	@Override
+	public boolean isLValue()
+	{
+		return m_base.isLValue();
 	}
 }

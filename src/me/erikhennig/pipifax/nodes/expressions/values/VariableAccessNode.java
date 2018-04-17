@@ -1,9 +1,9 @@
-package me.erikhennig.pipifax.nodes.expressions.lvalues;
+package me.erikhennig.pipifax.nodes.expressions.values;
 
 import me.erikhennig.pipifax.nodes.VariableNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 
-public class VariableAccessNode extends LValueNode {
+public class VariableAccessNode extends ValueNode {
 
 	private VariableNode m_variable;
 	private String m_name;
@@ -30,5 +30,11 @@ public class VariableAccessNode extends LValueNode {
 	@Override
 	public void accept(Visitor v) {
 		v.visit(this);
+	}
+
+	@Override
+	public boolean isLValue()
+	{
+		return true;
 	}
 }

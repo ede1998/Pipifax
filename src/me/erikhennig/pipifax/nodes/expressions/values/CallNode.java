@@ -1,11 +1,12 @@
-package me.erikhennig.pipifax.nodes.expressions;
+package me.erikhennig.pipifax.nodes.expressions.values;
 
 import java.util.ArrayList;
 
 import me.erikhennig.pipifax.nodes.FunctionNode;
+import me.erikhennig.pipifax.nodes.expressions.ExpressionNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 
-public class CallNode extends ExpressionNode
+public class CallNode extends ValueNode
 {
 	private String m_name;
 	private FunctionNode m_function;
@@ -46,5 +47,11 @@ public class CallNode extends ExpressionNode
 	public void setFunction(FunctionNode function)
 	{
 		m_function = function;
+	}
+
+	@Override
+	public boolean isLValue()
+	{
+		return false;
 	}
 }

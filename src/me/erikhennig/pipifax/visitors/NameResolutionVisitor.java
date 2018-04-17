@@ -2,8 +2,8 @@ package me.erikhennig.pipifax.visitors;
 
 import me.erikhennig.pipifax.nameresolution.Scope;
 import me.erikhennig.pipifax.nodes.*;
-import me.erikhennig.pipifax.nodes.expressions.CallNode;
-import me.erikhennig.pipifax.nodes.expressions.lvalues.VariableAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.values.CallNode;
+import me.erikhennig.pipifax.nodes.expressions.values.VariableAccessNode;
 import me.erikhennig.pipifax.nodes.types.CustomTypeNode;
 
 public class NameResolutionVisitor extends Visitor
