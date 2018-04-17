@@ -4,9 +4,16 @@ import java.util.ArrayList;
 
 import me.erikhennig.pipifax.antlr.PipifaxBaseVisitor;
 import me.erikhennig.pipifax.antlr.PipifaxParser;
+import me.erikhennig.pipifax.antlr.PipifaxParser.ArrayAccessContext;
+import me.erikhennig.pipifax.antlr.PipifaxParser.StructAccessContext;
+import me.erikhennig.pipifax.antlr.PipifaxParser.VarAccessContext;
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
+import me.erikhennig.pipifax.nodes.expressions.lvalues.ArrayAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.lvalues.LValueNode;
+import me.erikhennig.pipifax.nodes.expressions.lvalues.StructAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.lvalues.VariableAccessNode;
 import me.erikhennig.pipifax.nodes.types.*;
 
 public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
@@ -85,7 +92,7 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		StructNode sn = new StructNode(ctx.ID().getText());
 		for (PipifaxParser.MemberdeclContext pc : ctx.memberdecl())
 		{
-			sn.add(pc.ID().getText(), (TypeNode) pc.type().accept(this));
+			sn.add(pc.ID().getText(), (StructComponentNode) pc.type().accept(this));
 		}
 		return sn;
 	}
@@ -347,44 +354,26 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 
 		return cn;
 	}
-
+	
 	@Override
-	public Node visitLvalue(PipifaxParser.LvalueContext ctx)
-	{
-		ArrayList<SubLValueNode> alslvn = new ArrayList<>();
-		LValueNode lvn = new LValueNode(alslvn);
-
-		ArrayList<ExpressionNode> alen = new ArrayList<>();
-		if (ctx.expr() != null)
-			for (int i = 0; i < ctx.expr().size(); i++)
-			{
-				alen.add((ExpressionNode) ctx.expr(i).accept(this));
-			}
-		SubLValueNode slvn = new SubLValueNode(ctx.ID().getText(), alen);
-		slvn.setParent(lvn);
-		alslvn.add(slvn);
-		for (int i = 0; i < ctx.sublvalues().sublvalue().size(); i++)
-		{
-			slvn = (SubLValueNode) ctx.sublvalues().sublvalue(i).accept(this);
-			// i is always one less than needed position in alslvn because it starts with 1
-			// element
-			slvn.setPredecessor(alslvn.get(i));
-			alslvn.add(slvn);
-		}
-		return lvn;
+	public Node visitArrayAccess(PipifaxParser.ArrayAccessContext ctx) {
+		LValueNode lvn = (LValueNode) ctx.lvalue().accept(this);
+		ExpressionNode en = (ExpressionNode) ctx.expr().accept(this);
+		ArrayAccessNode aan = new ArrayAccessNode(lvn, en);
+		return aan;
 	}
-
+	
 	@Override
-	public Node visitSublvalue(PipifaxParser.SublvalueContext ctx)
-	{
-		ArrayList<ExpressionNode> alen = new ArrayList<>();
-		if (ctx.expr() != null)
-			for (int i = 0; i < ctx.expr().size(); i++)
-			{
-				alen.add((ExpressionNode) ctx.expr(i).accept(this));
-			}
-		SubLValueNode slvn = new SubLValueNode(ctx.ID().getText(), alen);
-		return slvn;
+	public Node visitStructAccess(PipifaxParser.StructAccessContext ctx) {
+		LValueNode lvn = (LValueNode) ctx.lvalue().accept(this);
+		StructAccessNode san = new StructAccessNode(lvn, ctx.ID().getText());
+		return san;
+	}
+	
+	@Override
+	public Node visitVarAccess(PipifaxParser.VarAccessContext ctx) {
+		VariableAccessNode van = new VariableAccessNode(ctx.ID().getText());
+		return van;
 	}
 
 	@Override
@@ -575,27 +564,8 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	@Override
 	public Node visitFunccall(PipifaxParser.FunccallContext ctx)
 	{
-		ArrayList<SubLValueNode> alslvn = new ArrayList<>();
-		CallNode cn = new CallNode(ctx.ID().getText(), alslvn);
+		CallNode cn = new CallNode(ctx.ID().getText());
 
-		// first node
-		ArrayList<ExpressionNode> alen = new ArrayList<>();
-		for (int i = 0; i < ctx.offsets.size(); i++)
-		{
-			alen.add((ExpressionNode) ctx.offsets.get(i).accept(this));
-		}
-		SubLValueNode slvn = new SubLValueNode(ctx.ID().getText(), alen);
-		slvn.setParent(cn);
-		alslvn.add(slvn);
-
-		// all other nodes
-		for (int i = 0; i < ctx.sublvalues().sublvalue().size(); i++)
-		{
-			slvn = (SubLValueNode) ctx.sublvalues().sublvalue(i).accept(this);
-			slvn.setPredecessor(alslvn.get(i));
-			slvn.setParent(cn);
-			alslvn.add(slvn);
-		}
 		if (ctx.expr() != null)
 			for (int i = 0; i < ctx.expr().size(); i++)
 			{

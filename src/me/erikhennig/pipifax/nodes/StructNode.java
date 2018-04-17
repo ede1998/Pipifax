@@ -1,14 +1,12 @@
 package me.erikhennig.pipifax.nodes;
 
-import java.util.Collection;
-import java.util.Hashtable;
+import java.util.LinkedHashMap;
 
-import me.erikhennig.pipifax.nodes.types.TypeNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 
 public class StructNode extends NamedNode
 {
-	private Hashtable<String, TypeNode> m_members = new Hashtable<>();
+	private LinkedHashMap<String, StructComponentNode> m_members = new LinkedHashMap<>();
 
 	public StructNode(String name)
 	{
@@ -21,23 +19,17 @@ public class StructNode extends NamedNode
 		v.visit(this);
 	}
 
-	public boolean add(String name, TypeNode t)
+	public boolean add(String name, StructComponentNode t)
 	{
 		return m_members.put(name, t) != null;
 	}
-
-	public TypeNode getType(String name)
+	
+	public StructComponentNode find(String name)
 	{
-		TypeNode retVal = m_members.get(name);
-		return (retVal != null) ? retVal : TypeNode.getVoid();
+		return m_members.get(name);
 	}
-
-	public Collection<TypeNode> getTypeMembers()
-	{
-		return m_members.values();
-	}
-
-	public Hashtable<String, TypeNode> getMembers()
+	
+	public LinkedHashMap<String, StructComponentNode> getMembers()
 	{
 		return m_members;
 	}

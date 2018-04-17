@@ -1,8 +1,13 @@
 package me.erikhennig.pipifax.visitors;
 
+import me.erikhennig.pipifax.antlr.PipifaxParser.StructAccessContext;
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
+import me.erikhennig.pipifax.nodes.expressions.lvalues.ArrayAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.lvalues.LValueNode;
+import me.erikhennig.pipifax.nodes.expressions.lvalues.StructAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.lvalues.VariableAccessNode;
 import me.erikhennig.pipifax.nodes.types.*;
 
 public abstract class Visitor
@@ -136,7 +141,6 @@ public abstract class Visitor
 	public void visit(CallNode n)
 	{
 		n.getArguments().forEach((subnode) -> subnode.accept(this));
-		n.getChildren().forEach((subnode) -> subnode.accept(this));
 	}
 
 	public void visit(DoubleLiteralNode n)
@@ -147,14 +151,19 @@ public abstract class Visitor
 	{
 	}
 
-	public void visit(LValueNode n)
+	public void visit(ArrayAccessNode n)
 	{
-		n.getChildren().forEach((subnode) -> subnode.accept(this));
+		n.getOffset().accept(this);
+		n.getBase().accept(this);
 	}
 
-	public void visit(SubLValueNode n)
+	public void visit(StructAccessNode n)
 	{
-		n.getOffsets().forEach((subnode) -> subnode.accept(this));
+		n.getBase().accept(this);
+	}
+	
+	public void visit(VariableAccessNode n)
+	{
 	}
 
 	public void visit(StringLiteralNode n)
@@ -166,8 +175,13 @@ public abstract class Visitor
 		n.getStatements().forEach((subnode) -> subnode.accept(this));
 	}
 
-	public void visit(StructNode sn)
+	public void visit(StructNode n)
 	{
-		sn.getTypeMembers().forEach((subnode) -> subnode.accept(this));
+		n.getMembers().forEach((str, subnode) -> subnode.accept(this));
+	}
+	
+	public void visit(StructComponentNode n)
+	{
+		n.getType().accept(this);
 	}
 }

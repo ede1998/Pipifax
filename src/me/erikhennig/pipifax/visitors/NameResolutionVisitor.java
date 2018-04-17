@@ -3,8 +3,10 @@ package me.erikhennig.pipifax.visitors;
 import me.erikhennig.pipifax.nameresolution.Scope;
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.expressions.CallNode;
-import me.erikhennig.pipifax.nodes.expressions.LValueNode;
-import me.erikhennig.pipifax.nodes.expressions.SubLValueNode;
+import me.erikhennig.pipifax.nodes.expressions.lvalues.ArrayAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.lvalues.LValueNode;
+import me.erikhennig.pipifax.nodes.expressions.lvalues.StructAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.lvalues.VariableAccessNode;
 import me.erikhennig.pipifax.nodes.types.CustomTypeNode;
 
 public class NameResolutionVisitor extends Visitor
@@ -51,18 +53,15 @@ public class NameResolutionVisitor extends Visitor
 			m_currentScope = m_currentScope.leaveScope();
 		}
 	}
-
+	
 	@Override
-	public void visit(LValueNode n)
-	{
-		String variableName = n.getChildren().get(0).getName();
-		VariableNode vn = m_currentScope.getVariable(variableName);
+	public void visit(VariableAccessNode n) {
+		VariableNode vn = m_currentScope.getVariable(n.getName());
 		if (vn == null)
-			printErrorAndFail("Name lookup failed for variable " + variableName);
+			printErrorAndFail("Name lookup failed for variable " + n.getName());
 		n.setVariable(vn);
-		super.visit(n);
 	}
-
+	
 	@Override
 	public void visit(ParameterNode n)
 	{

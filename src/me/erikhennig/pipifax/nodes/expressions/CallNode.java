@@ -10,12 +10,10 @@ public class CallNode extends ExpressionNode
 	private String m_name;
 	private FunctionNode m_function;
 	private ArrayList<ExpressionNode> m_arguments = new ArrayList<>();
-	private ArrayList<SubLValueNode> m_children;
 
-	public CallNode(String name, ArrayList<SubLValueNode> children)
+	public CallNode(String name)
 	{
 		m_name = name;
-		m_children = children;
 	}
 
 	public void addArgument(ExpressionNode arg)
@@ -48,10 +46,5 @@ public class CallNode extends ExpressionNode
 	public void setFunction(FunctionNode function)
 	{
 		m_function = function;
-	}
-
-	public ArrayList<SubLValueNode> getChildren()
-	{
-		return m_children;
 	}
 }

@@ -9,6 +9,10 @@ import me.erikhennig.pipifax.nodes.controls.IfNode;
 import me.erikhennig.pipifax.nodes.controls.SwitchNode;
 import me.erikhennig.pipifax.nodes.controls.WhileNode;
 import me.erikhennig.pipifax.nodes.expressions.*;
+import me.erikhennig.pipifax.nodes.expressions.lvalues.ArrayAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.lvalues.LValueNode;
+import me.erikhennig.pipifax.nodes.expressions.lvalues.StructAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.lvalues.VariableAccessNode;
 import me.erikhennig.pipifax.nodes.types.CustomTypeNode;
 import me.erikhennig.pipifax.nodes.types.DoubleTypeNode;
 import me.erikhennig.pipifax.nodes.types.IntTypeNode;
@@ -244,12 +248,6 @@ public class PrintVisitor extends Visitor
 			m_program += "\n";
 		}
 
-		Iterator<SubLValueNode> iter = n.getChildren().iterator();
-		while (iter.hasNext())
-		{
-			m_program += ".";
-			iter.next().accept(this);
-		}
 		m_indentLevel--;
 		m_indentLevel--;
 	}
@@ -294,30 +292,23 @@ public class PrintVisitor extends Visitor
 		m_program += n.getValue();
 	}
 
-	public void visit(LValueNode n)
-	{
-		Iterator<SubLValueNode> iter = n.getChildren().iterator();
-		// ToplevelNode
-		iter.next().accept(this);
-
-		// SublevelNodes
-		while (iter.hasNext())
-		{
-			m_program += ".";
-			iter.next().accept(this);
-		}
-	}
-
 	@Override
-	public void visit(SubLValueNode n)
-	{
+	public void visit(VariableAccessNode n) {
 		m_program += n.getName();
-		for (ExpressionNode en : n.getOffsets())
-		{
-			m_program += "[";
-			en.accept(this);
-			m_program += "]";
-		}
+	}
+	
+	@Override
+	public void visit(ArrayAccessNode n) {
+		super.visit(n);
+		m_program += "[";
+		n.getOffset().accept(this);
+		m_program += "]";
+	}
+	
+	@Override
+	public void visit(StructAccessNode n) {
+		super.visit(n);
+		m_program += "." + n.getName();
 	}
 
 	public void visit(StringLiteralNode n)
@@ -326,18 +317,19 @@ public class PrintVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(StructNode sn)
+	public void visit(StructNode n)
 	{
 		m_indentLevel++;
-		m_program += "Struct: " + sn.getName() + "\n";
-		m_indentLevel++;
-		sn.getMembers().forEach((name, tn) ->
-		{
-			m_program += genSp() + name + " : ";
-			tn.accept(this);
-			m_program += "\n";
-		});
+		m_program += "Struct: " + n.getName() + "\n";
+		super.visit(n);
 		m_indentLevel--;
+	}
+	
+	@Override
+	public void visit(StructComponentNode n) {
+		m_indentLevel++;
+		m_program += genSp() + n.getName() + " : ";
+		super.visit(n);
 		m_indentLevel--;
 	}
 }

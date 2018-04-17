@@ -7,9 +7,14 @@ import me.erikhennig.pipifax.nodes.AssignmentNode;
 import me.erikhennig.pipifax.nodes.FunctionNode;
 import me.erikhennig.pipifax.nodes.Node;
 import me.erikhennig.pipifax.nodes.ParameterNode;
+import me.erikhennig.pipifax.nodes.StructComponentNode;
 import me.erikhennig.pipifax.nodes.VariableNode;
 import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
+import me.erikhennig.pipifax.nodes.expressions.lvalues.ArrayAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.lvalues.LValueNode;
+import me.erikhennig.pipifax.nodes.expressions.lvalues.StructAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.lvalues.VariableAccessNode;
 import me.erikhennig.pipifax.nodes.types.ArrayTypeNode;
 import me.erikhennig.pipifax.nodes.types.CustomTypeNode;
 import me.erikhennig.pipifax.nodes.types.RefTypeNode;
@@ -18,8 +23,7 @@ import me.erikhennig.pipifax.nodes.types.TypeNode;
 public class TypeCheckingVisitor extends Visitor
 {
 	@Override
-	public void visit(BinaryExpressionNode n)
-	{
+	public void visit(BinaryExpressionNode n) {
 		super.visit(n);
 
 		TypeNode lefttype = n.getLeftSide().getType();
@@ -27,8 +31,7 @@ public class TypeCheckingVisitor extends Visitor
 
 		boolean retVal = lefttype.checkType(righttype);
 
-		switch (n.getOperation())
-		{
+		switch (n.getOperation()) {
 		case ADDITION:
 		case SUBTRACTION:
 		case MULTIPLICATION:
@@ -72,8 +75,7 @@ public class TypeCheckingVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(CallNode n)
-	{
+	public void visit(CallNode n) {
 		super.visit(n);
 
 		FunctionNode func = n.getFunction();
@@ -88,8 +90,7 @@ public class TypeCheckingVisitor extends Visitor
 		Iterator<ExpressionNode> exp = arguments.iterator();
 		Iterator<ParameterNode> param = parameters.iterator();
 		if (isValidArgNumber)
-			while (exp.hasNext())
-			{
+			while (exp.hasNext()) {
 				areValidArgs &= param.next().getType().checkType(exp.next().getType());
 			}
 
@@ -100,8 +101,7 @@ public class TypeCheckingVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(AssignmentNode n)
-	{
+	public void visit(AssignmentNode n) {
 		super.visit(n);
 		if (!n.getSource().getType().checkType(n.getDestination().getType()))
 			printErrorAndFail("Type Check Error: Conflicting types in Assignment to "
@@ -109,8 +109,7 @@ public class TypeCheckingVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(VariableNode n)
-	{
+	public void visit(VariableNode n) {
 		super.visit(n);
 		if (n.getExpression() != null)
 			if (!n.getType().checkType(n.getExpression().getType()))
@@ -118,15 +117,13 @@ public class TypeCheckingVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(UnaryExpressionNode n)
-	{
+	public void visit(UnaryExpressionNode n) {
 		super.visit(n);
 
 		boolean retVal = false;
 		TypeNode type = n.getOperand().getType();
 
-		switch (n.getOperation())
-		{
+		switch (n.getOperation()) {
 		case INTCAST:
 			retVal = type.checkType(TypeNode.getInt()) || type.checkType(TypeNode.getDouble());
 			if (retVal)
@@ -154,80 +151,42 @@ public class TypeCheckingVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(LValueNode n)
-	{
+	public void visit(StructAccessNode n) {
 		super.visit(n);
+		if (!(n.getBase().getType() instanceof CustomTypeNode))
+			printErrorAndFail("Type Check Error: Base Type is no struct type");
+		CustomTypeNode basetype = (CustomTypeNode) n.getBase().getType();
 
-		// type = type of last child
-		n.setType(n.getChildren().get(n.getChildren().size() - 1).getType());
+		StructComponentNode scn = basetype.getTypeDefinition().find(n.getName());
+		if (scn == null)
+			printErrorAndFail("Type Check Error: Struct " + basetype.getName() + " has no member " + n.getName());
+		n.setComponent(scn); 
+		n.setType(scn.getType());
 	}
 
 	@Override
-	public void visit(SubLValueNode n)
-	{
+	public void visit(ArrayAccessNode n) {
 		super.visit(n);
-
-		TypeNode predType;
-		if (n.getPredecessor() != null)
-			predType = n.getPredecessor().getType();
-		else if (n.getParent() instanceof LValueNode)
-			predType = ((LValueNode) n.getParent()).getVariable().getType();
+		final TypeNode predType = n.getBase().getType();
+		if (predType instanceof ArrayTypeNode)
+		{
+			final ArrayTypeNode predArray = (ArrayTypeNode) predType;
+			n.setType(predArray.getType());
+		}
 		else
-			predType = ((CallNode) n.getParent()).getFunction().getReturnVariable().getType();
-
-		boolean enoughDimensions = true;
-		boolean onlyIntsInOffsets = true;
-		TypeNode potentialtype = (predType instanceof RefTypeNode) ? ((RefTypeNode) predType).getType() : predType;
-
-		// if first node: leave unchanged; no problem can be deducted here;
-		// else:
-		if (n.getPredecessor() != null)
 		{
-			// if predecessor is customtype everythings all right
-			if (predType instanceof CustomTypeNode)
-			{
-				potentialtype = ((CustomTypeNode) potentialtype).getTypeDefinition().getType(n.getName());
-			}
-			// if predecessor is simple type, we have a problem
-			else
-				potentialtype = TypeNode.getVoid();
+			printErrorAndFail("Type Check Error: No Array Access Node");
 		}
-
-		for (ExpressionNode en : n.getOffsets())
-		{
-			if (!en.getType().checkType(TypeNode.getInt()))
-			{
-				onlyIntsInOffsets = false;
-				break;
-			}
-			if (potentialtype instanceof ArrayTypeNode)
-				potentialtype = ((ArrayTypeNode) potentialtype).getType();
-			else
-			{
-				enoughDimensions = false;
-				break;
-			}
-		}
-		/*
-		 * //necessary if Pointertypes are introduced or sth if (vtn instanceof
-		 * RefTypeNode) { potentialtype = new RefTypeNode(potentialtype); }
-		 */
-		if (enoughDimensions && onlyIntsInOffsets)
-			n.setType(potentialtype);
-
-		if (!enoughDimensions)
-			printErrorAndFail("Type Check Error: LValue-ArrayAccess" + n.getName()
-					+ " requests more dimensions than variable offers");
-		if (!onlyIntsInOffsets)
-			printErrorAndFail("Type Check Error: LValue offsets of " + n.getName() + " has non integer types");
-
-		if (potentialtype.checkType(TypeNode.getVoid()))
-			printErrorAndFail("Type Check Error: LValue " + n.getName() + " does not exist as part of a struct");
 	}
-
+	
 	@Override
-	public void visit(WhileNode n)
-	{
+	public void visit(VariableAccessNode n) {
+		final TypeNode tn = n.getVariable().getType();
+		n.setType((tn instanceof RefTypeNode)? ((RefTypeNode) tn).getType(): tn);
+	}
+	
+	@Override
+	public void visit(WhileNode n) {
 		super.visit(n);
 		TypeNode type = n.getCondition().getType();
 		boolean retVal = type.checkType(TypeNode.getInt());
@@ -236,8 +195,7 @@ public class TypeCheckingVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(IfNode n)
-	{
+	public void visit(IfNode n) {
 		super.visit(n);
 		TypeNode type = n.getCondition().getType();
 		boolean retVal = type.checkType(TypeNode.getInt());
@@ -246,8 +204,7 @@ public class TypeCheckingVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(ForNode n)
-	{
+	public void visit(ForNode n) {
 		super.visit(n);
 		TypeNode type = n.getCondition().getType();
 		boolean retVal = type.checkType(TypeNode.getInt());
@@ -256,8 +213,7 @@ public class TypeCheckingVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(SwitchNode n)
-	{
+	public void visit(SwitchNode n) {
 		super.visit(n);
 
 		TypeNode type = n.getCondition().getType();
@@ -266,8 +222,7 @@ public class TypeCheckingVisitor extends Visitor
 		boolean areCaseTypesCorrect = true;
 
 		int position = 0;
-		for (Iterator<Node> iter = nodes.iterator(); iter.hasNext(); position++)
-		{
+		for (Iterator<Node> iter = nodes.iterator(); iter.hasNext(); position++) {
 			TypeNode casecondtype = ((CaseNode) iter.next()).getCondition().getType();
 			areCaseTypesCorrect &= type.checkType(casecondtype);
 		}

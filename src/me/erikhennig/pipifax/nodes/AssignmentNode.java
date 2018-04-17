@@ -1,7 +1,7 @@
 package me.erikhennig.pipifax.nodes;
 
 import me.erikhennig.pipifax.nodes.expressions.ExpressionNode;
-import me.erikhennig.pipifax.nodes.expressions.LValueNode;
+import me.erikhennig.pipifax.nodes.expressions.lvalues.LValueNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 
 public class AssignmentNode extends Node

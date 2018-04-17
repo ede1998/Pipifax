@@ -46,10 +46,10 @@ assignment: lvalue '=' expr # Assign
       | lvalue '%=' expr # ModuloAssign
       | lvalue '...=' expr # StringAssign
       ;
-lvalue: ID ('[' expr ']')* sublvalues;
-sublvalue: '.' ID ('[' expr ']')*;
-sublvalues: sublvalue*;
- 
+lvalue: ID # VarAccess 
+      | lvalue '[' expr ']' # ArrayAccess
+      | lvalue '.' ID # StructAccess
+      ; 
 expr: INT # IntLiteral
       | DOUBLE # DoubleLiteral
       | STRING # StringLiteral
@@ -76,7 +76,7 @@ expr: INT # IntLiteral
       | expr '&&' expr # And
       | expr '||' expr # Or
       ;
-funccall: ID '(' (expr (',' expr)*)? ')'('[' offsets+=expr ']')* sublvalues; 
+funccall: ID '(' (expr (',' expr)*)? ')'('[' offsets+=expr ']')*; 
 
 NEWLINE : [\r\n]+ -> skip;
 ENDOFFILE : EOF -> skip;
