@@ -1,11 +1,9 @@
 package me.erikhennig.pipifax.visitors;
 
-import me.erikhennig.pipifax.antlr.PipifaxParser.StructAccessContext;
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
 import me.erikhennig.pipifax.nodes.expressions.lvalues.ArrayAccessNode;
-import me.erikhennig.pipifax.nodes.expressions.lvalues.LValueNode;
 import me.erikhennig.pipifax.nodes.expressions.lvalues.StructAccessNode;
 import me.erikhennig.pipifax.nodes.expressions.lvalues.VariableAccessNode;
 import me.erikhennig.pipifax.nodes.types.*;

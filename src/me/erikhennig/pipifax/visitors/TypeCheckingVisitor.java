@@ -12,7 +12,6 @@ import me.erikhennig.pipifax.nodes.VariableNode;
 import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
 import me.erikhennig.pipifax.nodes.expressions.lvalues.ArrayAccessNode;
-import me.erikhennig.pipifax.nodes.expressions.lvalues.LValueNode;
 import me.erikhennig.pipifax.nodes.expressions.lvalues.StructAccessNode;
 import me.erikhennig.pipifax.nodes.expressions.lvalues.VariableAccessNode;
 import me.erikhennig.pipifax.nodes.types.ArrayTypeNode;
@@ -82,8 +81,10 @@ public class TypeCheckingVisitor extends Visitor
 		ArrayList<ParameterNode> parameters = func.getParameterList();
 		ArrayList<ExpressionNode> arguments = n.getArguments();
 
-		n.setType(n.getChildren().get(n.getChildren().size() - 1).getType());
+		//TODO type resolving for function calls
 
+		TypeNode returnType = n.getFunction().getReturnVariable().getType();
+		n.setType((returnType instanceof RefTypeNode)?((RefTypeNode) returnType).getType():returnType);
 		boolean isValidArgNumber = parameters.size() == arguments.size();
 		boolean areValidArgs = true;
 
@@ -104,8 +105,7 @@ public class TypeCheckingVisitor extends Visitor
 	public void visit(AssignmentNode n) {
 		super.visit(n);
 		if (!n.getSource().getType().checkType(n.getDestination().getType()))
-			printErrorAndFail("Type Check Error: Conflicting types in Assignment to "
-					+ n.getDestination().getChildren().get(0).getName());
+			printErrorAndFail("Type Check Error: Conflicting types in Assignment.");
 	}
 
 	@Override

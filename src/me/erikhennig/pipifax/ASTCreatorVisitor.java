@@ -1,12 +1,7 @@
 package me.erikhennig.pipifax;
 
-import java.util.ArrayList;
-
 import me.erikhennig.pipifax.antlr.PipifaxBaseVisitor;
 import me.erikhennig.pipifax.antlr.PipifaxParser;
-import me.erikhennig.pipifax.antlr.PipifaxParser.ArrayAccessContext;
-import me.erikhennig.pipifax.antlr.PipifaxParser.StructAccessContext;
-import me.erikhennig.pipifax.antlr.PipifaxParser.VarAccessContext;
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
@@ -92,9 +87,16 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		StructNode sn = new StructNode(ctx.ID().getText());
 		for (PipifaxParser.MemberdeclContext pc : ctx.memberdecl())
 		{
-			sn.add(pc.ID().getText(), (StructComponentNode) pc.type().accept(this));
+			sn.add(pc.ID().getText(), (StructComponentNode) pc.accept(this));
 		}
 		return sn;
+	}
+	
+	@Override
+	public Node visitMemberdecl(PipifaxParser.MemberdeclContext ctx) {
+		TypeNode tn = (TypeNode) ctx.type().accept(this);
+		StructComponentNode scn = new StructComponentNode(ctx.ID().getText(), tn);
+		return scn;
 	}
 
 	@Override

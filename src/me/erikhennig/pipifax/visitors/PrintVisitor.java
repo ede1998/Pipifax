@@ -1,7 +1,5 @@
 package me.erikhennig.pipifax.visitors;
 
-import java.util.Iterator;
-
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.controls.CaseNode;
 import me.erikhennig.pipifax.nodes.controls.ForNode;
@@ -10,7 +8,6 @@ import me.erikhennig.pipifax.nodes.controls.SwitchNode;
 import me.erikhennig.pipifax.nodes.controls.WhileNode;
 import me.erikhennig.pipifax.nodes.expressions.*;
 import me.erikhennig.pipifax.nodes.expressions.lvalues.ArrayAccessNode;
-import me.erikhennig.pipifax.nodes.expressions.lvalues.LValueNode;
 import me.erikhennig.pipifax.nodes.expressions.lvalues.StructAccessNode;
 import me.erikhennig.pipifax.nodes.expressions.lvalues.VariableAccessNode;
 import me.erikhennig.pipifax.nodes.types.CustomTypeNode;
@@ -330,6 +327,7 @@ public class PrintVisitor extends Visitor
 		m_indentLevel++;
 		m_program += genSp() + n.getName() + " : ";
 		super.visit(n);
+		m_program += "\n";
 		m_indentLevel--;
 	}
 }

@@ -3,9 +3,6 @@ package me.erikhennig.pipifax.visitors;
 import me.erikhennig.pipifax.nameresolution.Scope;
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.expressions.CallNode;
-import me.erikhennig.pipifax.nodes.expressions.lvalues.ArrayAccessNode;
-import me.erikhennig.pipifax.nodes.expressions.lvalues.LValueNode;
-import me.erikhennig.pipifax.nodes.expressions.lvalues.StructAccessNode;
 import me.erikhennig.pipifax.nodes.expressions.lvalues.VariableAccessNode;
 import me.erikhennig.pipifax.nodes.types.CustomTypeNode;
 

@@ -18,6 +18,11 @@ public class StructAccessNode extends LValueNode {
 	{
 		m_component = comp;
 	}
+	
+	public StructComponentNode getComponent()
+	{
+		return m_component;
+	}
 
 	@Override
 	public void accept(Visitor v) {
