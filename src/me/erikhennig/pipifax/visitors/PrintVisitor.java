@@ -22,6 +22,12 @@ import me.erikhennig.pipifax.nodes.types.VoidTypeNode;
 
 public class PrintVisitor extends Visitor
 {
+	@Override
+	protected String getName()
+	{
+		return "printing";
+	}
+
 	private String m_program = "";
 	private int m_indentLevel = -1;
 
@@ -291,20 +297,23 @@ public class PrintVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(VariableAccessNode n) {
+	public void visit(VariableAccessNode n)
+	{
 		m_program += n.getName();
 	}
-	
+
 	@Override
-	public void visit(ArrayAccessNode n) {
+	public void visit(ArrayAccessNode n)
+	{
 		n.getBase().accept(this);
 		m_program += "[";
 		n.getOffset().accept(this);
 		m_program += "]";
 	}
-	
+
 	@Override
-	public void visit(StructAccessNode n) {
+	public void visit(StructAccessNode n)
+	{
 		super.visit(n);
 		m_program += "." + n.getName();
 	}
@@ -322,9 +331,10 @@ public class PrintVisitor extends Visitor
 		super.visit(n);
 		m_indentLevel--;
 	}
-	
+
 	@Override
-	public void visit(StructComponentNode n) {
+	public void visit(StructComponentNode n)
+	{
 		m_indentLevel++;
 		m_program += genSp() + n.getName() + " : ";
 		super.visit(n);

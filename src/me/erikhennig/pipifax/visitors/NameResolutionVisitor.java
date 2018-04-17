@@ -8,6 +8,12 @@ import me.erikhennig.pipifax.nodes.types.CustomTypeNode;
 
 public class NameResolutionVisitor extends Visitor
 {
+	@Override
+	protected String getName()
+	{
+		return "name resolution";
+	}
+
 	private Scope m_currentScope;
 	private boolean m_onlyAddFunctions = true; // used for duplicate traversal to lookup global function names before
 												// they are defined
@@ -31,7 +37,7 @@ public class NameResolutionVisitor extends Visitor
 	{
 		FunctionNode fn = m_currentScope.getFunction(n.getName());
 		if (fn == null)
-			printErrorAndFail("Name lookup failed for function " + n.getName());
+			printErrorAndFail(n, "Name lookup failed for function " + n.getName());
 		n.setFunction(fn);
 		super.visit(n);
 	}
@@ -42,28 +48,30 @@ public class NameResolutionVisitor extends Visitor
 		if (m_onlyAddFunctions)
 		{
 			if (!m_currentScope.register(n))
-				printErrorAndFail("Name already defined for function " + n.getName());
-		} else
+				printErrorAndFail(n, "Name already defined for function " + n.getName());
+		}
+		else
 		{
 			m_currentScope = m_currentScope.enterScope();
 			super.visit(n);
 			m_currentScope = m_currentScope.leaveScope();
 		}
 	}
-	
+
 	@Override
-	public void visit(VariableAccessNode n) {
+	public void visit(VariableAccessNode n)
+	{
 		VariableNode vn = m_currentScope.getVariable(n.getName());
 		if (vn == null)
-			printErrorAndFail("Name lookup failed for variable " + n.getName());
+			printErrorAndFail(n, "Name lookup failed for variable " + n.getName());
 		n.setVariable(vn);
 	}
-	
+
 	@Override
 	public void visit(ParameterNode n)
 	{
 		if (!m_currentScope.register(n))
-			printErrorAndFail("Name already defined for parameter " + n.getName());
+			printErrorAndFail(n, "Name already defined for parameter " + n.getName());
 	}
 
 	@Override
@@ -73,7 +81,7 @@ public class NameResolutionVisitor extends Visitor
 			return;
 		super.visit(n);
 		if (!m_currentScope.register(n))
-			printErrorAndFail("Name already defined for variable " + n.getName());
+			printErrorAndFail(n, "Name already defined for variable " + n.getName());
 	}
 
 	public void visit(BlockNode n)
@@ -84,21 +92,21 @@ public class NameResolutionVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(StructNode sn)
+	public void visit(StructNode n)
 	{
 		if (m_onlyAddFunctions)
 			return;
-		if (!m_currentScope.register(sn))
-			printErrorAndFail("Name already defined for struct " + sn.getName());
-		super.visit(sn);
+		super.visit(n);
+		if (!m_currentScope.register(n))
+			printErrorAndFail(n, "Name already defined for struct " + n.getName());
 	}
 
 	@Override
-	public void visit(CustomTypeNode ctn)
+	public void visit(CustomTypeNode n)
 	{
-		StructNode sn = m_currentScope.getStruct(ctn.getName());
+		StructNode sn = m_currentScope.getStruct(n.getName());
 		if (sn == null)
-			printErrorAndFail("Name lookup failed for struct " + ctn.getName());
-		ctn.setTypeDefinition(sn);
+			printErrorAndFail(n, "Name lookup failed for struct " + n.getName());
+		n.setTypeDefinition(sn);
 	}
 }

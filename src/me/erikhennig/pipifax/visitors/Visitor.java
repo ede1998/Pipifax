@@ -13,14 +13,20 @@ public abstract class Visitor
 {
 	private boolean m_success = true;
 
+	protected String getName()
+	{
+		return "defaultvisitor";
+	}
+
 	public boolean wasSuccessful()
 	{
 		return m_success;
 	}
 
-	protected void printErrorAndFail(String errstr)
+	protected void printErrorAndFail(Node n, String errstr)
 	{
-		System.err.println(errstr);
+		System.err.println(
+				"Error in " + this.getName() + " (" + n.getLine() + ", " + n.getPositionInLine() + "): " + errstr);
 		m_success = false;
 	}
 
@@ -160,7 +166,7 @@ public abstract class Visitor
 	{
 		n.getBase().accept(this);
 	}
-	
+
 	public void visit(VariableAccessNode n)
 	{
 	}
@@ -178,7 +184,7 @@ public abstract class Visitor
 	{
 		n.getMembers().forEach((str, subnode) -> subnode.accept(this));
 	}
-	
+
 	public void visit(StructComponentNode n)
 	{
 		n.getType().accept(this);

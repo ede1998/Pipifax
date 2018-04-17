@@ -24,6 +24,12 @@ import me.erikhennig.pipifax.nodes.types.TypeNode;
 public class TypeCheckingVisitor extends Visitor
 {
 	@Override
+	protected String getName()
+	{
+		return "type checking";
+	}
+
+	@Override
 	public void visit(BinaryExpressionNode n)
 	{
 		super.visit(n);
@@ -73,8 +79,7 @@ public class TypeCheckingVisitor extends Visitor
 		}
 
 		if (!retVal)
-			printErrorAndFail(
-					"Type Check Error: Binary Expression " + n.getOperationAsString() + " can't take those types");
+			printErrorAndFail(n, "Binary expression " + n.getOperationAsString() + " doesn't accept those types");
 	}
 
 	@Override
@@ -101,9 +106,9 @@ public class TypeCheckingVisitor extends Visitor
 			}
 
 		if (!areValidArgs)
-			printErrorAndFail("Type Check Error: Invalid argument types for function call");
+			printErrorAndFail(n, "Invalid argument types for function call");
 		if (!isValidArgNumber)
-			printErrorAndFail("Type Check Error: Invalid number of arguments for function call");
+			printErrorAndFail(n, "Invalid number of arguments for function call");
 	}
 
 	@Override
@@ -111,9 +116,9 @@ public class TypeCheckingVisitor extends Visitor
 	{
 		super.visit(n);
 		if (!n.getSource().getType().checkType(n.getDestination().getType()))
-			printErrorAndFail("Type Check Error: Conflicting types in Assignment.");
+			printErrorAndFail(n, "Conflicting types in assignment.");
 		if (!n.getDestination().isLValue())
-			printErrorAndFail("Type Check Error: Assigned side is no lvalue");
+			printErrorAndFail(n, "Assigned side is no lvalue");
 	}
 
 	@Override
@@ -122,7 +127,7 @@ public class TypeCheckingVisitor extends Visitor
 		super.visit(n);
 		if (n.getExpression() != null)
 			if (!n.getType().checkType(n.getExpression().getType()))
-				printErrorAndFail("Type Check Error: Conflicting types in initial Assignment to " + n.getName());
+				printErrorAndFail(n, "Conflicting types in initial assignment to " + n.getName());
 	}
 
 	@Override
@@ -158,7 +163,7 @@ public class TypeCheckingVisitor extends Visitor
 		}
 
 		if (!retVal)
-			printErrorAndFail("Type Check Error: Unary Expression can't take this type");
+			printErrorAndFail(n, "Unary expression doesn't accept this type");
 	}
 
 	@Override
@@ -166,12 +171,12 @@ public class TypeCheckingVisitor extends Visitor
 	{
 		super.visit(n);
 		if (!(n.getBase().getType() instanceof CustomTypeNode))
-			printErrorAndFail("Type Check Error: Base Type is no struct type");
+			printErrorAndFail(n, "Base type is no struct type");
 		CustomTypeNode basetype = (CustomTypeNode) n.getBase().getType();
 
 		StructComponentNode scn = basetype.getTypeDefinition().find(n.getName());
 		if (scn == null)
-			printErrorAndFail("Type Check Error: Struct " + basetype.getName() + " has no member " + n.getName());
+			printErrorAndFail(n, "Struct " + basetype.getName() + " has no member " + n.getName());
 		n.setComponent(scn);
 		n.setType(scn.getType());
 	}
@@ -192,7 +197,7 @@ public class TypeCheckingVisitor extends Visitor
 		}
 		else
 		{
-			printErrorAndFail("Type Check Error: No Array Access Node");
+			printErrorAndFail(n, "Not an array access node");
 		}
 	}
 
@@ -210,7 +215,7 @@ public class TypeCheckingVisitor extends Visitor
 		TypeNode type = n.getCondition().getType();
 		boolean retVal = type.checkType(TypeNode.getInt());
 		if (!retVal)
-			printErrorAndFail("Type Check Error: While Node needs int type");
+			printErrorAndFail(n, "While needs int type as condition");
 	}
 
 	@Override
@@ -220,7 +225,7 @@ public class TypeCheckingVisitor extends Visitor
 		TypeNode type = n.getCondition().getType();
 		boolean retVal = type.checkType(TypeNode.getInt());
 		if (!retVal)
-			printErrorAndFail("Type Check Error: If Node needs int type");
+			printErrorAndFail(n, "If needs int type as condition");
 	}
 
 	@Override
@@ -230,7 +235,7 @@ public class TypeCheckingVisitor extends Visitor
 		TypeNode type = n.getCondition().getType();
 		boolean retVal = type.checkType(TypeNode.getInt());
 		if (!retVal)
-			printErrorAndFail("Type Check Error: For Node needs int type");
+			printErrorAndFail(n, "For needs int type as condition");
 	}
 
 	@Override
@@ -251,8 +256,8 @@ public class TypeCheckingVisitor extends Visitor
 		}
 
 		if (!retVal)
-			printErrorAndFail("Type Check Error: Switch Node needs int or string type");
+			printErrorAndFail(n, "Switch needs int or string type as condition");
 		if (!areCaseTypesCorrect)
-			printErrorAndFail("Type Check Error: Case Type of case " + position + " differs from switch type");
+			printErrorAndFail(n, "Case type of case " + position + " differs from switch type");
 	}
 }

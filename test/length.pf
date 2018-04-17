@@ -1,0 +1,8 @@
+func length(str string) int
+{
+  var tmp string = "";
+  for (length = 0; (tmp <=> str) != 0; length += 1)
+  {
+    tmp ...= str[length];
+  }
+}

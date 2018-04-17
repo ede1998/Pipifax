@@ -2,7 +2,6 @@ package me.erikhennig.pipifax;
 
 import me.erikhennig.pipifax.antlr.PipifaxBaseVisitor;
 import me.erikhennig.pipifax.antlr.PipifaxParser;
-import me.erikhennig.pipifax.antlr.PipifaxParser.FunctionAccessContext;
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
@@ -56,6 +55,9 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		BlockNode bn = new BlockNode();
 		Node n = ctx.statement().accept(this);
 		bn.addStatement(n);
+
+		bn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return bn;
 	}
 
@@ -69,6 +71,8 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 			bn.addStatement(n);
 		}
 
+		bn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return bn;
 	}
 
@@ -79,8 +83,11 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		ExpressionNode en = null;
 		if (ctx.expr() != null)
 			en = (ExpressionNode) ctx.expr().accept(this);
-		VariableNode d = new VariableNode(ctx.ID().getText(), t, en);
-		return d;
+		VariableNode vn = new VariableNode(ctx.ID().getText(), t, en);
+
+		vn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return vn;
 	}
 
 	@Override
@@ -91,13 +98,20 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		{
 			sn.add(pc.ID().getText(), (StructComponentNode) pc.accept(this));
 		}
+
+		sn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return sn;
 	}
-	
+
 	@Override
-	public Node visitMemberdecl(PipifaxParser.MemberdeclContext ctx) {
+	public Node visitMemberdecl(PipifaxParser.MemberdeclContext ctx)
+	{
 		TypeNode tn = (TypeNode) ctx.type().accept(this);
 		StructComponentNode scn = new StructComponentNode(ctx.ID().getText(), tn);
+
+		scn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return scn;
 	}
 
@@ -125,6 +139,9 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		TypeNode tn = (TypeNode) ctx.type().accept(this);
 		int size = Integer.parseInt(ctx.INT().getText());
 		SizedArrayTypeNode satn = new SizedArrayTypeNode(tn, size);
+
+		satn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return satn;
 	}
 
@@ -132,6 +149,9 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	public Node visitCustomType(PipifaxParser.CustomTypeContext ctx)
 	{
 		CustomTypeNode ctn = new CustomTypeNode(ctx.ID().getText());
+
+		ctn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return ctn;
 	}
 
@@ -146,6 +166,9 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 			ParameterNode pn = (ParameterNode) pc.accept(this);
 			fn.addParameter(pn);
 		}
+
+		fn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return fn;
 	}
 
@@ -161,6 +184,9 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		String name = ((PipifaxParser.ParameterContext) ctx.getParent()).ID().getText();
 		TypeNode tn = (TypeNode) ctx.type().accept(this);
 		ParameterNode pn = new ParameterNode(name, tn);
+
+		pn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return pn;
 	}
 
@@ -171,6 +197,9 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		TypeNode tn = (TypeNode) ctx.type().accept(this);
 		RefTypeNode rtn = new RefTypeNode(tn);
 		ParameterNode pn = new ParameterNode(name, rtn);
+
+		pn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return pn;
 	}
 
@@ -182,6 +211,9 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		UnsizedArrayTypeNode uatn = new UnsizedArrayTypeNode(tn);
 		RefTypeNode rtn = new RefTypeNode(uatn);
 		ParameterNode pn = new ParameterNode(name, rtn);
+
+		pn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return pn;
 	}
 
@@ -200,6 +232,9 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 			bn1 = new BlockNode();
 		}
 		IfNode in = new IfNode(en, bn, bn1);
+
+		in.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return in;
 	}
 
@@ -209,6 +244,9 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		ExpressionNode en = (ExpressionNode) ctx.expr().accept(this);
 		BlockNode bn = (BlockNode) ctx.statements().accept(this);
 		WhileNode wn = new WhileNode(en, bn);
+
+		wn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return wn;
 	}
 
@@ -218,6 +256,9 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		ValueNode dest = (ValueNode) ctx.lvalue().accept(this);
 		ExpressionNode src = (ExpressionNode) ctx.expr().accept(this);
 		AssignmentNode an = new AssignmentNode(dest, src);
+
+		an.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return an;
 	}
 
@@ -229,6 +270,9 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		ExpressionNode right = (ExpressionNode) ctx.expr().accept(this);
 		ExpressionNode src = new BinaryExpressionNode(left, right, BinaryOperation.ADDITION);
 		AssignmentNode an = new AssignmentNode(dest, src);
+
+		an.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return an;
 	}
 
@@ -240,6 +284,9 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		ExpressionNode right = (ExpressionNode) ctx.expr().accept(this);
 		ExpressionNode src = new BinaryExpressionNode(left, right, BinaryOperation.SUBTRACTION);
 		AssignmentNode an = new AssignmentNode(dest, src);
+
+		an.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return an;
 	}
 
@@ -251,6 +298,9 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		ExpressionNode right = (ExpressionNode) ctx.expr().accept(this);
 		ExpressionNode src = new BinaryExpressionNode(left, right, BinaryOperation.MULTIPLICATION);
 		AssignmentNode an = new AssignmentNode(dest, src);
+
+		an.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return an;
 	}
 
@@ -262,6 +312,9 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		ExpressionNode right = (ExpressionNode) ctx.expr().accept(this);
 		ExpressionNode src = new BinaryExpressionNode(left, right, BinaryOperation.DIVISION);
 		AssignmentNode an = new AssignmentNode(dest, src);
+
+		an.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return an;
 	}
 
@@ -273,6 +326,9 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		ExpressionNode right = (ExpressionNode) ctx.expr().accept(this);
 		ExpressionNode src = new BinaryExpressionNode(left, right, BinaryOperation.AND);
 		AssignmentNode an = new AssignmentNode(dest, src);
+
+		an.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return an;
 	}
 
@@ -284,6 +340,9 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		ExpressionNode right = (ExpressionNode) ctx.expr().accept(this);
 		ExpressionNode src = new BinaryExpressionNode(left, right, BinaryOperation.OR);
 		AssignmentNode an = new AssignmentNode(dest, src);
+
+		an.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return an;
 	}
 
@@ -295,6 +354,9 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		ExpressionNode right = (ExpressionNode) ctx.expr().accept(this);
 		ExpressionNode src = new BinaryExpressionNode(left, right, BinaryOperation.MODULO);
 		AssignmentNode an = new AssignmentNode(dest, src);
+
+		an.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return an;
 	}
 
@@ -306,6 +368,9 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		ExpressionNode right = (ExpressionNode) ctx.expr().accept(this);
 		ExpressionNode src = new BinaryExpressionNode(left, right, BinaryOperation.CONCATENATION);
 		AssignmentNode an = new AssignmentNode(dest, src);
+
+		an.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return an;
 	}
 
@@ -321,6 +386,9 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 			an2 = (AssignmentNode) ctx.loopedassign.accept(this);
 		BlockNode bn = (BlockNode) ctx.statements().accept(this);
 		ForNode fn = new ForNode(an1, en, an2, bn);
+
+		fn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return fn;
 	}
 
@@ -345,6 +413,8 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 
 		SwitchNode sn = new SwitchNode(en, bn2, bn);
 
+		sn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return sn;
 	}
 
@@ -356,30 +426,44 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 
 		CaseNode cn = new CaseNode(en, bn);
 
+		cn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return cn;
 	}
-	
+
 	@Override
-	public Node visitArrayAccess(PipifaxParser.ArrayAccessContext ctx) {
+	public Node visitArrayAccess(PipifaxParser.ArrayAccessContext ctx)
+	{
 		ValueNode lvn = (ValueNode) ctx.lvalue().accept(this);
 		ExpressionNode en = (ExpressionNode) ctx.expr().accept(this);
 		ArrayAccessNode aan = new ArrayAccessNode(lvn, en);
+
+		aan.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return aan;
 	}
-	
+
 	@Override
-	public Node visitStructAccess(PipifaxParser.StructAccessContext ctx) {
+	public Node visitStructAccess(PipifaxParser.StructAccessContext ctx)
+	{
 		ValueNode lvn = (ValueNode) ctx.lvalue().accept(this);
 		StructAccessNode san = new StructAccessNode(lvn, ctx.ID().getText());
+
+		san.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return san;
 	}
-	
+
 	@Override
-	public Node visitVarAccess(PipifaxParser.VarAccessContext ctx) {
+	public Node visitVarAccess(PipifaxParser.VarAccessContext ctx)
+	{
 		VariableAccessNode van = new VariableAccessNode(ctx.ID().getText());
+
+		van.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
 		return van;
 	}
-	
+
 	@Override
 	public Node visitFunctionAccess(PipifaxParser.FunctionAccessContext ctx)
 	{
@@ -389,20 +473,32 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	@Override
 	public Node visitIntLiteral(PipifaxParser.IntLiteralContext ctx)
 	{
-		return new IntegerLiteralNode(Integer.parseInt(ctx.INT().getText()));
+		IntegerLiteralNode iln = new IntegerLiteralNode(Integer.parseInt(ctx.INT().getText()));
+
+		iln.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return iln;
 	}
 
 	@Override
 	public Node visitDoubleLiteral(PipifaxParser.DoubleLiteralContext ctx)
 	{
-		return new DoubleLiteralNode(Double.parseDouble(ctx.DOUBLE().getText()));
+		DoubleLiteralNode dln = new DoubleLiteralNode(Double.parseDouble(ctx.DOUBLE().getText()));
+
+		dln.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return dln;
 	}
 
 	@Override
 	public Node visitStringLiteral(PipifaxParser.StringLiteralContext ctx)
 	{
 		String str = ctx.STRING().getText();
-		return new StringLiteralNode(str.substring(1, str.length() - 1));
+		StringLiteralNode sln = new StringLiteralNode(str.substring(1, str.length() - 1));
+
+		sln.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return sln;
 	}
 
 	@Override
@@ -422,7 +518,11 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	{
 		ExpressionNode l = (ExpressionNode) ctx.expr(0).accept(this);
 		ExpressionNode r = (ExpressionNode) ctx.expr(1).accept(this);
-		return new BinaryExpressionNode(l, r, BinaryOperation.ADDITION);
+		BinaryExpressionNode ben = new BinaryExpressionNode(l, r, BinaryOperation.ADDITION);
+
+		ben.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return ben;
 	}
 
 	@Override
@@ -430,7 +530,11 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	{
 		ExpressionNode l = (ExpressionNode) ctx.expr(0).accept(this);
 		ExpressionNode r = (ExpressionNode) ctx.expr(1).accept(this);
-		return new BinaryExpressionNode(l, r, BinaryOperation.SUBTRACTION);
+		BinaryExpressionNode ben = new BinaryExpressionNode(l, r, BinaryOperation.SUBTRACTION);
+
+		ben.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return ben;
 	}
 
 	@Override
@@ -438,7 +542,11 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	{
 		ExpressionNode l = (ExpressionNode) ctx.expr(0).accept(this);
 		ExpressionNode r = (ExpressionNode) ctx.expr(1).accept(this);
-		return new BinaryExpressionNode(l, r, BinaryOperation.MULTIPLICATION);
+		BinaryExpressionNode ben = new BinaryExpressionNode(l, r, BinaryOperation.MULTIPLICATION);
+
+		ben.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return ben;
 	}
 
 	@Override
@@ -446,7 +554,11 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	{
 		ExpressionNode l = (ExpressionNode) ctx.expr(0).accept(this);
 		ExpressionNode r = (ExpressionNode) ctx.expr(1).accept(this);
-		return new BinaryExpressionNode(l, r, BinaryOperation.DIVISION);
+		BinaryExpressionNode ben = new BinaryExpressionNode(l, r, BinaryOperation.DIVISION);
+
+		ben.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return ben;
 	}
 
 	@Override
@@ -454,7 +566,11 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	{
 		ExpressionNode l = (ExpressionNode) ctx.expr(0).accept(this);
 		ExpressionNode r = (ExpressionNode) ctx.expr(1).accept(this);
-		return new BinaryExpressionNode(l, r, BinaryOperation.MODULO);
+		BinaryExpressionNode ben = new BinaryExpressionNode(l, r, BinaryOperation.MODULO);
+
+		ben.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return ben;
 	}
 
 	@Override
@@ -462,14 +578,22 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	{
 		ExpressionNode l = (ExpressionNode) ctx.expr(0).accept(this);
 		ExpressionNode r = (ExpressionNode) ctx.expr(1).accept(this);
-		return new BinaryExpressionNode(l, r, BinaryOperation.CONCATENATION);
+		BinaryExpressionNode ben = new BinaryExpressionNode(l, r, BinaryOperation.CONCATENATION);
+
+		ben.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return ben;
 	}
 
 	@Override
 	public Node visitNegation(PipifaxParser.NegationContext ctx)
 	{
 		ExpressionNode op = (ExpressionNode) ctx.expr().accept(this);
-		return new UnaryExpressionNode(op, UnaryOperation.NEGATION);
+		UnaryExpressionNode uen = new UnaryExpressionNode(op, UnaryOperation.NEGATION);
+
+		uen.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return uen;
 	}
 
 	@Override
@@ -477,7 +601,11 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	{
 		ExpressionNode l = (ExpressionNode) ctx.expr(0).accept(this);
 		ExpressionNode r = (ExpressionNode) ctx.expr(1).accept(this);
-		return new BinaryExpressionNode(l, r, BinaryOperation.EQUALS);
+		BinaryExpressionNode ben = new BinaryExpressionNode(l, r, BinaryOperation.EQUALS);
+
+		ben.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return ben;
 	}
 
 	@Override
@@ -485,14 +613,22 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	{
 		ExpressionNode l = (ExpressionNode) ctx.expr(0).accept(this);
 		ExpressionNode r = (ExpressionNode) ctx.expr(1).accept(this);
-		return new BinaryExpressionNode(l, r, BinaryOperation.NOTEQUALS);
+		BinaryExpressionNode ben = new BinaryExpressionNode(l, r, BinaryOperation.NOTEQUALS);
+
+		ben.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return ben;
 	}
 
 	@Override
 	public Node visitNot(PipifaxParser.NotContext ctx)
 	{
 		ExpressionNode op = (ExpressionNode) ctx.expr().accept(this);
-		return new UnaryExpressionNode(op, UnaryOperation.NOT);
+		UnaryExpressionNode uen = new UnaryExpressionNode(op, UnaryOperation.NOT);
+
+		uen.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return uen;
 	}
 
 	@Override
@@ -500,7 +636,11 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	{
 		ExpressionNode l = (ExpressionNode) ctx.expr(0).accept(this);
 		ExpressionNode r = (ExpressionNode) ctx.expr(1).accept(this);
-		return new BinaryExpressionNode(l, r, BinaryOperation.OR);
+		BinaryExpressionNode ben = new BinaryExpressionNode(l, r, BinaryOperation.OR);
+
+		ben.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return ben;
 	}
 
 	@Override
@@ -508,7 +648,11 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	{
 		ExpressionNode l = (ExpressionNode) ctx.expr(0).accept(this);
 		ExpressionNode r = (ExpressionNode) ctx.expr(1).accept(this);
-		return new BinaryExpressionNode(l, r, BinaryOperation.AND);
+		BinaryExpressionNode ben = new BinaryExpressionNode(l, r, BinaryOperation.AND);
+
+		ben.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return ben;
 	}
 
 	@Override
@@ -516,7 +660,11 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	{
 		ExpressionNode l = (ExpressionNode) ctx.expr(0).accept(this);
 		ExpressionNode r = (ExpressionNode) ctx.expr(1).accept(this);
-		return new BinaryExpressionNode(l, r, BinaryOperation.GREATER);
+		BinaryExpressionNode ben = new BinaryExpressionNode(l, r, BinaryOperation.GREATER);
+
+		ben.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return ben;
 	}
 
 	@Override
@@ -524,7 +672,11 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	{
 		ExpressionNode l = (ExpressionNode) ctx.expr(0).accept(this);
 		ExpressionNode r = (ExpressionNode) ctx.expr(1).accept(this);
-		return new BinaryExpressionNode(l, r, BinaryOperation.GREATEROREQUALS);
+		BinaryExpressionNode ben = new BinaryExpressionNode(l, r, BinaryOperation.GREATEROREQUALS);
+
+		ben.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return ben;
 	}
 
 	@Override
@@ -532,7 +684,11 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	{
 		ExpressionNode l = (ExpressionNode) ctx.expr(0).accept(this);
 		ExpressionNode r = (ExpressionNode) ctx.expr(1).accept(this);
-		return new BinaryExpressionNode(l, r, BinaryOperation.LESS);
+		BinaryExpressionNode ben = new BinaryExpressionNode(l, r, BinaryOperation.LESS);
+
+		ben.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return ben;
 	}
 
 	@Override
@@ -540,7 +696,11 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	{
 		ExpressionNode l = (ExpressionNode) ctx.expr(0).accept(this);
 		ExpressionNode r = (ExpressionNode) ctx.expr(1).accept(this);
-		return new BinaryExpressionNode(l, r, BinaryOperation.LESSOREQUALS);
+		BinaryExpressionNode ben = new BinaryExpressionNode(l, r, BinaryOperation.LESSOREQUALS);
+
+		ben.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return ben;
 	}
 
 	@Override
@@ -548,21 +708,33 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	{
 		ExpressionNode l = (ExpressionNode) ctx.expr(0).accept(this);
 		ExpressionNode r = (ExpressionNode) ctx.expr(1).accept(this);
-		return new BinaryExpressionNode(l, r, BinaryOperation.STRINGCOMPARE);
+		BinaryExpressionNode ben = new BinaryExpressionNode(l, r, BinaryOperation.STRINGCOMPARE);
+
+		ben.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return ben;
 	}
 
 	@Override
 	public Node visitIntCast(PipifaxParser.IntCastContext ctx)
 	{
-		ExpressionNode en = (ExpressionNode) ctx.expr().accept(this);
-		return new UnaryExpressionNode(en, UnaryOperation.INTCAST);
+		ExpressionNode op = (ExpressionNode) ctx.expr().accept(this);
+		UnaryExpressionNode uen = new UnaryExpressionNode(op, UnaryOperation.INTCAST);
+
+		uen.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return uen;
 	}
 
 	@Override
 	public Node visitDoubleCast(PipifaxParser.DoubleCastContext ctx)
 	{
-		ExpressionNode en = (ExpressionNode) ctx.expr().accept(this);
-		return new UnaryExpressionNode(en, UnaryOperation.DOUBLECAST);
+		ExpressionNode op = (ExpressionNode) ctx.expr().accept(this);
+		UnaryExpressionNode uen = new UnaryExpressionNode(op, UnaryOperation.DOUBLECAST);
+
+		uen.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return uen;
 	}
 
 	@Override
@@ -575,6 +747,8 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 			{
 				cn.addArgument((ExpressionNode) ctx.expr(i).accept(this));
 			}
+
+		cn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
 
 		return cn;
 	}
