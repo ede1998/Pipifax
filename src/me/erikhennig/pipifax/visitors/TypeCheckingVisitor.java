@@ -18,6 +18,7 @@ import me.erikhennig.pipifax.nodes.expressions.values.VariableAccessNode;
 import me.erikhennig.pipifax.nodes.types.ArrayTypeNode;
 import me.erikhennig.pipifax.nodes.types.CustomTypeNode;
 import me.erikhennig.pipifax.nodes.types.RefTypeNode;
+import me.erikhennig.pipifax.nodes.types.StringTypeNode;
 import me.erikhennig.pipifax.nodes.types.TypeNode;
 
 public class TypeCheckingVisitor extends Visitor
@@ -184,6 +185,10 @@ public class TypeCheckingVisitor extends Visitor
 		{
 			final ArrayTypeNode predArray = (ArrayTypeNode) predType;
 			n.setType(predArray.getType());
+		}
+		else if (predType instanceof StringTypeNode)
+		{
+			n.setType(TypeNode.getString());
 		}
 		else
 		{

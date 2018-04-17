@@ -1,0 +1,5 @@
+var str string = "hello World!";
+func string_access() string {
+  string_access = str[0];
+  str[1][0] = "a";
+}

@@ -1,0 +1,24 @@
+struct myretstruct {
+  i int;
+  v string;
+}
+
+func funcsubvalue(zahl int, wort string) {
+  var str myretstruct;
+  str = givememore()[0];
+  zahl = giveme().i;
+  wort = givememore()[2].v;
+  #giveme().v = "test";
+}
+
+func giveme() myretstruct {
+  giveme.i = 12;
+  giveme.v = "Testeras";
+}
+
+func givememore() [5]myretstruct {
+   givememore[0].i = 12;
+   givememore[0].v = "Aeons Torn";
+   
+   givememore[2].v = "blabla";
+}
