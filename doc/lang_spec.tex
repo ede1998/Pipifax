@@ -1,0 +1,49 @@
+\title{Pipifax Language Specification}
+\author{
+        Erik Hennig \\
+                Dualer Student Informationstechnik\\
+        Duale Hochschule Baden-W\"urttemberg\\
+        Stuttgart \underline{Germany}
+}
+\date{\today}
+
+\documentclass[a4paper, 12pt, english]{article}
+\usepackage{hyperref}
+\usepackage{listings}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+\tableofcontents
+\pagebreak
+
+
+\section{Introduction}
+Pipifax is a language designed for learning purposes. It exists, so students can learn to write a compiler for it. The original specification was published in German and can be found at \url{http://compilerbau.vavoor.de/?file=4-semester/pipifax-die-sprache} \\
+This language specification is based on the original specification and includes additional features into the language.\\
+
+Placeholder: \verb|$placeholder$|
+\section{Basic structure}\label{basic structure}
+A Pipifax program is divided into two major parts.\\
+It starts with a number of include statements. Each statement adds an additional source file that is neccessary to compile the program.\\
+The second part is the program itself. It can contain variables declarations, struct declarations and function declarations.
+
+\subsection{Include statements}
+Include statements look like this:
+\begin{lstlisting}
+<include "$path_to_program$" >
+\end{lstlisting}
+\verb|$path_to_program$| is any valid path to a file in the filesystem. It does not matter whether the path is relative or absolute.
+When compiling, all includes are compiled (if found). If these includes have any dependencies, those are compiled as well until all dependencies are resolved.
+\section{Types}\label{types}
+
+
+\section{Conclusions}\label{conclusions}
+We worked hard, and achieved very little.
+
+\bibliographystyle{abbrv}
+\bibliography{main}
+
+\end{document}
