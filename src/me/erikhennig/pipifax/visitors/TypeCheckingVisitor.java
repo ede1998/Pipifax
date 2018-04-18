@@ -217,6 +217,16 @@ public class TypeCheckingVisitor extends Visitor
 		if (!retVal)
 			printErrorAndFail(n, "While needs int type as condition");
 	}
+	
+	@Override
+	public void visit(DoWhileNode n)
+	{
+		super.visit(n);
+		TypeNode type = n.getCondition().getType();
+		boolean retVal = type.checkType(TypeNode.getInt());
+		if (!retVal)
+			printErrorAndFail(n, "DoWhile needs int type as condition");
+	}
 
 	@Override
 	public void visit(IfNode n)

@@ -109,6 +109,12 @@ public abstract class Visitor
 		n.getStatements().accept(this);
 	}
 
+	public void visit(DoWhileNode n)
+	{
+		n.getCondition().accept(this);
+		n.getStatements().accept(this);
+	}
+
 	public void visit(ForNode n)
 	{
 		if (n.getInitialAssignment() != null)

@@ -29,10 +29,12 @@ statement: assignment ';'? # StatementAssignment
       | funccall ';'? # StatementCall
       | forstmt # StatementFor
       | switchstmt # StatementSwitch
+      | dowhilestmt # StatementDoWhile
       ;
 ifstmt: 'if' expr statements elsestmt?;
 elsestmt: 'else' statements;
 whilestmt: 'while' expr statements;
+dowhilestmt: 'do' statements 'while' expr ';'?;
 forstmt: 'for' '(' (initassign = assignment)? ';' expr ';' (loopedassign = assignment)? ')' statements;
 switchstmt: 'switch' expr '{' casestmt* defaultstmt?'}';
 casestmt: 'case' expr statements;

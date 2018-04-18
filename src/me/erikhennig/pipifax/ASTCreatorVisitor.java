@@ -3,6 +3,7 @@ package me.erikhennig.pipifax;
 import me.erikhennig.pipifax.antlr.PipifaxBaseVisitor;
 import me.erikhennig.pipifax.antlr.PipifaxParser;
 import me.erikhennig.pipifax.antlr.PipifaxParser.DeclarationContext;
+import me.erikhennig.pipifax.antlr.PipifaxParser.StatementDoWhileContext;
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
@@ -28,7 +29,7 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 			Node n = ctx.includedecl(i).accept(this);
 			pn.addNode(n);
 		}
-		
+
 		for (int i = 0; i < ctx.declaration().size(); i++)
 		{
 			Node n = ctx.declaration(i).accept(this);
@@ -36,14 +37,15 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		}
 		return pn;
 	}
-	
+
 	@Override
-	public Node visitDeclaration(DeclarationContext ctx) {
+	public Node visitDeclaration(DeclarationContext ctx)
+	{
 		boolean export = ctx.EXPORT() != null;
-		
-		NamedNode nn = (NamedNode) ctx.getChild((export)?1:0).accept(this);
+
+		NamedNode nn = (NamedNode) ctx.getChild((export) ? 1 : 0).accept(this);
 		nn.setExported(export);
-		
+
 		return nn;
 	}
 
@@ -261,6 +263,18 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		wn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
 
 		return wn;
+	}
+
+	@Override
+	public Node visitDowhilestmt(PipifaxParser.DowhilestmtContext ctx)
+	{
+		ExpressionNode en = (ExpressionNode) ctx.expr().accept(this);
+		BlockNode bn = (BlockNode) ctx.statements().accept(this);
+		DoWhileNode dwn = new DoWhileNode(en, bn);
+
+		dwn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return dwn;
 	}
 
 	@Override
@@ -800,5 +814,11 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	public Node visitStatementWhile(PipifaxParser.StatementWhileContext ctx)
 	{
 		return ctx.whilestmt().accept(this);
+	}
+
+	@Override
+	public Node visitStatementDoWhile(PipifaxParser.StatementDoWhileContext ctx)
+	{
+		return ctx.dowhilestmt().accept(this);
 	}
 }

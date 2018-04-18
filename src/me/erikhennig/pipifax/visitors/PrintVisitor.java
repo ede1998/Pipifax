@@ -2,6 +2,7 @@ package me.erikhennig.pipifax.visitors;
 
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.controls.CaseNode;
+import me.erikhennig.pipifax.nodes.controls.DoWhileNode;
 import me.erikhennig.pipifax.nodes.controls.ForNode;
 import me.erikhennig.pipifax.nodes.controls.IfNode;
 import me.erikhennig.pipifax.nodes.controls.SwitchNode;
@@ -196,6 +197,18 @@ public class PrintVisitor extends Visitor
 		m_indentLevel--;
 	}
 
+	@Override
+	public void visit(DoWhileNode n)
+	{
+		m_indentLevel++;
+		m_program += genSp() + "DoWhile\n";
+		n.getStatements().accept(this);
+		m_program += genSp() + "Condition: ";
+		n.getCondition().accept(this);
+		m_program += "\n";
+		m_indentLevel--;
+	}
+	
 	public void visit(ForNode n)
 	{
 		m_indentLevel++;
