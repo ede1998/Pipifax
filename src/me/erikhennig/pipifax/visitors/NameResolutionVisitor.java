@@ -20,7 +20,8 @@ public class NameResolutionVisitor extends Visitor
 
 	public NameResolutionVisitor(Scope s)
 	{
-		m_currentScope = s;
+		//internal declarations can override global declarations
+		m_currentScope = s.enterScope();
 	}
 
 	@Override

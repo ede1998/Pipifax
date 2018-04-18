@@ -2,14 +2,11 @@ package me.erikhennig.pipifax;
 
 import me.erikhennig.pipifax.antlr.PipifaxBaseVisitor;
 import me.erikhennig.pipifax.antlr.PipifaxParser;
+import me.erikhennig.pipifax.antlr.PipifaxParser.DeclarationContext;
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
-import me.erikhennig.pipifax.nodes.expressions.values.ArrayAccessNode;
-import me.erikhennig.pipifax.nodes.expressions.values.CallNode;
-import me.erikhennig.pipifax.nodes.expressions.values.StructAccessNode;
-import me.erikhennig.pipifax.nodes.expressions.values.ValueNode;
-import me.erikhennig.pipifax.nodes.expressions.values.VariableAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.values.*;
 import me.erikhennig.pipifax.nodes.types.*;
 
 public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
@@ -26,12 +23,28 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	{
 		ProgramNode pn = new ProgramNode();
 
-		for (int i = 0; i < ctx.getChildCount(); i++)
+		for (int i = 0; i < ctx.includedecl().size(); i++)
 		{
-			Node n = ctx.getChild(i).accept(this);
+			Node n = ctx.includedecl(i).accept(this);
+			pn.addNode(n);
+		}
+		
+		for (int i = 0; i < ctx.declaration().size(); i++)
+		{
+			Node n = ctx.declaration(i).accept(this);
 			pn.addNode(n);
 		}
 		return pn;
+	}
+	
+	@Override
+	public Node visitDeclaration(DeclarationContext ctx) {
+		boolean export = ctx.EXPORT() != null;
+		
+		NamedNode nn = (NamedNode) ctx.getChild((export)?1:0).accept(this);
+		nn.setExported(export);
+		
+		return nn;
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 grammar Pipifax;
-prog: includedecl* (funcdecl | vardecl | struct)*;
+prog: includedecl* declaration*;
+declaration: EXPORT? (funcdecl | vardecl | struct);
 includedecl: '<' 'include' STRING '>';
 funcdecl: 'func' ID '('parameterlist')'type? block; 
 vardecl: 'var' ID type ('=' expr)? ';'?;
@@ -82,6 +83,7 @@ NEWLINE : [\r\n]+ -> skip;
 ENDOFFILE : EOF -> skip;
 COMMENT : '#' ~[\r\n]* ('\r'? '\n' | EOF) -> skip ;
 WS : [ \r\t\n]+ -> skip ;
+EXPORT : 'export';
 ID : LETTER (LETTER|'0'..'9')* ;
 DOUBLECASTOP: '(' WS* 'double' WS* ')';
 INTCASTOP: '(' WS* 'int' WS* ')';

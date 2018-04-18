@@ -105,7 +105,8 @@ public class Program
 		for (Node n : m_program.getNodes())
 		{
 			NamedNode nn = (NamedNode) n;
-			m_symbols.put(nn.getName(), nn);
+			if (nn.isExported())
+				m_symbols.put(nn.getName(), nn);
 		}
 	}
 
@@ -123,6 +124,7 @@ public class Program
 			return;
 		}
 
+		
 		// Type checking
 		TypeCheckingVisitor tcv = new TypeCheckingVisitor();
 		m_program.accept(tcv);
