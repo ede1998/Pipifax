@@ -1,11 +1,15 @@
 grammar Pipifax;
 prog: includedecl* declaration*;
-declaration: EXPORT? (funcdecl | vardecl | struct);
+declaration: EXPORT? (funcdecl | vardecl | struct | class);
 includedecl: '<' 'include' STRING '>';
 funcdecl: 'func' ID '('parameterlist')'type? block; 
 vardecl: 'var' ID type ('=' expr)? ';'?;
 struct: 'struct' ID '{' memberdecl+ '}';
 memberdecl: ID type';'?;
+class: 'class' ID '{' classmemberdecl* '}';
+classmemberdecl: ACCESS_MODIFIER funcdecl # classfunction
+      | ACCESS_MODIFIER vardecl # classvar
+      ;
 type: 'int' # IntType
       | 'double' # DoubleType
       | 'string' # StringType
@@ -22,7 +26,6 @@ block: '{' (vardecl | statement)* '}';
 statements: statement # StatementSingle
       | block # StatementBlock
       ;
-
 statement: assignment ';'? # StatementAssignment
       | ifstmt # StatementIf
       | whilestmt # StatementWhile
@@ -53,6 +56,8 @@ lvalue: ID # VarAccess
       | lvalue '[' expr ']' # ArrayAccess
       | lvalue '.' ID # StructAccess
       | funccall # FunctionAccess
+      | lvalue '->' ID # ClassVarAccess
+      | lvalue '->' funccall # ClassFuncAccess
       ; 
 expr: INT # IntLiteral
       | DOUBLE # DoubleLiteral
@@ -86,6 +91,7 @@ ENDOFFILE : EOF -> skip;
 COMMENT : '#' ~[\r\n]* ('\r'? '\n' | EOF) -> skip ;
 WS : [ \r\t\n]+ -> skip ;
 EXPORT : 'export';
+ACCESS_MODIFIER: 'private' | 'protected' | 'public';
 ID : LETTER (LETTER|'0'..'9')* ;
 DOUBLECASTOP: '(' WS* 'double' WS* ')';
 INTCASTOP: '(' WS* 'int' WS* ')';
