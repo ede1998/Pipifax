@@ -1,0 +1,36 @@
+class parent {
+   protected var m_size double;
+   public func parent(size double) parent
+   {
+     m_size = size;
+   }
+}
+class myfirstclass : parent{
+
+   private var i int;
+   protected var j string;
+   
+   public func getI() int
+   {
+     getI = i;
+   }
+   
+   public func getJ() string
+   {
+     getJ = j;
+   }
+   
+   public func myfirstclass() myfirstclass
+   {
+     i = 0;
+	 j = "yay";
+   }
+}
+
+
+func main() int
+{
+  var p myfirstclass = new myfirstclass();
+  var j parent = new parent();
+  var i int = p->getI;
+}

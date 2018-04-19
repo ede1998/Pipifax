@@ -1,12 +1,12 @@
 grammar Pipifax;
 prog: includedecl* declaration*;
-declaration: EXPORT? (funcdecl | vardecl | struct | class);
+declaration: EXPORT? (funcdecl | vardecl | struct | classdecl);
 includedecl: '<' 'include' STRING '>';
 funcdecl: 'func' ID '('parameterlist')'type? block; 
 vardecl: 'var' ID type ('=' expr)? ';'?;
 struct: 'struct' ID '{' memberdecl+ '}';
 memberdecl: ID type';'?;
-class: 'class' ID '{' classmemberdecl* '}';
+classdecl: 'class' ID (':' PARENT=ID)? '{' classmemberdecl* '}';
 classmemberdecl: ACCESS_MODIFIER funcdecl # classfunction
       | ACCESS_MODIFIER vardecl # classvar
       ;
@@ -64,6 +64,7 @@ expr: INT # IntLiteral
       | STRING # StringLiteral
       | lvalue # LValueExpression
       | '(' expr ')' # Parentheses
+      | 'new' ID'(' (arg+=expr (',' arg+=expr)*)? ')'# New
       | '-' expr # Negation
       | INTCASTOP expr # IntCast
       | DOUBLECASTOP expr # DoubleCast
