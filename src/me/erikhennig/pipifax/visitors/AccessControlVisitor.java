@@ -20,7 +20,7 @@ public class AccessControlVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(ClassFunctionAccessNode n)
+	public void visit(ClassFunctionAccessNode n) throws VisitorException
 	{
 		super.visit(n);
 		ClassFunctionComponentNode cfcn = n.getComponent();
@@ -30,7 +30,7 @@ public class AccessControlVisitor extends Visitor
 			if (visibility == Visibility.PRIVATE)
 			{
 				if (!cfcn.getParent().getName().equals(m_currentClass.getName()))
-					printErrorAndFail(n, "Cannot access private function of class " + cfcn.getParent().getName() + " from here");
+					throw new VisitorException(this, n, "Cannot access private function of class " + cfcn.getParent().getName() + " from here");
 			}
 			else if (visibility == Visibility.PROTECTED)
 			{
@@ -47,7 +47,7 @@ public class AccessControlVisitor extends Visitor
 				
 				if (curr == null)
 				{
-					printErrorAndFail(n, "Cannot access protected function of class " + cfcn.getParent().getName() + " from here");
+					throw new VisitorException(this, n, "Cannot access protected function of class " + cfcn.getParent().getName() + " from here");
 				}
 			}
 
@@ -55,7 +55,7 @@ public class AccessControlVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(ClassDataAccessNode n)
+	public void visit(ClassDataAccessNode n) throws VisitorException
 	{
 		super.visit(n);
 		ClassDataComponentNode cdcn = n.getComponent();
@@ -65,7 +65,7 @@ public class AccessControlVisitor extends Visitor
 			if (visibility == Visibility.PRIVATE)
 			{
 				if (!cdcn.getParent().getName().equals(m_currentClass.getName()))
-					printErrorAndFail(n, "Cannot access private member of class " + cdcn.getParent().getName() + " from here");
+					throw new VisitorException(this, n, "Cannot access private member of class " + cdcn.getParent().getName() + " from here");
 			}
 			else if (visibility == Visibility.PROTECTED)
 			{
@@ -82,7 +82,7 @@ public class AccessControlVisitor extends Visitor
 				
 				if (curr == null)
 				{
-					printErrorAndFail(n, "Cannot access protected member of class " + cdcn.getParent().getName() + " from here");
+					throw new VisitorException(this, n, "Cannot access protected member of class " + cdcn.getParent().getName() + " from here");
 				}
 			}
 
@@ -90,7 +90,7 @@ public class AccessControlVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(VariableAccessNode n)
+	public void visit(VariableAccessNode n) throws VisitorException
 	{
 		super.visit(n);
 		ClassDataComponentNode cdcn = n.getVariable().getParent();
@@ -103,7 +103,7 @@ public class AccessControlVisitor extends Visitor
 			if (visibility == Visibility.PRIVATE)
 			{
 				if (!cdcn.getParent().getName().equals(m_currentClass.getName()))
-					printErrorAndFail(n, "Cannot access private member of class " + cdcn.getParent().getName() + " from here");
+					throw new VisitorException(this, n, "Cannot access private member of class " + cdcn.getParent().getName() + " from here");
 			}
 			else if (visibility == Visibility.PROTECTED)
 			{
@@ -120,7 +120,7 @@ public class AccessControlVisitor extends Visitor
 				
 				if (curr == null)
 				{
-					printErrorAndFail(n, "Cannot access protected member of class " + cdcn.getParent().getName() + " from here");
+					throw new VisitorException(this, n, "Cannot access protected member of class " + cdcn.getParent().getName() + " from here");
 				}
 			}
 
@@ -128,7 +128,7 @@ public class AccessControlVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(CallNode n)
+	public void visit(CallNode n) throws VisitorException
 	{
 		super.visit(n);
 		ClassFunctionComponentNode cdcn = n.getFunction().getParent();
@@ -141,7 +141,7 @@ public class AccessControlVisitor extends Visitor
 			if (visibility == Visibility.PRIVATE)
 			{
 				if (!cdcn.getParent().getName().equals(m_currentClass.getName()))
-					printErrorAndFail(n, "Cannot access private function of class " + cdcn.getParent().getName() + " from here");
+					throw new VisitorException(this, n, "Cannot access private function of class " + cdcn.getParent().getName() + " from here");
 			}
 			else if (visibility == Visibility.PROTECTED)
 			{
@@ -158,7 +158,7 @@ public class AccessControlVisitor extends Visitor
 				
 				if (curr == null)
 				{
-					printErrorAndFail(n, "Cannot access protected function of class " + cdcn.getParent().getName() + " from here");
+					throw new VisitorException(this, n, "Cannot access protected function of class " + cdcn.getParent().getName() + " from here");
 				}
 			}
 
@@ -166,7 +166,7 @@ public class AccessControlVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(ClassNode n)
+	public void visit(ClassNode n) throws VisitorException
 	{
 		m_currentClass = n;
 		super.visit(n);

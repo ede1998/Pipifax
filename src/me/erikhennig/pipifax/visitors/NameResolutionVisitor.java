@@ -26,7 +26,7 @@ public class NameResolutionVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(ProgramNode n)
+	public void visit(ProgramNode n) throws VisitorException
 	{
 		m_onlyAddFunctions = true;
 		super.visit(n);
@@ -35,22 +35,22 @@ public class NameResolutionVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(CallNode n)
+	public void visit(CallNode n) throws VisitorException
 	{
 		FunctionNode fn = m_currentScope.getFunction(n.getName());
 		if (fn == null)
-			printErrorAndFail(n, "Name lookup failed for function " + n.getName());
+			throw new VisitorException(this, n, "Name lookup failed for function " + n.getName());
 		n.setFunction(fn);
 		super.visit(n);
 	}
 
 	@Override
-	public void visit(FunctionNode n)
+	public void visit(FunctionNode n) throws VisitorException
 	{
 		if (m_onlyAddFunctions)
 		{
 			if (!m_currentScope.register(n))
-				printErrorAndFail(n, "Name already defined for function " + n.getName());
+				throw new VisitorException(this, n, "Name already defined for function " + n.getName());
 		}
 		else
 		{
@@ -61,38 +61,38 @@ public class NameResolutionVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(VariableAccessNode n)
+	public void visit(VariableAccessNode n) throws VisitorException
 	{
 		VariableNode vn = m_currentScope.getVariable(n.getName());
 		if (vn == null)
-			printErrorAndFail(n, "Name lookup failed for variable " + n.getName());
+			throw new VisitorException(this, n, "Name lookup failed for variable " + n.getName());
 		n.setVariable(vn);
 	}
 
 	@Override
-	public void visit(ClassFunctionAccessNode n)
+	public void visit(ClassFunctionAccessNode n) throws VisitorException
 	{
 		n.getBase().accept(this);
 	}
 
 	@Override
-	public void visit(ParameterNode n)
+	public void visit(ParameterNode n) throws VisitorException
 	{
 		if (!m_currentScope.register(n))
-			printErrorAndFail(n, "Name already defined for parameter " + n.getName());
+			throw new VisitorException(this, n, "Name already defined for parameter " + n.getName());
 	}
 
 	@Override
-	public void visit(VariableNode n)
+	public void visit(VariableNode n) throws VisitorException
 	{
 		if (m_onlyAddFunctions)
 			return;
 		super.visit(n);
 		if (!m_currentScope.register(n))
-			printErrorAndFail(n, "Name already defined for variable " + n.getName());
+			throw new VisitorException(this, n, "Name already defined for variable " + n.getName());
 	}
 
-	public void visit(BlockNode n)
+	public void visit(BlockNode n) throws VisitorException
 	{
 		m_currentScope = m_currentScope.enterScope();
 		super.visit(n);
@@ -100,47 +100,47 @@ public class NameResolutionVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(StructNode n)
+	public void visit(StructNode n) throws VisitorException
 	{
 		if (m_onlyAddFunctions)
 			return;
 		super.visit(n);
 		if (!m_currentScope.register(n))
-			printErrorAndFail(n, "Name already defined for struct " + n.getName());
+			throw new VisitorException(this, n, "Name already defined for struct " + n.getName());
 	}
 
 	@Override
-	public void visit(CustomTypeNode n)
+	public void visit(CustomTypeNode n) throws VisitorException
 	{
 		TypeDefinitionNode tdn = m_currentScope.getTypeDefinition(n.getName());
 		if (tdn == null)
-			printErrorAndFail(n, "Name lookup failed for custom type " + n.getName());
+			throw new VisitorException(this, n, "Name lookup failed for custom type " + n.getName());
 		n.setTypeDefinition(tdn);
 	}
 
 	@Override
-	public void visit(ClassNode n)
+	public void visit(ClassNode n) throws VisitorException
 	{
 		if (m_onlyAddFunctions)
 			return;
 		ClassNode parent = m_currentScope.getClass(n.getParent());
 		if (!n.getParent().isEmpty() && parent == null)
-			printErrorAndFail(n, "Parent class " + n.getParent() + " does  not exist.");
+			throw new VisitorException(this, n, "Parent class " + n.getParent() + " does  not exist.");
 		n.setParent(parent);
 		if (!m_currentScope.register(n))
-			printErrorAndFail(n, "Name already defined for class " + n.getName());
+			throw new VisitorException(this, n, "Name already defined for class " + n.getName());
 		if (parent != null)
 		{
 			for (ClassDataComponentNode mem : parent.getAllMembers())
 			{
 				if (!m_currentScope.register(mem.getVariable()))
-					printErrorAndFail(n, "Member " + mem.getName() + " already defined in parent");
+					throw new VisitorException(this, n, "Member " + mem.getName() + " already defined in parent");
 			}
 
 			for (ClassFunctionComponentNode func : parent.getAllFunctions())
 			{
 				if (!m_currentScope.register(func.getFunction()))
-					printErrorAndFail(n, "Function " + func.getName() + " already defined in parent");
+					throw new VisitorException(this, n, "Function " + func.getName() + " already defined in parent");
 			}
 		}
 
@@ -151,18 +151,18 @@ public class NameResolutionVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(ClassDataComponentNode n)
+	public void visit(ClassDataComponentNode n) throws VisitorException
 	{
 		super.visit(n);
 		if (!m_currentScope.register(n.getVariable()))
-			printErrorAndFail(n, "Member " + n.getName() + " already defined in class");
+			throw new VisitorException(this, n, "Member " + n.getName() + " already defined in class");
 	}
 
 	@Override
-	public void visit(ClassFunctionComponentNode n)
+	public void visit(ClassFunctionComponentNode n) throws VisitorException
 	{
 		if (!m_currentScope.register(n.getFunction()))
-			printErrorAndFail(n, "Function " + n.getName() + " already defined in class");
+			throw new VisitorException(this, n, "Function " + n.getName() + " already defined in class");
 		super.visit(n);
 	}
 }

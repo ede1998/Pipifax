@@ -49,7 +49,7 @@ public class PrintVisitor extends Visitor
 		return m_program;
 	}
 
-	public void visit(AssignmentNode n)
+	public void visit(AssignmentNode n) throws VisitorException
 	{
 		m_indentLevel++;
 		m_program += genSp();
@@ -60,7 +60,7 @@ public class PrintVisitor extends Visitor
 		m_indentLevel--;
 	}
 
-	public void visit(FunctionNode n)
+	public void visit(FunctionNode n) throws VisitorException
 	{
 		m_indentLevel++;
 		m_program += genSp() + "Function " + n.getName() + " : ";
@@ -82,25 +82,25 @@ public class PrintVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(DoubleTypeNode n)
+	public void visit(DoubleTypeNode n) throws VisitorException
 	{
 		m_program += "double";
 	}
 
 	@Override
-	public void visit(IntTypeNode n)
+	public void visit(IntTypeNode n) throws VisitorException
 	{
 		m_program += "int";
 	}
 
 	@Override
-	public void visit(StringTypeNode n)
+	public void visit(StringTypeNode n) throws VisitorException
 	{
 		m_program += "string";
 	}
 
 	@Override
-	public void visit(VoidTypeNode n)
+	public void visit(VoidTypeNode n) throws VisitorException
 	{
 		m_program += "void";
 	}
@@ -112,14 +112,14 @@ public class PrintVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(RefTypeNode n)
+	public void visit(RefTypeNode n) throws VisitorException
 	{
 		m_program += "*";
 		super.visit(n);
 	}
 
 	@Override
-	public void visit(SizedArrayTypeNode n)
+	public void visit(SizedArrayTypeNode n) throws VisitorException
 	{
 		m_program += "[";
 		m_program += n.getSize();
@@ -128,14 +128,14 @@ public class PrintVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(UnsizedArrayTypeNode n)
+	public void visit(UnsizedArrayTypeNode n) throws VisitorException
 	{
 		m_program += "[]";
 		super.visit(n);
 	}
 
 	@Override
-	public void visit(BlockNode n)
+	public void visit(BlockNode n) throws VisitorException
 	{
 		m_indentLevel++;
 		m_program += genSp() + "{\n";
@@ -144,7 +144,7 @@ public class PrintVisitor extends Visitor
 		m_indentLevel--;
 	}
 
-	public void visit(IfNode n)
+	public void visit(IfNode n) throws VisitorException
 	{
 		m_indentLevel++;
 		m_program += genSp() + "If ";
@@ -157,7 +157,7 @@ public class PrintVisitor extends Visitor
 		m_indentLevel--;
 	}
 
-	public void visit(ParameterNode n)
+	public void visit(ParameterNode n) throws VisitorException
 	{
 		m_indentLevel++;
 		m_program += genSp() + n.getName() + " : ";
@@ -166,7 +166,7 @@ public class PrintVisitor extends Visitor
 		m_indentLevel--;
 	}
 
-	public void visit(ProgramNode n)
+	public void visit(ProgramNode n) throws VisitorException
 	{
 		for (Node tmp : n.getNodes())
 		{
@@ -174,7 +174,7 @@ public class PrintVisitor extends Visitor
 		}
 	}
 
-	public void visit(VariableNode n)
+	public void visit(VariableNode n) throws VisitorException
 	{
 		m_indentLevel++;
 		m_program += genSp() + n.getName() + " : ";
@@ -188,7 +188,7 @@ public class PrintVisitor extends Visitor
 		m_indentLevel--;
 	}
 
-	public void visit(WhileNode n)
+	public void visit(WhileNode n) throws VisitorException
 	{
 		m_indentLevel++;
 		m_program += genSp() + "While ";
@@ -199,7 +199,7 @@ public class PrintVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(DoWhileNode n)
+	public void visit(DoWhileNode n) throws VisitorException
 	{
 		m_indentLevel++;
 		m_program += genSp() + "DoWhile\n";
@@ -210,7 +210,7 @@ public class PrintVisitor extends Visitor
 		m_indentLevel--;
 	}
 
-	public void visit(ForNode n)
+	public void visit(ForNode n) throws VisitorException
 	{
 		m_indentLevel++;
 		m_program += genSp() + "For ";
@@ -227,7 +227,7 @@ public class PrintVisitor extends Visitor
 		m_indentLevel--;
 	}
 
-	public void visit(SwitchNode n)
+	public void visit(SwitchNode n) throws VisitorException
 	{
 		m_indentLevel++;
 		m_program += genSp() + "Switch ";
@@ -244,7 +244,7 @@ public class PrintVisitor extends Visitor
 		m_indentLevel--;
 	}
 
-	public void visit(CaseNode n)
+	public void visit(CaseNode n) throws VisitorException
 	{
 		m_indentLevel++;
 		m_program += genSp() + "Case: ";
@@ -254,7 +254,7 @@ public class PrintVisitor extends Visitor
 		m_indentLevel--;
 	}
 
-	public void visit(CallNode n)
+	public void visit(CallNode n) throws VisitorException
 	{
 		m_indentLevel++;
 		m_program += genSp() + "FunctionCall " + n.getName() + "\n";
@@ -271,7 +271,7 @@ public class PrintVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(BinaryExpressionNode n)
+	public void visit(BinaryExpressionNode n) throws VisitorException
 	{
 		String symbol = " " + n.getOperationAsString() + " ";
 		n.getLeftSide().accept(this);
@@ -280,7 +280,7 @@ public class PrintVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(UnaryExpressionNode n)
+	public void visit(UnaryExpressionNode n) throws VisitorException
 	{
 		switch (n.getOperation())
 		{
@@ -300,24 +300,24 @@ public class PrintVisitor extends Visitor
 		super.visit(n);
 	}
 
-	public void visit(DoubleLiteralNode n)
+	public void visit(DoubleLiteralNode n) throws VisitorException
 	{
 		m_program += n.getValue();
 	}
 
-	public void visit(IntegerLiteralNode n)
+	public void visit(IntegerLiteralNode n) throws VisitorException
 	{
 		m_program += n.getValue();
 	}
 
 	@Override
-	public void visit(VariableAccessNode n)
+	public void visit(VariableAccessNode n) throws VisitorException
 	{
 		m_program += n.getName();
 	}
 
 	@Override
-	public void visit(ArrayAccessNode n)
+	public void visit(ArrayAccessNode n) throws VisitorException
 	{
 		n.getBase().accept(this);
 		m_program += "[";
@@ -326,34 +326,34 @@ public class PrintVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(StructAccessNode n)
+	public void visit(StructAccessNode n) throws VisitorException
 	{
 		super.visit(n);
 		m_program += "." + n.getName();
 	}
 
 	@Override
-	public void visit(ClassDataAccessNode n)
+	public void visit(ClassDataAccessNode n) throws VisitorException
 	{
 		n.getBase().accept(this);
 		m_program += "->" + n.getName();
 	}
 
 	@Override
-	public void visit(ClassFunctionAccessNode n)
+	public void visit(ClassFunctionAccessNode n) throws VisitorException
 	{
 		n.getBase().accept(this);
 		m_program += "->";
 		n.getCall().accept(this);
 	}
 
-	public void visit(StringLiteralNode n)
+	public void visit(StringLiteralNode n) throws VisitorException
 	{
 		m_program += n.getValue();
 	}
 
 	@Override
-	public void visit(StructNode n)
+	public void visit(StructNode n) throws VisitorException
 	{
 		m_indentLevel++;
 		m_program += "Struct: " + n.getName() + "\n";
@@ -362,7 +362,7 @@ public class PrintVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(StructComponentNode n)
+	public void visit(StructComponentNode n) throws VisitorException
 	{
 		m_indentLevel++;
 		m_program += genSp() + n.getName() + " : ";
@@ -372,7 +372,7 @@ public class PrintVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(ClassNode n)
+	public void visit(ClassNode n) throws VisitorException
 	{
 		m_indentLevel++;
 		m_program += "Class: " + n.getName();
@@ -398,7 +398,7 @@ public class PrintVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(ClassDataComponentNode n)
+	public void visit(ClassDataComponentNode n) throws VisitorException
 	{
 		m_indentLevel++;
 		m_program += genSp() + convert(n.getAccessModifier()) + " " + n.getName() + " : ";
@@ -408,7 +408,7 @@ public class PrintVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(ClassFunctionComponentNode n)
+	public void visit(ClassFunctionComponentNode n) throws VisitorException
 	{
 		m_indentLevel++;
 		m_program += genSp() + convert(n.getAccessModifier()) + " ";

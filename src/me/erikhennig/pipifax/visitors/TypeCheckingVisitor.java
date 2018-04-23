@@ -36,7 +36,7 @@ public class TypeCheckingVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(BinaryExpressionNode n)
+	public void visit(BinaryExpressionNode n) throws VisitorException
 	{
 		super.visit(n);
 
@@ -85,11 +85,11 @@ public class TypeCheckingVisitor extends Visitor
 		}
 
 		if (!retVal)
-			printErrorAndFail(n, "Binary expression " + n.getOperationAsString() + " doesn't accept those types");
+			throw new VisitorException(this, n, "Binary expression " + n.getOperationAsString() + " doesn't accept those types");
 	}
 
 	@Override
-	public void visit(CallNode n)
+	public void visit(CallNode n) throws VisitorException
 	{
 		super.visit(n);
 
@@ -112,32 +112,32 @@ public class TypeCheckingVisitor extends Visitor
 			}
 
 		if (!areValidArgs)
-			printErrorAndFail(n, "Invalid argument types for function call");
+			throw new VisitorException(this, n, "Invalid argument types for function call");
 		if (!isValidArgNumber)
-			printErrorAndFail(n, "Invalid number of arguments for function call");
+			throw new VisitorException(this, n, "Invalid number of arguments for function call");
 	}
 
 	@Override
-	public void visit(AssignmentNode n)
+	public void visit(AssignmentNode n) throws VisitorException
 	{
 		super.visit(n);
 		if (!n.getSource().getType().checkType(n.getDestination().getType()))
-			printErrorAndFail(n, "Conflicting types in assignment.");
+			throw new VisitorException(this, n, "Conflicting types in assignment.");
 		if (!n.getDestination().isLValue())
-			printErrorAndFail(n, "Assigned side is no lvalue");
+			throw new VisitorException(this, n, "Assigned side is no lvalue");
 	}
 
 	@Override
-	public void visit(VariableNode n)
+	public void visit(VariableNode n) throws VisitorException
 	{
 		super.visit(n);
 		if (n.getExpression() != null)
 			if (!n.getType().checkType(n.getExpression().getType()))
-				printErrorAndFail(n, "Conflicting types in initial assignment to " + n.getName());
+				throw new VisitorException(this, n, "Conflicting types in initial assignment to " + n.getName());
 	}
 
 	@Override
-	public void visit(UnaryExpressionNode n)
+	public void visit(UnaryExpressionNode n) throws VisitorException
 	{
 		super.visit(n);
 
@@ -169,51 +169,51 @@ public class TypeCheckingVisitor extends Visitor
 		}
 
 		if (!retVal)
-			printErrorAndFail(n, "Unary expression doesn't accept this type");
+			throw new VisitorException(this, n, "Unary expression doesn't accept this type");
 	}
 
 	@Override
-	public void visit(StructAccessNode n)
+	public void visit(StructAccessNode n) throws VisitorException
 	{
 		super.visit(n);
 		if (!(n.getBase().getType() instanceof CustomTypeNode))
-			printErrorAndFail(n, "Base type is no struct type");
+			throw new VisitorException(this, n, "Base type is no struct type");
 		CustomTypeNode basetype = (CustomTypeNode) n.getBase().getType();
 
 		StructComponentNode scn = ((StructNode) basetype.getTypeDefinition()).find(n.getName());
 		if (scn == null)
-			printErrorAndFail(n, "Struct " + basetype.getName() + " has no member " + n.getName());
+			throw new VisitorException(this, n, "Struct " + basetype.getName() + " has no member " + n.getName());
 		n.setComponent(scn);
 		n.setType(scn.getType());
 	}
 
 	@Override
-	public void visit(ClassDataAccessNode n)
+	public void visit(ClassDataAccessNode n) throws VisitorException
 	{
 		super.visit(n);
 		if (!(n.getBase().getType() instanceof CustomTypeNode))
-			printErrorAndFail(n, "Base type is no class type");
+			throw new VisitorException(this, n, "Base type is no class type");
 		CustomTypeNode basetype = (CustomTypeNode) n.getBase().getType();
 
 		ClassDataComponentNode cdcn = ((ClassNode) basetype.getTypeDefinition()).findMember(n.getName());
 		if (cdcn == null)
-			printErrorAndFail(n, "Class " + basetype.getName() + " has no member " + n.getName());
+			throw new VisitorException(this, n, "Class " + basetype.getName() + " has no member " + n.getName());
 		n.setComponent(cdcn);
 		n.setType(cdcn.getType());
 	}
 	
 	@Override
-	public void visit(ClassFunctionAccessNode n)
+	public void visit(ClassFunctionAccessNode n) throws VisitorException
 	{
 		n.getBase().accept(this);
 		
 		if (!(n.getBase().getType() instanceof CustomTypeNode))
-			printErrorAndFail(n, "Base type is no class type");
+			throw new VisitorException(this, n, "Base type is no class type");
 		CustomTypeNode basetype = (CustomTypeNode) n.getBase().getType();
 
 		ClassFunctionComponentNode cfcn = ((ClassNode) basetype.getTypeDefinition()).findFunction(n.getName());
 		if (cfcn == null)
-			printErrorAndFail(n, "Class " + basetype.getName() + " has no member " + n.getName());
+			throw new VisitorException(this, n, "Class " + basetype.getName() + " has no member " + n.getName());
 		//should maybe be done earlier in name resolution?
 		n.getCall().setFunction(cfcn.getFunction());
 		n.setComponent(cfcn);
@@ -223,7 +223,7 @@ public class TypeCheckingVisitor extends Visitor
 	}
 	
 	@Override
-	public void visit(ArrayAccessNode n)
+	public void visit(ArrayAccessNode n) throws VisitorException
 	{
 		super.visit(n);
 		final TypeNode predType = n.getBase().getType();
@@ -238,59 +238,59 @@ public class TypeCheckingVisitor extends Visitor
 		}
 		else
 		{
-			printErrorAndFail(n, "Not an array access node");
+			throw new VisitorException(this, n, "Not an array access node");
 		}
 	}
 
 	@Override
-	public void visit(VariableAccessNode n)
+	public void visit(VariableAccessNode n) throws VisitorException
 	{
 		final TypeNode tn = n.getVariable().getType();
 		n.setType((tn instanceof RefTypeNode) ? ((RefTypeNode) tn).getType() : tn);
 	}
 
 	@Override
-	public void visit(WhileNode n)
+	public void visit(WhileNode n) throws VisitorException
 	{
 		super.visit(n);
 		TypeNode type = n.getCondition().getType();
 		boolean retVal = type.checkType(TypeNode.getInt());
 		if (!retVal)
-			printErrorAndFail(n, "While needs int type as condition");
+			throw new VisitorException(this, n, "While needs int type as condition");
 	}
 	
 	@Override
-	public void visit(DoWhileNode n)
+	public void visit(DoWhileNode n) throws VisitorException
 	{
 		super.visit(n);
 		TypeNode type = n.getCondition().getType();
 		boolean retVal = type.checkType(TypeNode.getInt());
 		if (!retVal)
-			printErrorAndFail(n, "DoWhile needs int type as condition");
+			throw new VisitorException(this, n, "DoWhile needs int type as condition");
 	}
 
 	@Override
-	public void visit(IfNode n)
+	public void visit(IfNode n) throws VisitorException
 	{
 		super.visit(n);
 		TypeNode type = n.getCondition().getType();
 		boolean retVal = type.checkType(TypeNode.getInt());
 		if (!retVal)
-			printErrorAndFail(n, "If needs int type as condition");
+			throw new VisitorException(this, n, "If needs int type as condition");
 	}
 
 	@Override
-	public void visit(ForNode n)
+	public void visit(ForNode n) throws VisitorException
 	{
 		super.visit(n);
 		TypeNode type = n.getCondition().getType();
 		boolean retVal = type.checkType(TypeNode.getInt());
 		if (!retVal)
-			printErrorAndFail(n, "For needs int type as condition");
+			throw new VisitorException(this, n, "For needs int type as condition");
 	}
 
 	@Override
-	public void visit(SwitchNode n)
+	public void visit(SwitchNode n) throws VisitorException
 	{
 		super.visit(n);
 
@@ -307,8 +307,8 @@ public class TypeCheckingVisitor extends Visitor
 		}
 
 		if (!retVal)
-			printErrorAndFail(n, "Switch needs int or string type as condition");
+			throw new VisitorException(this, n, "Switch needs int or string type as condition");
 		if (!areCaseTypesCorrect)
-			printErrorAndFail(n, "Case type of case " + position + " differs from switch type");
+			throw new VisitorException(this, n, "Case type of case " + position + " differs from switch type");
 	}
 }

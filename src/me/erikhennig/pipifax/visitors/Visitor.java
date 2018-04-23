@@ -1,5 +1,7 @@
 package me.erikhennig.pipifax.visitors;
 
+import java.util.Map.Entry;
+
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
@@ -13,111 +15,99 @@ import me.erikhennig.pipifax.nodes.types.*;
 
 public abstract class Visitor
 {
-	private boolean m_success = true;
-
 	protected String getName()
 	{
 		return "defaultvisitor";
 	}
 
-	public boolean wasSuccessful()
-	{
-		return m_success;
-	}
-
-	protected void printErrorAndFail(Node n, String errstr)
-	{
-		System.err.println(
-				"Error in " + this.getName() + " (" + n.getLine() + ", " + n.getPositionInLine() + "): " + errstr);
-		m_success = false;
-	}
-
-	public void visit(AssignmentNode n)
+	public void visit(AssignmentNode n) throws VisitorException
 	{
 		n.getDestination().accept(this);
 		n.getSource().accept(this);
 	}
 
-	public void visit(IntTypeNode n)
+	public void visit(IntTypeNode n) throws VisitorException
 	{
 	}
 
-	public void visit(StringTypeNode n)
+	public void visit(StringTypeNode n) throws VisitorException
 	{
 	}
 
-	public void visit(DoubleTypeNode n)
+	public void visit(DoubleTypeNode n) throws VisitorException
 	{
 	}
 
-	public void visit(VoidTypeNode n)
+	public void visit(VoidTypeNode n) throws VisitorException
 	{
 	}
 
-	public void visit(CustomTypeNode customTypeNode)
+	public void visit(CustomTypeNode n) throws VisitorException
 	{
 	}
 
-	public void visit(SizedArrayTypeNode n)
-	{
-		n.getType().accept(this);
-	}
-
-	public void visit(UnsizedArrayTypeNode n)
+	public void visit(SizedArrayTypeNode n) throws VisitorException
 	{
 		n.getType().accept(this);
 	}
 
-	public void visit(RefTypeNode n)
+	public void visit(UnsizedArrayTypeNode n) throws VisitorException
 	{
 		n.getType().accept(this);
 	}
 
-	public void visit(FunctionNode n)
+	public void visit(RefTypeNode n) throws VisitorException
+	{
+		n.getType().accept(this);
+	}
+
+	public void visit(FunctionNode n) throws VisitorException
 	{
 		if (n.getReturnVariable() != null)
 			n.getReturnVariable().accept(this);
-		n.getParameterList().forEach((subnode) -> subnode.accept(this));
+		for (ParameterNode entry : n.getParameterList())
+			entry.accept(this);
 		n.getStatements().accept(this);
 	}
 
-	public void visit(IfNode n)
+	public void visit(IfNode n) throws VisitorException
 	{
 		n.getCondition().accept(this);
 		n.getStatements().accept(this);
 		n.getElseStatements().accept(this);
 	}
 
-	public void visit(ParameterNode n)
+	public void visit(ParameterNode n) throws VisitorException
 	{
 		n.getType().accept(this);
 	}
 
-	public void visit(ProgramNode n)
+	public void visit(ProgramNode n) throws VisitorException
 	{
-		n.getNodes().forEach((subnode) -> subnode.accept(this));
+		for (Node entry : n.getNodes())
+			entry.accept(this);
 	}
 
-	public void visit(VariableNode n)
+	public void visit(VariableNode n) throws VisitorException
 	{
 		n.getType().accept(this);
 		if (n.getExpression() != null)
 			n.getExpression().accept(this);
 	}
 
-	public void visit(WhileNode n)
+	public void visit(WhileNode n) throws VisitorException
 	{
 		n.getCondition().accept(this);
 		n.getStatements().accept(this);
 	}
 
-	public void visit(DoWhileNode n)
+	public void visit(DoWhileNode n) throws VisitorException
 	{
 		n.getCondition().accept(this);
 		n.getStatements().accept(this);
 	}
 
-	public void visit(ForNode n)
+	public void visit(ForNode n) throws VisitorException
 	{
 		if (n.getInitialAssignment() != null)
 			n.getInitialAssignment().accept(this);
@@ -127,99 +117,104 @@ public abstract class Visitor
 		n.getStatements().accept(this);
 	}
 
-	public void visit(SwitchNode n)
+	public void visit(SwitchNode n) throws VisitorException
 	{
 		n.getCondition().accept(this);
 		n.getStatements().accept(this);
 		n.getDefaultStatements().accept(this);
 	}
 
-	public void visit(CaseNode n)
+	public void visit(CaseNode n) throws VisitorException
 	{
 		n.getCondition().accept(this);
 		n.getStatements().accept(this);
 	}
 
-	public void visit(BinaryExpressionNode n)
+	public void visit(BinaryExpressionNode n) throws VisitorException
 	{
 		n.getLeftSide().accept(this);
 		n.getRightSide().accept(this);
 	}
 
-	public void visit(UnaryExpressionNode n)
+	public void visit(UnaryExpressionNode n) throws VisitorException
 	{
 		n.getOperand().accept(this);
 	}
 
-	public void visit(CallNode n)
+	public void visit(CallNode n) throws VisitorException
 	{
-		n.getArguments().forEach((subnode) -> subnode.accept(this));
+		for (ExpressionNode entry : n.getArguments())
+			entry.accept(this);
 	}
 
-	public void visit(DoubleLiteralNode n)
-	{
-	}
-
-	public void visit(IntegerLiteralNode n)
+	public void visit(DoubleLiteralNode n) throws VisitorException
 	{
 	}
 
-	public void visit(ArrayAccessNode n)
+	public void visit(IntegerLiteralNode n) throws VisitorException
+	{
+	}
+
+	public void visit(ArrayAccessNode n) throws VisitorException
 	{
 		n.getOffset().accept(this);
 		n.getBase().accept(this);
 	}
 
-	public void visit(StructAccessNode n)
+	public void visit(StructAccessNode n) throws VisitorException
 	{
 		n.getBase().accept(this);
 	}
 
-	public void visit(VariableAccessNode n)
+	public void visit(VariableAccessNode n) throws VisitorException
 	{
 	}
 
-	public void visit(StringLiteralNode n)
+	public void visit(StringLiteralNode n) throws VisitorException
 	{
 	}
 
-	public void visit(BlockNode n)
+	public void visit(BlockNode n) throws VisitorException
 	{
-		n.getStatements().forEach((subnode) -> subnode.accept(this));
+		for (Node entry : n.getStatements())
+			entry.accept(this);
 	}
 
-	public void visit(StructNode n)
+	public void visit(StructNode n) throws VisitorException
 	{
-		n.getMembers().forEach((str, subnode) -> subnode.accept(this));
+		for (Entry<String, StructComponentNode> entry : n.getMembers().entrySet())
+			entry.getValue().accept(this);
 	}
 
-	public void visit(StructComponentNode n)
+	public void visit(StructComponentNode n) throws VisitorException
 	{
 		n.getType().accept(this);
 	}
 
-	public void visit(ClassFunctionComponentNode n)
+	public void visit(ClassFunctionComponentNode n) throws VisitorException
 	{
 		n.getFunction().accept(this);
 	}
 
-	public void visit(ClassDataComponentNode n)
+	public void visit(ClassDataComponentNode n) throws VisitorException
 	{
 		n.getType().accept(this);
 	}
 
-	public void visit(ClassNode n)
+	public void visit(ClassNode n) throws VisitorException
 	{
-		n.getMembers().forEach((str, subnode) -> subnode.accept(this));
-		n.getFunctions().forEach((str, subnode) -> subnode.accept(this));
+		for (Entry<String, ClassDataComponentNode> entry : n.getMembers().entrySet())
+			entry.getValue().accept(this);
+		for (Entry<String, ClassFunctionComponentNode> entry : n.getFunctions().entrySet())
+			entry.getValue().accept(this);
 	}
 
-	public void visit(ClassDataAccessNode n)
+	public void visit(ClassDataAccessNode n) throws VisitorException
 	{
 		n.getBase().accept(this);
 	}
 
-	public void visit(ClassFunctionAccessNode n)
+	public void visit(ClassFunctionAccessNode n) throws VisitorException
 	{
 		n.getCall().accept(this);
 		n.getBase().accept(this);
