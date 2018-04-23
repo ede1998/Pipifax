@@ -5,6 +5,8 @@ import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
 import me.erikhennig.pipifax.nodes.expressions.values.ArrayAccessNode;
 import me.erikhennig.pipifax.nodes.expressions.values.CallNode;
+import me.erikhennig.pipifax.nodes.expressions.values.ClassDataAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.values.ClassFunctionAccessNode;
 import me.erikhennig.pipifax.nodes.expressions.values.StructAccessNode;
 import me.erikhennig.pipifax.nodes.expressions.values.VariableAccessNode;
 import me.erikhennig.pipifax.nodes.types.*;
@@ -194,5 +196,32 @@ public abstract class Visitor
 	public void visit(StructComponentNode n)
 	{
 		n.getType().accept(this);
+	}
+
+	public void visit(ClassFunctionComponentNode n)
+	{
+		n.getFunction().accept(this);
+	}
+
+	public void visit(ClassDataComponentNode n)
+	{
+		n.getType().accept(this);
+	}
+
+	public void visit(ClassNode n)
+	{
+		n.getMembers().forEach((str, subnode) -> subnode.accept(this));
+		n.getFunctions().forEach((str, subnode) -> subnode.accept(this));
+	}
+
+	public void visit(ClassDataAccessNode n)
+	{
+		n.getBase().accept(this);
+	}
+
+	public void visit(ClassFunctionAccessNode n)
+	{
+		n.getCall().accept(this);
+		n.getBase().accept(this);
 	}
 }

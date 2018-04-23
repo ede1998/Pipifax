@@ -10,6 +10,8 @@ import me.erikhennig.pipifax.nodes.controls.WhileNode;
 import me.erikhennig.pipifax.nodes.expressions.*;
 import me.erikhennig.pipifax.nodes.expressions.values.ArrayAccessNode;
 import me.erikhennig.pipifax.nodes.expressions.values.CallNode;
+import me.erikhennig.pipifax.nodes.expressions.values.ClassDataAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.values.ClassFunctionAccessNode;
 import me.erikhennig.pipifax.nodes.expressions.values.StructAccessNode;
 import me.erikhennig.pipifax.nodes.expressions.values.VariableAccessNode;
 import me.erikhennig.pipifax.nodes.types.CustomTypeNode;
@@ -74,9 +76,8 @@ public class PrintVisitor extends Visitor
 				pn.accept(this);
 			}
 		}
-		m_program += genSp() + "Statements\n";
-		n.getStatements().accept(this);
 		m_indentLevel--;
+		n.getStatements().accept(this);
 		m_indentLevel--;
 	}
 
@@ -208,7 +209,7 @@ public class PrintVisitor extends Visitor
 		m_program += "\n";
 		m_indentLevel--;
 	}
-	
+
 	public void visit(ForNode n)
 	{
 		m_indentLevel++;
@@ -331,6 +332,21 @@ public class PrintVisitor extends Visitor
 		m_program += "." + n.getName();
 	}
 
+	@Override
+	public void visit(ClassDataAccessNode n)
+	{
+		n.getBase().accept(this);
+		m_program += "->" + n.getName();
+	}
+
+	@Override
+	public void visit(ClassFunctionAccessNode n)
+	{
+		n.getBase().accept(this);
+		m_program += "->";
+		n.getCall().accept(this);
+	}
+
 	public void visit(StringLiteralNode n)
 	{
 		m_program += n.getValue();
@@ -350,6 +366,52 @@ public class PrintVisitor extends Visitor
 	{
 		m_indentLevel++;
 		m_program += genSp() + n.getName() + " : ";
+		super.visit(n);
+		m_program += "\n";
+		m_indentLevel--;
+	}
+
+	@Override
+	public void visit(ClassNode n)
+	{
+		m_indentLevel++;
+		m_program += "Class: " + n.getName();
+		if (!n.getParent().isEmpty())
+			m_program += " : " + n.getParent();
+		m_program += "\n";
+		super.visit(n);
+		m_indentLevel--;
+	}
+
+	private static String convert(Visibility v)
+	{
+		switch (v)
+		{
+		case PRIVATE:
+			return "private";
+		case PUBLIC:
+			return "public";
+		case PROTECTED:
+			return "protected";
+		}
+		return "";
+	}
+
+	@Override
+	public void visit(ClassDataComponentNode n)
+	{
+		m_indentLevel++;
+		m_program += genSp() + convert(n.getAccessModifier()) + " " + n.getName() + " : ";
+		super.visit(n);
+		m_program += "\n";
+		m_indentLevel--;
+	}
+
+	@Override
+	public void visit(ClassFunctionComponentNode n)
+	{
+		m_indentLevel++;
+		m_program += genSp() + convert(n.getAccessModifier()) + " ";
 		super.visit(n);
 		m_program += "\n";
 		m_indentLevel--;

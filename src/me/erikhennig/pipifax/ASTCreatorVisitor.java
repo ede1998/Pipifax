@@ -2,8 +2,6 @@ package me.erikhennig.pipifax;
 
 import me.erikhennig.pipifax.antlr.PipifaxBaseVisitor;
 import me.erikhennig.pipifax.antlr.PipifaxParser;
-import me.erikhennig.pipifax.antlr.PipifaxParser.DeclarationContext;
-import me.erikhennig.pipifax.antlr.PipifaxParser.StatementDoWhileContext;
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
@@ -39,7 +37,7 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	}
 
 	@Override
-	public Node visitDeclaration(DeclarationContext ctx)
+	public Node visitDeclaration(PipifaxParser.DeclarationContext ctx)
 	{
 		boolean export = ctx.EXPORT() != null;
 
@@ -128,6 +126,74 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		scn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
 
 		return scn;
+	}
+
+	@Override
+	public Node visitClassdecl(PipifaxParser.ClassdeclContext ctx)
+	{
+		ClassNode cn = new ClassNode(ctx.ID(0).getText(), (ctx.PARENT != null) ? ctx.PARENT.getText() : "");
+		for (PipifaxParser.ClassmemberdeclContext cmdc : ctx.classmemberdecl())
+		{
+			Node n = cmdc.accept(this);
+
+			if (n instanceof ClassFunctionComponentNode)
+				cn.add(((ClassFunctionComponentNode) n).getName(), (ClassFunctionComponentNode) n);
+			else if (n instanceof ClassDataComponentNode)
+				cn.add(((ClassDataComponentNode) n).getName(), (ClassDataComponentNode) n);
+		}
+		return cn;
+	}
+
+	@Override
+	public Node visitClassfunction(PipifaxParser.ClassfunctionContext ctx)
+	{
+		FunctionNode fn = (FunctionNode) ctx.funcdecl().accept(this);
+		ClassFunctionComponentNode cfcn = new ClassFunctionComponentNode(fn);
+		switch (ctx.ACCESS_MODIFIER().getText())
+		{
+		case "private":
+			cfcn.setAccessModifier(Visibility.PRIVATE);
+			break;
+		case "protected":
+			cfcn.setAccessModifier(Visibility.PROTECTED);
+			break;
+		case "public":
+			cfcn.setAccessModifier(Visibility.PUBLIC);
+			break;
+		}
+		cfcn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+		return cfcn;
+	}
+
+	@Override
+	public Node visitClassvar(PipifaxParser.ClassvarContext ctx)
+	{
+		ClassDataComponentNode cdcn = (ClassDataComponentNode) ctx.classvardecl().accept(this);
+		switch (ctx.ACCESS_MODIFIER().getText())
+		{
+		case "private":
+			cdcn.setAccessModifier(Visibility.PRIVATE);
+			break;
+		case "protected":
+			cdcn.setAccessModifier(Visibility.PROTECTED);
+			break;
+		case "public":
+			cdcn.setAccessModifier(Visibility.PUBLIC);
+			break;
+		default:
+			throw new NullPointerException();
+		}
+		cdcn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+		return cdcn;
+	}
+
+	@Override
+	public Node visitClassvardecl(PipifaxParser.ClassvardeclContext ctx)
+	{
+		TypeNode tn = (TypeNode) ctx.type().accept(this);
+		ClassDataComponentNode cdcn = new ClassDataComponentNode(ctx.ID().getText(), tn);
+		cdcn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+		return cdcn;
 	}
 
 	@Override
@@ -489,6 +555,25 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		van.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
 
 		return van;
+	}
+
+	@Override
+	public Node visitClassFuncAccess(PipifaxParser.ClassFuncAccessContext ctx)
+	{
+		ValueNode vn = (ValueNode) ctx.lvalue().accept(this);
+		CallNode cn = (CallNode) ctx.funccall().accept(this);
+		ClassFunctionAccessNode cfan = new ClassFunctionAccessNode(vn, cn);
+		cfan.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+		return cfan;
+	}
+
+	@Override
+	public Node visitClassVarAccess(PipifaxParser.ClassVarAccessContext ctx)
+	{
+		ValueNode vn = (ValueNode) ctx.lvalue().accept(this);
+		ClassDataAccessNode cdan = new ClassDataAccessNode(vn, ctx.ID().getText());
+		cdan.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+		return cdan;
 	}
 
 	@Override

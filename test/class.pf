@@ -1,18 +1,22 @@
 class parent {
-   protected var m_size double;
+   protected m_size double;
+   public xdd string;
    public func parent(size double) parent
    {
      m_size = size;
+	 xdd = "default";
    }
 }
 class myfirstclass : parent{
 
-   private var i int;
-   protected var j string;
+   private i int;
+   protected j string;
    
    public func getI() int
    {
      getI = i;
+	 xdd = "test";
+	 m_size = 9000.0;
    }
    
    public func getJ() string
@@ -32,5 +36,7 @@ func main() int
 {
   var p myfirstclass = new myfirstclass();
   var j parent = new parent();
-  var i int = p->getI;
+  var i int = p->getI();
+  j->xdd = "test";
+  p->xdd = "test2";
 }

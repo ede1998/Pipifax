@@ -4,15 +4,21 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import me.erikhennig.pipifax.nodes.AssignmentNode;
+import me.erikhennig.pipifax.nodes.ClassDataComponentNode;
+import me.erikhennig.pipifax.nodes.ClassFunctionComponentNode;
+import me.erikhennig.pipifax.nodes.ClassNode;
 import me.erikhennig.pipifax.nodes.FunctionNode;
 import me.erikhennig.pipifax.nodes.Node;
 import me.erikhennig.pipifax.nodes.ParameterNode;
 import me.erikhennig.pipifax.nodes.StructComponentNode;
+import me.erikhennig.pipifax.nodes.StructNode;
 import me.erikhennig.pipifax.nodes.VariableNode;
 import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
 import me.erikhennig.pipifax.nodes.expressions.values.ArrayAccessNode;
 import me.erikhennig.pipifax.nodes.expressions.values.CallNode;
+import me.erikhennig.pipifax.nodes.expressions.values.ClassDataAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.values.ClassFunctionAccessNode;
 import me.erikhennig.pipifax.nodes.expressions.values.StructAccessNode;
 import me.erikhennig.pipifax.nodes.expressions.values.VariableAccessNode;
 import me.erikhennig.pipifax.nodes.types.ArrayTypeNode;
@@ -174,13 +180,48 @@ public class TypeCheckingVisitor extends Visitor
 			printErrorAndFail(n, "Base type is no struct type");
 		CustomTypeNode basetype = (CustomTypeNode) n.getBase().getType();
 
-		StructComponentNode scn = basetype.getTypeDefinition().find(n.getName());
+		StructComponentNode scn = ((StructNode) basetype.getTypeDefinition()).find(n.getName());
 		if (scn == null)
 			printErrorAndFail(n, "Struct " + basetype.getName() + " has no member " + n.getName());
 		n.setComponent(scn);
 		n.setType(scn.getType());
 	}
 
+	@Override
+	public void visit(ClassDataAccessNode n)
+	{
+		super.visit(n);
+		if (!(n.getBase().getType() instanceof CustomTypeNode))
+			printErrorAndFail(n, "Base type is no class type");
+		CustomTypeNode basetype = (CustomTypeNode) n.getBase().getType();
+
+		ClassDataComponentNode cdcn = ((ClassNode) basetype.getTypeDefinition()).findMember(n.getName());
+		if (cdcn == null)
+			printErrorAndFail(n, "Class " + basetype.getName() + " has no member " + n.getName());
+		n.setComponent(cdcn);
+		n.setType(cdcn.getType());
+	}
+	
+	@Override
+	public void visit(ClassFunctionAccessNode n)
+	{
+		n.getBase().accept(this);
+		
+		if (!(n.getBase().getType() instanceof CustomTypeNode))
+			printErrorAndFail(n, "Base type is no class type");
+		CustomTypeNode basetype = (CustomTypeNode) n.getBase().getType();
+
+		ClassFunctionComponentNode cfcn = ((ClassNode) basetype.getTypeDefinition()).findFunction(n.getName());
+		if (cfcn == null)
+			printErrorAndFail(n, "Class " + basetype.getName() + " has no member " + n.getName());
+		//should maybe be done earlier in name resolution?
+		n.getCall().setFunction(cfcn.getFunction());
+		n.setComponent(cfcn);
+		n.setType(cfcn.getFunction().getReturnVariable().getType());
+		
+		n.getCall().accept(this);
+	}
+	
 	@Override
 	public void visit(ArrayAccessNode n)
 	{

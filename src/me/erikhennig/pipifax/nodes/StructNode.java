@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 
 import me.erikhennig.pipifax.visitors.Visitor;
 
-public class StructNode extends NamedNode
+public class StructNode extends TypeDefinitionNode
 {
 	private LinkedHashMap<String, StructComponentNode> m_members = new LinkedHashMap<>();
 

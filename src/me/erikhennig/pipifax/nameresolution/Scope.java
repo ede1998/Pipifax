@@ -2,18 +2,26 @@ package me.erikhennig.pipifax.nameresolution;
 
 import java.util.Hashtable;
 
+import me.erikhennig.pipifax.nodes.ClassDataComponentNode;
+import me.erikhennig.pipifax.nodes.ClassFunctionComponentNode;
+import me.erikhennig.pipifax.nodes.ClassNode;
 import me.erikhennig.pipifax.nodes.FunctionNode;
 import me.erikhennig.pipifax.nodes.NamedNode;
 import me.erikhennig.pipifax.nodes.Node;
 import me.erikhennig.pipifax.nodes.StructNode;
+import me.erikhennig.pipifax.nodes.TypeDefinitionNode;
 import me.erikhennig.pipifax.nodes.VariableNode;
 
 public class Scope
 {
 	private Scope m_OuterScope = null;;
 	private Hashtable<String, NamedNode> m_symbols = new Hashtable<>();
-	
-	public Scope() {}
+	private Hashtable<String, NamedNode> m_typeSymbols = new Hashtable<>();
+
+	public Scope()
+	{
+	}
+
 	public Scope enterScope()
 	{
 		return new Scope(this);
@@ -26,7 +34,10 @@ public class Scope
 
 	public boolean register(NamedNode nn)
 	{
-		return m_symbols.put(nn.getName(), nn) == null;
+		if (nn instanceof TypeDefinitionNode)
+			return m_typeSymbols.put(nn.getName(), nn) == null;
+		else
+			return m_symbols.put(nn.getName(), nn) == null;
 	}
 
 	public Scope getOuterScope()
@@ -46,13 +57,37 @@ public class Scope
 			vn = m_OuterScope.getVariable(name);
 		return vn;
 	}
-	
+
+	public TypeDefinitionNode getTypeDefinition(String name)
+	{
+		TypeDefinitionNode tdn = fetchTypeDef(name);
+		if ((tdn == null) && (m_OuterScope != null))
+			tdn = m_OuterScope.getTypeDefinition(name);
+		return tdn;
+	}
+
+	private TypeDefinitionNode fetchTypeDef(String name)
+	{
+		Node n = m_typeSymbols.get(name);
+		if (n instanceof TypeDefinitionNode)
+			return (TypeDefinitionNode) n;
+		return null;
+	}
+
 	public StructNode getStruct(String name)
 	{
 		StructNode sn = fetchStruct(name);
 		if ((sn == null) && (m_OuterScope != null))
 			sn = m_OuterScope.getStruct(name);
 		return sn;
+	}
+
+	public ClassNode getClass(String name)
+	{
+		ClassNode cn = fetchClass(name);
+		if ((cn == null) && (m_OuterScope != null))
+			cn = m_OuterScope.getClass(name);
+		return cn;
 	}
 
 	public FunctionNode getFunction(String name)
@@ -65,12 +100,20 @@ public class Scope
 
 	private StructNode fetchStruct(String name)
 	{
-		Node n = m_symbols.get(name);
+		Node n = m_typeSymbols.get(name);
 		if (n instanceof StructNode)
 			return (StructNode) n;
 		return null;
 	}
-	
+
+	private ClassNode fetchClass(String name)
+	{
+		Node n = m_typeSymbols.get(name);
+		if (n instanceof ClassNode)
+			return (ClassNode) n;
+		return null;
+	}
+
 	private VariableNode fetchVariable(String name)
 	{
 		Node n = m_symbols.get(name);
@@ -86,5 +129,4 @@ public class Scope
 			return (FunctionNode) n;
 		return null;
 	}
-
 }

@@ -10,6 +10,7 @@ public class FunctionNode extends NamedNode
 	private VariableNode m_returnVariable = null;
 	private ArrayList<ParameterNode> m_parameterList = new ArrayList<>();
 	private BlockNode m_statements;
+	private ClassFunctionComponentNode m_parent = null;
 
 	public FunctionNode(TypeNode retType, String name, BlockNode bn)
 	{
@@ -47,5 +48,15 @@ public class FunctionNode extends NamedNode
 	public BlockNode getStatements()
 	{
 		return m_statements;
+	}
+
+	public ClassFunctionComponentNode getParent()
+	{
+		return m_parent;
+	}
+
+	void setParent(ClassFunctionComponentNode parent)
+	{
+		m_parent = parent;
 	}
 }

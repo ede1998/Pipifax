@@ -8,8 +8,9 @@ struct: 'struct' ID '{' memberdecl+ '}';
 memberdecl: ID type';'?;
 classdecl: 'class' ID (':' PARENT=ID)? '{' classmemberdecl* '}';
 classmemberdecl: ACCESS_MODIFIER funcdecl # classfunction
-      | ACCESS_MODIFIER vardecl # classvar
+      | ACCESS_MODIFIER classvardecl # classvar
       ;
+classvardecl: ID type';'?;
 type: 'int' # IntType
       | 'double' # DoubleType
       | 'string' # StringType

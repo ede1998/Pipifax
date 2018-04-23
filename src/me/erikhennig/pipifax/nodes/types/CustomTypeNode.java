@@ -1,18 +1,18 @@
 package me.erikhennig.pipifax.nodes.types;
 
-import me.erikhennig.pipifax.nodes.StructNode;
+import me.erikhennig.pipifax.nodes.TypeDefinitionNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 
 public class CustomTypeNode extends TypeNode
 {
-	private StructNode m_typeDefinition = null;
+	private TypeDefinitionNode m_typeDefinition = null;
 	private String m_name;
-	
+
 	public CustomTypeNode(String name)
 	{
 		m_name = name;
 	}
-	
+
 	@Override
 	public boolean checkType(TypeNode tn)
 	{
@@ -34,16 +34,14 @@ public class CustomTypeNode extends TypeNode
 		return m_name;
 	}
 
-	public StructNode getTypeDefinition()
+	public TypeDefinitionNode getTypeDefinition()
 	{
 		return m_typeDefinition;
 	}
 
-	public void setTypeDefinition(StructNode typeDefinition)
+	public void setTypeDefinition(TypeDefinitionNode typeDefinition)
 	{
 		m_typeDefinition = typeDefinition;
 	}
-	
-	
 
 }

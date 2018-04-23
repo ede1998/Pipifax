@@ -21,6 +21,7 @@ import me.erikhennig.pipifax.nameresolution.Scope;
 import me.erikhennig.pipifax.nodes.NamedNode;
 import me.erikhennig.pipifax.nodes.Node;
 import me.erikhennig.pipifax.nodes.ProgramNode;
+import me.erikhennig.pipifax.visitors.AccessControlVisitor;
 import me.erikhennig.pipifax.visitors.NameResolutionVisitor;
 import me.erikhennig.pipifax.visitors.PrintVisitor;
 import me.erikhennig.pipifax.visitors.TypeCheckingVisitor;
@@ -88,10 +89,12 @@ public class Program
 			m_program = (ProgramNode) n;
 
 			addPublicSymbols();
-		} catch (IOException e)
+		}
+		catch (IOException e)
 		{
 			e.printStackTrace();
-		} catch (RecognitionException e)
+		}
+		catch (RecognitionException e)
 		{
 			System.err.println("Syntax error: " + e);
 		}
@@ -124,7 +127,6 @@ public class Program
 			return;
 		}
 
-		
 		// Type checking
 		TypeCheckingVisitor tcv = new TypeCheckingVisitor();
 		m_program.accept(tcv);
@@ -133,6 +135,17 @@ public class Program
 		else
 		{
 			System.out.println("Type checking error.");
+		}
+		m_checked = true;
+
+		// Visibility checking
+		AccessControlVisitor acv = new AccessControlVisitor();
+		m_program.accept(acv);
+		if (acv.wasSuccessful())
+			System.out.println("Visibility checking done.");
+		else
+		{
+			System.out.println("Visibility checking error.");
 		}
 		m_checked = true;
 	}
