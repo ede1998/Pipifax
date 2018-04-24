@@ -3,6 +3,7 @@ package me.erikhennig.pipifax.nodes;
 import java.util.ArrayList;
 
 import me.erikhennig.pipifax.visitors.Visitor;
+import me.erikhennig.pipifax.visitors.VisitorException;
 
 public class ProgramNode extends Node
 {
@@ -20,7 +21,7 @@ public class ProgramNode extends Node
 	}
 
 	@Override
-	public void accept(Visitor v)
+	public void accept(Visitor v) throws VisitorException
 	{
 		v.visit(this);
 	}

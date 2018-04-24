@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import me.erikhennig.pipifax.visitors.Visitor;
+import me.erikhennig.pipifax.visitors.VisitorException;
 
 public class ClassNode extends TypeDefinitionNode
 {
@@ -20,7 +21,7 @@ public class ClassNode extends TypeDefinitionNode
 	}
 
 	@Override
-	public void accept(Visitor v)
+	public void accept(Visitor v) throws VisitorException
 	{
 		v.visit(this);
 	}

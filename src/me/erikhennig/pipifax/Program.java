@@ -25,6 +25,7 @@ import me.erikhennig.pipifax.visitors.AccessControlVisitor;
 import me.erikhennig.pipifax.visitors.NameResolutionVisitor;
 import me.erikhennig.pipifax.visitors.PrintVisitor;
 import me.erikhennig.pipifax.visitors.TypeCheckingVisitor;
+import me.erikhennig.pipifax.visitors.VisitorException;
 
 public class Program
 {
@@ -117,37 +118,49 @@ public class Program
 	{
 		// Resolve names
 		NameResolutionVisitor nrv = new NameResolutionVisitor(constructScope());
-		m_program.accept(nrv);
-		if (nrv.wasSuccessful())
+		try
+		{
+			m_program.accept(nrv);
 			System.out.println("Name resolution successful.");
-		else
+		}
+		catch (VisitorException e)
 		{
 			m_checked = true;
+			System.err.println(e);
 			System.out.println("Name resolution error.");
 			return;
 		}
 
 		// Type checking
 		TypeCheckingVisitor tcv = new TypeCheckingVisitor();
-		m_program.accept(tcv);
-		if (tcv.wasSuccessful())
-			System.out.println("Type checking done.");
-		else
+		try
 		{
-			System.out.println("Type checking error.");
+			m_program.accept(tcv);
+			System.out.println("Type checking done.");
 		}
-		m_checked = true;
+		catch (VisitorException e)
+		{
+			System.err.println(e);
+			System.out.println("Type checking error.");
+			m_checked = true;
+		}
 
 		// Visibility checking
 		AccessControlVisitor acv = new AccessControlVisitor();
-		m_program.accept(acv);
-		if (acv.wasSuccessful())
-			System.out.println("Visibility checking done.");
-		else
+		try
 		{
+			m_program.accept(acv);
+			System.out.println("Visibility checking done.");
+		}
+		catch (VisitorException e)
+		{
+			System.err.println(e);
 			System.out.println("Visibility checking error.");
 		}
-		m_checked = true;
+		finally
+		{
+			m_checked = true;
+		}
 	}
 
 	private Scope constructScope()
@@ -170,7 +183,14 @@ public class Program
 	{
 		// Print AST
 		PrintVisitor printer = new PrintVisitor();
-		m_program.accept(printer);
+		try
+		{
+			m_program.accept(printer);
+		}
+		catch (VisitorException e)
+		{
+			System.err.println(e);
+		}
 		System.out.println(printer.getProgram());
 	}
 

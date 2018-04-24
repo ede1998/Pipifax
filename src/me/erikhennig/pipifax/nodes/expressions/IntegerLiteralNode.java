@@ -2,6 +2,7 @@ package me.erikhennig.pipifax.nodes.expressions;
 
 import me.erikhennig.pipifax.nodes.types.TypeNode;
 import me.erikhennig.pipifax.visitors.Visitor;
+import me.erikhennig.pipifax.visitors.VisitorException;
 
 public class IntegerLiteralNode extends LiteralNode
 {
@@ -14,7 +15,7 @@ public class IntegerLiteralNode extends LiteralNode
 	}
 
 	@Override
-	public void accept(Visitor v)
+	public void accept(Visitor v) throws VisitorException
 	{
 		v.visit(this);
 	}

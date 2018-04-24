@@ -1,12 +1,13 @@
 package me.erikhennig.pipifax.nodes;
 
 import me.erikhennig.pipifax.visitors.Visitor;
+import me.erikhennig.pipifax.visitors.VisitorException;
 
 public abstract class Node
 {
 	private int m_line = -1;
 	private int m_charInLine = -1;
-	public abstract void accept(Visitor v);
+	public abstract void accept(Visitor v)  throws VisitorException;
 	
 	public void setPosition(int line, int character)
 	{

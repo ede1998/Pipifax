@@ -3,6 +3,7 @@ package me.erikhennig.pipifax.nodes;
 import java.util.LinkedHashMap;
 
 import me.erikhennig.pipifax.visitors.Visitor;
+import me.erikhennig.pipifax.visitors.VisitorException;
 
 public class StructNode extends TypeDefinitionNode
 {
@@ -14,7 +15,7 @@ public class StructNode extends TypeDefinitionNode
 	}
 
 	@Override
-	public void accept(Visitor v)
+	public void accept(Visitor v) throws VisitorException
 	{
 		v.visit(this);
 	}
@@ -23,12 +24,12 @@ public class StructNode extends TypeDefinitionNode
 	{
 		return m_members.put(name, t) != null;
 	}
-	
+
 	public StructComponentNode find(String name)
 	{
 		return m_members.get(name);
 	}
-	
+
 	public LinkedHashMap<String, StructComponentNode> getMembers()
 	{
 		return m_members;

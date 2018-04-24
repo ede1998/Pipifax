@@ -2,6 +2,7 @@ package me.erikhennig.pipifax.nodes.expressions.values;
 
 import me.erikhennig.pipifax.nodes.ClassFunctionComponentNode;
 import me.erikhennig.pipifax.visitors.Visitor;
+import me.erikhennig.pipifax.visitors.VisitorException;
 
 public class ClassFunctionAccessNode extends ValueNode
 {
@@ -26,7 +27,7 @@ public class ClassFunctionAccessNode extends ValueNode
 	}
 
 	@Override
-	public void accept(Visitor v)
+	public void accept(Visitor v) throws VisitorException
 	{
 		v.visit(this);
 	}
@@ -40,7 +41,7 @@ public class ClassFunctionAccessNode extends ValueNode
 	{
 		return m_base;
 	}
-	
+
 	public String getName()
 	{
 		return m_call.getName();

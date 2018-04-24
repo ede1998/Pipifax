@@ -1,6 +1,7 @@
 package me.erikhennig.pipifax.nodes.expressions;
 
 import me.erikhennig.pipifax.visitors.Visitor;
+import me.erikhennig.pipifax.visitors.VisitorException;
 
 public class BinaryExpressionNode extends ExpressionNode
 {
@@ -31,7 +32,7 @@ public class BinaryExpressionNode extends ExpressionNode
 	}
 
 	@Override
-	public void accept(Visitor v)
+	public void accept(Visitor v) throws VisitorException
 	{
 		v.visit(this);
 	}

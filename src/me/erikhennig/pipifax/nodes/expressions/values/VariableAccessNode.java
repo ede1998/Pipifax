@@ -2,13 +2,16 @@ package me.erikhennig.pipifax.nodes.expressions.values;
 
 import me.erikhennig.pipifax.nodes.VariableNode;
 import me.erikhennig.pipifax.visitors.Visitor;
+import me.erikhennig.pipifax.visitors.VisitorException;
 
-public class VariableAccessNode extends ValueNode {
+public class VariableAccessNode extends ValueNode
+{
 
 	private VariableNode m_variable;
 	private String m_name;
-	
-	public VariableAccessNode(String name) {
+
+	public VariableAccessNode(String name)
+	{
 		m_name = name;
 	}
 
@@ -21,14 +24,15 @@ public class VariableAccessNode extends ValueNode {
 	{
 		m_variable = variable;
 	}
-	
+
 	public String getName()
 	{
 		return m_name;
 	}
 
 	@Override
-	public void accept(Visitor v) {
+	public void accept(Visitor v) throws VisitorException
+	{
 		v.visit(this);
 	}
 

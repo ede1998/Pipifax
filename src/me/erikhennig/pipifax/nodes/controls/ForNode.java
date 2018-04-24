@@ -4,6 +4,7 @@ import me.erikhennig.pipifax.nodes.AssignmentNode;
 import me.erikhennig.pipifax.nodes.BlockNode;
 import me.erikhennig.pipifax.nodes.expressions.ExpressionNode;
 import me.erikhennig.pipifax.visitors.Visitor;
+import me.erikhennig.pipifax.visitors.VisitorException;
 
 public class ForNode extends ControlNode
 {
@@ -18,7 +19,7 @@ public class ForNode extends ControlNode
 	}
 
 	@Override
-	public void accept(Visitor v)
+	public void accept(Visitor v) throws VisitorException
 	{
 		v.visit(this);
 	}
@@ -27,7 +28,7 @@ public class ForNode extends ControlNode
 	{
 		return m_initialAssignment;
 	}
-	
+
 	public AssignmentNode getLoopedAssignment()
 	{
 		return m_loopedAssignment;

@@ -2,26 +2,30 @@ package me.erikhennig.pipifax.nodes.expressions.values;
 
 import me.erikhennig.pipifax.nodes.expressions.ExpressionNode;
 import me.erikhennig.pipifax.visitors.Visitor;
+import me.erikhennig.pipifax.visitors.VisitorException;
 
-public class ArrayAccessNode extends ValueNode {
+public class ArrayAccessNode extends ValueNode
+{
 	private ExpressionNode m_offset;
 	private ValueNode m_base;
-	
-	public ArrayAccessNode(ValueNode base, ExpressionNode offset) {
+
+	public ArrayAccessNode(ValueNode base, ExpressionNode offset)
+	{
 		m_base = base;
 		m_offset = offset;
 	}
 
 	@Override
-	public void accept(Visitor v) {
+	public void accept(Visitor v) throws VisitorException
+	{
 		v.visit(this);
 	}
-	
+
 	public ExpressionNode getOffset()
 	{
 		return m_offset;
 	}
-	
+
 	public ValueNode getBase()
 	{
 		return m_base;
@@ -32,5 +36,5 @@ public class ArrayAccessNode extends ValueNode {
 	{
 		return m_base.isLValue();
 	}
-	
+
 }

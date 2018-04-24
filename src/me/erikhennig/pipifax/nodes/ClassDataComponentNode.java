@@ -2,15 +2,19 @@ package me.erikhennig.pipifax.nodes;
 
 import me.erikhennig.pipifax.nodes.types.TypeNode;
 import me.erikhennig.pipifax.visitors.Visitor;
+import me.erikhennig.pipifax.visitors.VisitorException;
 
-public class ClassDataComponentNode extends Node {
-	
+public class ClassDataComponentNode extends Node
+{
+
 	private ClassNode m_parent;
 	private TypeNode m_type;
 	private String m_name;
 	private Visibility m_accessModifier;
 	private VariableNode m_variable;
-	public ClassDataComponentNode(String name, TypeNode t) {
+
+	public ClassDataComponentNode(String name, TypeNode t)
+	{
 		m_name = name;
 		m_type = t;
 		m_variable = new VariableNode(m_name, m_type, null);
@@ -18,14 +22,16 @@ public class ClassDataComponentNode extends Node {
 	}
 
 	@Override
-	public void accept(Visitor v) {
+	public void accept(Visitor v) throws VisitorException
+	{
 		v.visit(this);
 	}
 
-	public TypeNode getType() {
+	public TypeNode getType()
+	{
 		return m_type;
 	}
-		
+
 	public String getName()
 	{
 		return m_name;
@@ -51,7 +57,7 @@ public class ClassDataComponentNode extends Node {
 		return m_parent;
 	}
 
-    void setParent(ClassNode parent)
+	void setParent(ClassNode parent)
 	{
 		m_parent = parent;
 	}

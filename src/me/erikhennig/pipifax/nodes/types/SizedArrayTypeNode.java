@@ -1,6 +1,7 @@
 package me.erikhennig.pipifax.nodes.types;
 
 import me.erikhennig.pipifax.visitors.Visitor;
+import me.erikhennig.pipifax.visitors.VisitorException;
 
 public class SizedArrayTypeNode extends ArrayTypeNode
 {
@@ -14,7 +15,7 @@ public class SizedArrayTypeNode extends ArrayTypeNode
 	}
 
 	@Override
-	public void accept(Visitor v)
+	public void accept(Visitor v) throws VisitorException
 	{
 		v.visit(this);
 	}

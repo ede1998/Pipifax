@@ -2,6 +2,7 @@ package me.erikhennig.pipifax.nodes.types;
 
 import me.erikhennig.pipifax.nodes.TypeDefinitionNode;
 import me.erikhennig.pipifax.visitors.Visitor;
+import me.erikhennig.pipifax.visitors.VisitorException;
 
 public class CustomTypeNode extends TypeNode
 {
@@ -24,7 +25,7 @@ public class CustomTypeNode extends TypeNode
 	}
 
 	@Override
-	public void accept(Visitor v)
+	public void accept(Visitor v) throws VisitorException
 	{
 		v.visit(this);
 	}

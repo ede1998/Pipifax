@@ -2,8 +2,6 @@ package me.erikhennig.pipifax.nameresolution;
 
 import java.util.Hashtable;
 
-import me.erikhennig.pipifax.nodes.ClassDataComponentNode;
-import me.erikhennig.pipifax.nodes.ClassFunctionComponentNode;
 import me.erikhennig.pipifax.nodes.ClassNode;
 import me.erikhennig.pipifax.nodes.FunctionNode;
 import me.erikhennig.pipifax.nodes.NamedNode;

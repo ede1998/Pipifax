@@ -1,6 +1,7 @@
 package me.erikhennig.pipifax.nodes.types;
 
 import me.erikhennig.pipifax.visitors.Visitor;
+import me.erikhennig.pipifax.visitors.VisitorException;
 
 public class IntTypeNode extends TypeNode
 {
@@ -10,7 +11,7 @@ public class IntTypeNode extends TypeNode
 	}
 
 	@Override
-	public void accept(Visitor v)
+	public void accept(Visitor v) throws VisitorException
 	{
 		v.visit(this);
 	}

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import me.erikhennig.pipifax.nodes.types.TypeNode;
 import me.erikhennig.pipifax.visitors.Visitor;
+import me.erikhennig.pipifax.visitors.VisitorException;
 
 public class FunctionNode extends NamedNode
 {
@@ -30,7 +31,7 @@ public class FunctionNode extends NamedNode
 	}
 
 	@Override
-	public void accept(Visitor v)
+	public void accept(Visitor v) throws VisitorException
 	{
 		v.visit(this);
 	}
