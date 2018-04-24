@@ -37,7 +37,7 @@ public class BinaryExpressionNode extends ExpressionNode
 		v.visit(this);
 	}
 
-	public String getOperationAsString()
+	public String stringify()
 	{
 		switch (m_operation)
 		{

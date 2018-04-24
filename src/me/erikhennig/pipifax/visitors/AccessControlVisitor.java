@@ -1,7 +1,7 @@
 package me.erikhennig.pipifax.visitors;
 
-import me.erikhennig.pipifax.nodes.ClassDataComponentNode;
-import me.erikhennig.pipifax.nodes.ClassFunctionComponentNode;
+import me.erikhennig.pipifax.nodes.ClassFieldNode;
+import me.erikhennig.pipifax.nodes.ClassFunctionNode;
 import me.erikhennig.pipifax.nodes.ClassNode;
 import me.erikhennig.pipifax.nodes.Visibility;
 import me.erikhennig.pipifax.nodes.expressions.values.CallNode;
@@ -23,8 +23,8 @@ public class AccessControlVisitor extends Visitor
 	public void visit(ClassFunctionAccessNode n) throws VisitorException
 	{
 		super.visit(n);
-		ClassFunctionComponentNode cfcn = n.getComponent();
-		Visibility visibility = cfcn.getAccessModifier();
+		ClassFunctionNode cfcn = n.getComponent();
+		Visibility visibility = cfcn.getVisibility();
 		if (visibility != Visibility.PUBLIC)
 		{
 			if (visibility == Visibility.PRIVATE)
@@ -58,8 +58,8 @@ public class AccessControlVisitor extends Visitor
 	public void visit(ClassDataAccessNode n) throws VisitorException
 	{
 		super.visit(n);
-		ClassDataComponentNode cdcn = n.getComponent();
-		Visibility visibility = cdcn.getAccessModifier();
+		ClassFieldNode cdcn = n.getComponent();
+		Visibility visibility = cdcn.getVisibility();
 		if (visibility != Visibility.PUBLIC)
 		{
 			if (visibility == Visibility.PRIVATE)
@@ -93,11 +93,11 @@ public class AccessControlVisitor extends Visitor
 	public void visit(VariableAccessNode n) throws VisitorException
 	{
 		super.visit(n);
-		ClassDataComponentNode cdcn = n.getVariable().getParent();
-		if (cdcn == null)
+		if (!(n.getVariable() instanceof ClassFieldNode))
 			return;
+		ClassFieldNode cdcn = (ClassFieldNode) n.getVariable();
 		
-		Visibility visibility = cdcn.getAccessModifier();
+		Visibility visibility = cdcn.getVisibility();
 		if (visibility != Visibility.PUBLIC)
 		{
 			if (visibility == Visibility.PRIVATE)
@@ -131,11 +131,12 @@ public class AccessControlVisitor extends Visitor
 	public void visit(CallNode n) throws VisitorException
 	{
 		super.visit(n);
-		ClassFunctionComponentNode cdcn = n.getFunction().getParent();
-		if (cdcn == null)
+		if (!(n.getFunction() instanceof ClassFunctionNode))
 			return;
+		ClassFunctionNode cdcn = (ClassFunctionNode) n.getFunction();
+			
 		
-		Visibility visibility = cdcn.getAccessModifier();
+		Visibility visibility = cdcn.getVisibility();
 		if (visibility != Visibility.PUBLIC)
 		{
 			if (visibility == Visibility.PRIVATE)

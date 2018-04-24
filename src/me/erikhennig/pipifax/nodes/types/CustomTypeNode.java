@@ -1,5 +1,7 @@
 package me.erikhennig.pipifax.nodes.types;
 
+import me.erikhennig.pipifax.nodes.ClassNode;
+import me.erikhennig.pipifax.nodes.StructNode;
 import me.erikhennig.pipifax.nodes.TypeDefinitionNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 import me.erikhennig.pipifax.visitors.VisitorException;
@@ -17,12 +19,31 @@ public class CustomTypeNode extends TypeNode
 	@Override
 	public boolean checkType(TypeNode tn)
 	{
-		if (tn instanceof CustomTypeNode)
-		{
-			return ((CustomTypeNode) tn).m_typeDefinition == m_typeDefinition;
-		}
+		if ((m_typeDefinition == null) || !(tn instanceof CustomTypeNode))
+			return false;
+		
+		CustomTypeNode other = (CustomTypeNode) tn;
+		
+		if (m_typeDefinition instanceof StructNode)
+			return checkStructType(other);
+		if (m_typeDefinition instanceof ClassNode)
+			return checkClassType(other);
+		
 		return false;
 	}
+		
+   private boolean checkClassType(CustomTypeNode n)
+   {
+	   ClassNode cn = (ClassNode) m_typeDefinition;
+	   if (n.m_typeDefinition instanceof ClassNode)
+		   return cn.isPolymorphable((ClassNode) n.m_typeDefinition);
+	   return false;
+   }
+   
+   private boolean checkStructType(CustomTypeNode n)
+   {
+	   return n.m_typeDefinition == m_typeDefinition;
+   }
 
 	@Override
 	public void accept(Visitor v) throws VisitorException

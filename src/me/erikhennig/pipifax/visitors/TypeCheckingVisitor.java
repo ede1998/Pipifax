@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import me.erikhennig.pipifax.nodes.AssignmentNode;
-import me.erikhennig.pipifax.nodes.ClassDataComponentNode;
-import me.erikhennig.pipifax.nodes.ClassFunctionComponentNode;
+import me.erikhennig.pipifax.nodes.ClassFieldNode;
+import me.erikhennig.pipifax.nodes.ClassFunctionNode;
 import me.erikhennig.pipifax.nodes.ClassNode;
 import me.erikhennig.pipifax.nodes.FunctionNode;
 import me.erikhennig.pipifax.nodes.Node;
@@ -85,7 +85,7 @@ public class TypeCheckingVisitor extends Visitor
 		}
 
 		if (!retVal)
-			throw new VisitorException(this, n, "Binary expression " + n.getOperationAsString() + " doesn't accept those types");
+			throw new VisitorException(this, n, "Binary expression " + n.stringify() + " doesn't accept those types");
 	}
 
 	@Override
@@ -166,10 +166,27 @@ public class TypeCheckingVisitor extends Visitor
 			if (retVal)
 				n.setType(TypeNode.getInt());
 			break;
+		default:
+			throw new UnsupportedOperationException("Can't resolve this Unary Expression here.");
 		}
 
 		if (!retVal)
 			throw new VisitorException(this, n, "Unary expression doesn't accept this type");
+	}
+
+	@Override
+	public void visit(ClassCastNode n) throws VisitorException
+	{
+		n.getOperand().accept(this);
+		TypeNode type = n.getOperand().getType();
+
+		CustomTypeNode temp = new CustomTypeNode(n.getClassName());
+		temp.setTypeDefinition(n.getClassNode());
+
+		if (!temp.checkType(type))
+			throw new VisitorException(this, n,
+					"Cannot cast into " + n.getClassName() + " (Incompatible static types)");
+		n.setType(temp);
 	}
 
 	@Override
@@ -195,33 +212,34 @@ public class TypeCheckingVisitor extends Visitor
 			throw new VisitorException(this, n, "Base type is no class type");
 		CustomTypeNode basetype = (CustomTypeNode) n.getBase().getType();
 
-		ClassDataComponentNode cdcn = ((ClassNode) basetype.getTypeDefinition()).findMember(n.getName());
+		ClassFieldNode cdcn = ((ClassNode) basetype.getTypeDefinition()).findMember(n.getName());
 		if (cdcn == null)
 			throw new VisitorException(this, n, "Class " + basetype.getName() + " has no member " + n.getName());
 		n.setComponent(cdcn);
 		n.setType(cdcn.getType());
 	}
-	
+
 	@Override
 	public void visit(ClassFunctionAccessNode n) throws VisitorException
 	{
 		n.getBase().accept(this);
-		
+
 		if (!(n.getBase().getType() instanceof CustomTypeNode))
 			throw new VisitorException(this, n, "Base type is no class type");
 		CustomTypeNode basetype = (CustomTypeNode) n.getBase().getType();
 
-		ClassFunctionComponentNode cfcn = ((ClassNode) basetype.getTypeDefinition()).findFunction(n.getName());
+		ClassFunctionNode cfcn = ((ClassNode) basetype.getTypeDefinition()).findFunction(n.getName());
 		if (cfcn == null)
 			throw new VisitorException(this, n, "Class " + basetype.getName() + " has no member " + n.getName());
-		//should maybe be done earlier in name resolution?
-		n.getCall().setFunction(cfcn.getFunction());
+
+		// should maybe be done earlier in name resolution?
+		n.getCall().setFunction(cfcn);
 		n.setComponent(cfcn);
-		n.setType(cfcn.getFunction().getReturnVariable().getType());
-		
+		n.setType(cfcn.getReturnVariable().getType());
+
 		n.getCall().accept(this);
 	}
-	
+
 	@Override
 	public void visit(ArrayAccessNode n) throws VisitorException
 	{
@@ -258,7 +276,7 @@ public class TypeCheckingVisitor extends Visitor
 		if (!retVal)
 			throw new VisitorException(this, n, "While needs int type as condition");
 	}
-	
+
 	@Override
 	public void visit(DoWhileNode n) throws VisitorException
 	{

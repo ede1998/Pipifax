@@ -1,13 +1,13 @@
 package me.erikhennig.pipifax.nodes.expressions.values;
 
-import me.erikhennig.pipifax.nodes.ClassDataComponentNode;
+import me.erikhennig.pipifax.nodes.ClassFieldNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 import me.erikhennig.pipifax.visitors.VisitorException;
 
 public class ClassDataAccessNode extends ValueNode
 {
 	private ValueNode m_base;
-	private ClassDataComponentNode m_component;
+	private ClassFieldNode m_component;
 	private String m_name;
 
 	public ClassDataAccessNode(ValueNode base, String name)
@@ -16,12 +16,12 @@ public class ClassDataAccessNode extends ValueNode
 		m_name = name;
 	}
 
-	public void setComponent(ClassDataComponentNode comp)
+	public void setComponent(ClassFieldNode comp)
 	{
 		m_component = comp;
 	}
 
-	public ClassDataComponentNode getComponent()
+	public ClassFieldNode getComponent()
 	{
 		return m_component;
 	}

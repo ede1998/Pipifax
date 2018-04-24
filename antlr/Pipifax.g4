@@ -69,6 +69,7 @@ expr: INT # IntLiteral
       | '-' expr # Negation
       | INTCASTOP expr # IntCast
       | DOUBLECASTOP expr # DoubleCast
+      | '(' ID ')' expr # ClassCast
       | expr '*' expr # Multiplication
       | expr '/' expr # Division
       | expr '%' expr # Modulo

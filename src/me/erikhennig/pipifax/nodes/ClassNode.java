@@ -9,8 +9,8 @@ import me.erikhennig.pipifax.visitors.VisitorException;
 
 public class ClassNode extends TypeDefinitionNode
 {
-	private LinkedHashMap<String, ClassDataComponentNode> m_members = new LinkedHashMap<>();
-	private LinkedHashMap<String, ClassFunctionComponentNode> m_functions = new LinkedHashMap<>();
+	private LinkedHashMap<String, ClassFieldNode> m_members = new LinkedHashMap<>();
+	private LinkedHashMap<String, ClassFunctionNode> m_functions = new LinkedHashMap<>();
 	private ClassNode m_parentClass;
 	private String m_parent;
 
@@ -26,21 +26,21 @@ public class ClassNode extends TypeDefinitionNode
 		v.visit(this);
 	}
 
-	public boolean add(String name, ClassDataComponentNode t)
+	public boolean add(String name, ClassFieldNode t)
 	{
 		t.setParent(this);
 		return m_members.put(name, t) != null;
 	}
 
-	public boolean add(String name, ClassFunctionComponentNode t)
+	public boolean add(String name, ClassFunctionNode t)
 	{
 		t.setParent(this);
 		return m_functions.put(name, t) != null;
 	}
 
-	public ClassDataComponentNode findMember(String name)
+	public ClassFieldNode findMember(String name)
 	{
-		ClassDataComponentNode cdcn = m_members.get(name);
+		ClassFieldNode cdcn = m_members.get(name);
 		if (m_parentClass != null)
 			if (cdcn == null)
 			{
@@ -49,9 +49,9 @@ public class ClassNode extends TypeDefinitionNode
 		return cdcn;
 	}
 
-	public ClassFunctionComponentNode findFunction(String name)
+	public ClassFunctionNode findFunction(String name)
 	{
-		ClassFunctionComponentNode cfcn = m_functions.get(name);
+		ClassFunctionNode cfcn = m_functions.get(name);
 		if (m_parentClass != null)
 			if (cfcn == null)
 			{
@@ -60,20 +60,20 @@ public class ClassNode extends TypeDefinitionNode
 		return cfcn;
 	}
 
-	public LinkedHashMap<String, ClassDataComponentNode> getMembers()
+	public LinkedHashMap<String, ClassFieldNode> getMembers()
 	{
 		return m_members;
 	}
 
-	public LinkedHashMap<String, ClassFunctionComponentNode> getFunctions()
+	public LinkedHashMap<String, ClassFunctionNode> getFunctions()
 	{
 		return m_functions;
 	}
 
-	public ArrayList<ClassDataComponentNode> getAllMembers()
+	public ArrayList<ClassFieldNode> getAllMembers()
 	{
-		ArrayList<ClassDataComponentNode> al = new ArrayList<>();
-		for (Entry<String, ClassDataComponentNode> pair : m_members.entrySet())
+		ArrayList<ClassFieldNode> al = new ArrayList<>();
+		for (Entry<String, ClassFieldNode> pair : m_members.entrySet())
 		{
 			al.add(pair.getValue());
 		}
@@ -82,10 +82,10 @@ public class ClassNode extends TypeDefinitionNode
 		return al;
 	}
 
-	public ArrayList<ClassFunctionComponentNode> getAllFunctions()
+	public ArrayList<ClassFunctionNode> getAllFunctions()
 	{
-		ArrayList<ClassFunctionComponentNode> al = new ArrayList<>();
-		for (Entry<String, ClassFunctionComponentNode> pair : m_functions.entrySet())
+		ArrayList<ClassFunctionNode> al = new ArrayList<>();
+		for (Entry<String, ClassFunctionNode> pair : m_functions.entrySet())
 		{
 			al.add(pair.getValue());
 		}
@@ -107,5 +107,13 @@ public class ClassNode extends TypeDefinitionNode
 	public String getParent()
 	{
 		return m_parent;
+	}
+
+	public boolean isPolymorphable(ClassNode cn)
+	{
+		boolean retVal = this == cn;
+		if (m_parentClass != null)
+			retVal |= (m_parentClass.isPolymorphable(cn));
+		return retVal;
 	}
 }

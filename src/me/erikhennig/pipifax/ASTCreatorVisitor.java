@@ -136,10 +136,10 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		{
 			Node n = cmdc.accept(this);
 
-			if (n instanceof ClassFunctionComponentNode)
-				cn.add(((ClassFunctionComponentNode) n).getName(), (ClassFunctionComponentNode) n);
-			else if (n instanceof ClassDataComponentNode)
-				cn.add(((ClassDataComponentNode) n).getName(), (ClassDataComponentNode) n);
+			if (n instanceof ClassFunctionNode)
+				cn.add(((ClassFunctionNode) n).getName(), (ClassFunctionNode) n);
+			else if (n instanceof ClassFieldNode)
+				cn.add(((ClassFieldNode) n).getName(), (ClassFieldNode) n);
 		}
 		return cn;
 	}
@@ -148,17 +148,17 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	public Node visitClassfunction(PipifaxParser.ClassfunctionContext ctx)
 	{
 		FunctionNode fn = (FunctionNode) ctx.funcdecl().accept(this);
-		ClassFunctionComponentNode cfcn = new ClassFunctionComponentNode(fn);
+		ClassFunctionNode cfcn = new ClassFunctionNode(fn);
 		switch (ctx.ACCESS_MODIFIER().getText())
 		{
 		case "private":
-			cfcn.setAccessModifier(Visibility.PRIVATE);
+			cfcn.setVisibility(Visibility.PRIVATE);
 			break;
 		case "protected":
-			cfcn.setAccessModifier(Visibility.PROTECTED);
+			cfcn.setVisibility(Visibility.PROTECTED);
 			break;
 		case "public":
-			cfcn.setAccessModifier(Visibility.PUBLIC);
+			cfcn.setVisibility(Visibility.PUBLIC);
 			break;
 		}
 		cfcn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
@@ -168,17 +168,17 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	@Override
 	public Node visitClassvar(PipifaxParser.ClassvarContext ctx)
 	{
-		ClassDataComponentNode cdcn = (ClassDataComponentNode) ctx.classvardecl().accept(this);
+		ClassFieldNode cdcn = (ClassFieldNode) ctx.classvardecl().accept(this);
 		switch (ctx.ACCESS_MODIFIER().getText())
 		{
 		case "private":
-			cdcn.setAccessModifier(Visibility.PRIVATE);
+			cdcn.setVisibility(Visibility.PRIVATE);
 			break;
 		case "protected":
-			cdcn.setAccessModifier(Visibility.PROTECTED);
+			cdcn.setVisibility(Visibility.PROTECTED);
 			break;
 		case "public":
-			cdcn.setAccessModifier(Visibility.PUBLIC);
+			cdcn.setVisibility(Visibility.PUBLIC);
 			break;
 		default:
 			throw new NullPointerException();
@@ -191,7 +191,7 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	public Node visitClassvardecl(PipifaxParser.ClassvardeclContext ctx)
 	{
 		TypeNode tn = (TypeNode) ctx.type().accept(this);
-		ClassDataComponentNode cdcn = new ClassDataComponentNode(ctx.ID().getText(), tn);
+		ClassFieldNode cdcn = new ClassFieldNode(ctx.ID().getText(), tn);
 		cdcn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
 		return cdcn;
 	}
@@ -847,6 +847,17 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		uen.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
 
 		return uen;
+	}
+	
+	@Override
+	public Node visitClassCast(PipifaxParser.ClassCastContext ctx)
+	{
+		ExpressionNode op = (ExpressionNode) ctx.expr().accept(this);
+		ClassCastNode ccn = new ClassCastNode(op, ctx.ID().getText());
+
+		ccn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return ccn;
 	}
 
 	@Override

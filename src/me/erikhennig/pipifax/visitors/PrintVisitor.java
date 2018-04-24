@@ -273,7 +273,7 @@ public class PrintVisitor extends Visitor
 	@Override
 	public void visit(BinaryExpressionNode n) throws VisitorException
 	{
-		String symbol = " " + n.getOperationAsString() + " ";
+		String symbol = " " + n.stringify() + " ";
 		n.getLeftSide().accept(this);
 		m_program += symbol;
 		n.getRightSide().accept(this);
@@ -282,21 +282,7 @@ public class PrintVisitor extends Visitor
 	@Override
 	public void visit(UnaryExpressionNode n) throws VisitorException
 	{
-		switch (n.getOperation())
-		{
-		case INTCAST:
-			m_program += " (int) ";
-			break;
-		case DOUBLECAST:
-			m_program += " (double) ";
-			break;
-		case NEGATION:
-			m_program += " - ";
-			break;
-		case NOT:
-			m_program += " ! ";
-			break;
-		}
+		m_program += " " + n.stringify() + " ";
 		super.visit(n);
 	}
 
@@ -398,20 +384,20 @@ public class PrintVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(ClassDataComponentNode n) throws VisitorException
+	public void visit(ClassFieldNode n) throws VisitorException
 	{
 		m_indentLevel++;
-		m_program += genSp() + convert(n.getAccessModifier()) + " " + n.getName() + " : ";
+		m_program += genSp() + convert(n.getVisibility()) + " " + n.getName() + " : ";
 		super.visit(n);
 		m_program += "\n";
 		m_indentLevel--;
 	}
 
 	@Override
-	public void visit(ClassFunctionComponentNode n) throws VisitorException
+	public void visit(ClassFunctionNode n) throws VisitorException
 	{
 		m_indentLevel++;
-		m_program += genSp() + convert(n.getAccessModifier()) + " ";
+		m_program += genSp() + convert(n.getVisibility()) + " ";
 		super.visit(n);
 		m_program += "\n";
 		m_indentLevel--;

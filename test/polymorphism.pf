@@ -14,14 +14,26 @@ class child : parent{
    public func child() child
    {
      parent(4.0);
-     money = 0;
+     money = 0.;
    }
 }
 
+class independent {
+   public name string;
+   public pride string;
+   
+   public func independent() independent
+   {
+     name = "USA";
+	 pride = "FREEDOM";
+   }
+}
 
 func main() int
 {
   var c child = new child();
   var p parent;
   p = c;
+  c = (child) p;
+  c = (independent) p;
 }

@@ -1,1 +1,1 @@
-func test1() {}
+export func test1() {}

@@ -8,10 +8,10 @@ public class UnaryExpressionNode extends ExpressionNode
 	private ExpressionNode m_operand;
 	private UnaryOperation m_operation;
 
-	public UnaryExpressionNode(ExpressionNode op, UnaryOperation negation)
+	public UnaryExpressionNode(ExpressionNode operand, UnaryOperation operation)
 	{
-		m_operand = op;
-		m_operation = negation;
+		m_operand = operand;
+		m_operation = operation;
 	}
 
 	public ExpressionNode getOperand()
@@ -28,5 +28,23 @@ public class UnaryExpressionNode extends ExpressionNode
 	public UnaryOperation getOperation()
 	{
 		return m_operation;
+	}
+	
+	public String stringify()
+	{
+		switch (m_operation)
+		{
+		case INTCAST:
+			return "(int)";
+		case DOUBLECAST:
+			return "(double)";
+		case NEGATION:
+			return "-";
+		case NOT:
+			return "!";
+		case CLASSCAST:
+			return "(CLASS)";
+		}
+		return "";
 	}
 }

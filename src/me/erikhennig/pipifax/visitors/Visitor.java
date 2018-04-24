@@ -140,6 +140,11 @@ public abstract class Visitor
 	{
 		n.getOperand().accept(this);
 	}
+	
+	public void visit(ClassCastNode n) throws VisitorException
+	{
+		visit((UnaryExpressionNode) n);
+	}
 
 	public void visit(CallNode n) throws VisitorException
 	{
@@ -191,21 +196,21 @@ public abstract class Visitor
 		n.getType().accept(this);
 	}
 
-	public void visit(ClassFunctionComponentNode n) throws VisitorException
+	public void visit(ClassFunctionNode n) throws VisitorException
 	{
-		n.getFunction().accept(this);
+		visit((FunctionNode) n);
 	}
 
-	public void visit(ClassDataComponentNode n) throws VisitorException
+	public void visit(ClassFieldNode n) throws VisitorException
 	{
-		n.getType().accept(this);
+		visit((VariableNode) n);
 	}
 
 	public void visit(ClassNode n) throws VisitorException
 	{
-		for (Entry<String, ClassDataComponentNode> entry : n.getMembers().entrySet())
+		for (Entry<String, ClassFieldNode> entry : n.getMembers().entrySet())
 			entry.getValue().accept(this);
-		for (Entry<String, ClassFunctionComponentNode> entry : n.getFunctions().entrySet())
+		for (Entry<String, ClassFunctionNode> entry : n.getFunctions().entrySet())
 			entry.getValue().accept(this);
 	}
 

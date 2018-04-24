@@ -2,6 +2,7 @@ package me.erikhennig.pipifax.visitors;
 
 import me.erikhennig.pipifax.nameresolution.Scope;
 import me.erikhennig.pipifax.nodes.*;
+import me.erikhennig.pipifax.nodes.expressions.ClassCastNode;
 import me.erikhennig.pipifax.nodes.expressions.values.CallNode;
 import me.erikhennig.pipifax.nodes.expressions.values.ClassFunctionAccessNode;
 import me.erikhennig.pipifax.nodes.expressions.values.VariableAccessNode;
@@ -131,15 +132,15 @@ public class NameResolutionVisitor extends Visitor
 			throw new VisitorException(this, n, "Name already defined for class " + n.getName());
 		if (parent != null)
 		{
-			for (ClassDataComponentNode mem : parent.getAllMembers())
+			for (ClassFieldNode mem : parent.getAllMembers())
 			{
-				if (!m_currentScope.register(mem.getVariable()))
+				if (!m_currentScope.register(mem))
 					throw new VisitorException(this, n, "Member " + mem.getName() + " already defined in parent");
 			}
 
-			for (ClassFunctionComponentNode func : parent.getAllFunctions())
+			for (ClassFunctionNode func : parent.getAllFunctions())
 			{
-				if (!m_currentScope.register(func.getFunction()))
+				if (!m_currentScope.register(func))
 					throw new VisitorException(this, n, "Function " + func.getName() + " already defined in parent");
 			}
 		}
@@ -151,18 +152,13 @@ public class NameResolutionVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(ClassDataComponentNode n) throws VisitorException
+	public void visit(ClassCastNode n) throws VisitorException
 	{
 		super.visit(n);
-		if (!m_currentScope.register(n.getVariable()))
-			throw new VisitorException(this, n, "Member " + n.getName() + " already defined in class");
-	}
+		TypeDefinitionNode tdn = m_currentScope.getTypeDefinition(n.getClassName());
+		if (!(tdn instanceof ClassNode))
+			throw new VisitorException(this, n, "Class " + n.getClassName() + " does not exist.");
 
-	@Override
-	public void visit(ClassFunctionComponentNode n) throws VisitorException
-	{
-		if (!m_currentScope.register(n.getFunction()))
-			throw new VisitorException(this, n, "Function " + n.getName() + " already defined in class");
-		super.visit(n);
+		n.setClassNode((ClassNode) tdn);
 	}
 }

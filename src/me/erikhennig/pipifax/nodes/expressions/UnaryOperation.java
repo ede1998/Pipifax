@@ -5,5 +5,6 @@ public enum UnaryOperation
 	NOT,
 	NEGATION,
 	DOUBLECAST,
-	INTCAST
+	INTCAST,
+	CLASSCAST
 }

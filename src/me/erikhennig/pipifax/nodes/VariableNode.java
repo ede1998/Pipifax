@@ -9,7 +9,6 @@ public class VariableNode extends NamedNode
 {
 	protected TypeNode m_type = null;
 	private ExpressionNode m_initialValue = null;
-	private ClassDataComponentNode m_parent = null;
 
 	public VariableNode(String text, TypeNode tn, ExpressionNode init)
 	{
@@ -32,15 +31,5 @@ public class VariableNode extends NamedNode
 	public ExpressionNode getExpression()
 	{
 		return m_initialValue;
-	}
-
-	public ClassDataComponentNode getParent()
-	{
-		return m_parent;
-	}
-
-	void setParent(ClassDataComponentNode parent)
-	{
-		m_parent = parent;
 	}
 }

@@ -126,6 +126,7 @@ public class Program
 		catch (VisitorException e)
 		{
 			m_checked = true;
+			System.err.println("In File: " + m_programPath);
 			System.err.println(e);
 			System.out.println("Name resolution error.");
 			return;
@@ -140,9 +141,11 @@ public class Program
 		}
 		catch (VisitorException e)
 		{
+			m_checked = true;
+			System.err.println("In File: " + m_programPath);
 			System.err.println(e);
 			System.out.println("Type checking error.");
-			m_checked = true;
+			return;
 		}
 
 		// Visibility checking
@@ -154,6 +157,7 @@ public class Program
 		}
 		catch (VisitorException e)
 		{
+			System.err.println("In File: " + m_programPath);
 			System.err.println(e);
 			System.out.println("Visibility checking error.");
 		}

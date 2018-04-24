@@ -1,5 +1,5 @@
 < include "includetest1.pf" >
-func test0()
+export func test0()
 {
   test1();
 }
