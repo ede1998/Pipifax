@@ -1,0 +1,27 @@
+class parent {
+   public name string;
+   private age int;
+   private m_size double;
+   public func parent(size double) parent
+   {
+     m_size = size;
+   }
+}
+class child : parent{
+
+  private money double;
+   
+   public func child() child
+   {
+     parent(4.0);
+     money = 0;
+   }
+}
+
+
+func main() int
+{
+  var c child = new child();
+  var p parent;
+  p = c;
+}
