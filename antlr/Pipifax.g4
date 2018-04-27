@@ -1,9 +1,10 @@
 grammar Pipifax;
 prog: includedecl* declaration*;
-declaration: EXPORT? (funcdecl | vardecl | struct | classdecl);
+declaration: EXPORT? (funcdecl | vardecl | struct | classdecl | unitdecl);
 includedecl: '<' 'include' STRING '>';
 funcdecl: 'func' ID '('parameterlist')'type? block; 
 vardecl: 'var' ID type ('=' expr)? ';'?;
+unitdecl: 'unit' ID '=' unit ';'?;
 struct: 'struct' ID '{' memberdecl+ '}';
 memberdecl: ID type';'?;
 classdecl: 'class' ID (':' PARENT=ID)? '{' classmemberdecl* '}';
@@ -23,7 +24,7 @@ parameter_type: type # TypeParameter
       | '*' type # ReferenceParameter
       | '*' '['']' type # ReferenceArrayParameter
       ;
-block: '{' (vardecl | statement)* '}';
+block: '{' (vardecl | unitdecl | statement)* '}';
 statements: statement # StatementSingle
       | block # StatementBlock
       ;
@@ -61,6 +62,7 @@ lvalue: ID # VarAccess
       | lvalue '->' funccall # ClassFuncAccess
       ; 
 expr: INT # IntLiteral
+      | DOUBLE unit# DoubleWithUnitLiteral
       | DOUBLE # DoubleLiteral
       | STRING # StringLiteral
       | lvalue # LValueExpression
@@ -87,6 +89,7 @@ expr: INT # IntLiteral
       | expr '&&' expr # And
       | expr '||' expr # Or
       ;
+unit: '[' (factor=ID '*')? top+=ID ('*' top+=ID)* ('/' bottom+=ID ('*' bottom+=ID)*)?']';
 funccall: ID '(' (expr (',' expr)*)? ')';
 
 NEWLINE : [\r\n]+ -> skip;
@@ -100,5 +103,5 @@ DOUBLECASTOP: '(' WS* 'double' WS* ')';
 INTCASTOP: '(' WS* 'int' WS* ')';
 fragment LETTER : [a-zA-Z_] ;
 INT     : [0-9]+ ;
-DOUBLE : INT ('.'INT?)?('e'[+-]?INT)?;
+DOUBLE : INT '.'INT?('e'[+-]?INT)?;
 STRING : '"'~["]*'"';
