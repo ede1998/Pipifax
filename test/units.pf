@@ -2,4 +2,6 @@ unit N = [kg*m/s*s];
 func myfirstunittest() {
   var d double = 1.298[m];
   var dd double = 3.[m*m];
+  
+  d = dd / d;
 }  
