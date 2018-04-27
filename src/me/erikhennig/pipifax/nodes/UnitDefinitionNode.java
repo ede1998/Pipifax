@@ -1,19 +1,16 @@
-package me.erikhennig.pipifax.nodes.expressions;
+package me.erikhennig.pipifax.nodes;
 
-import me.erikhennig.pipifax.nodes.types.TypeNode;
 import me.erikhennig.pipifax.nodes.types.UnitNode;
 import me.erikhennig.pipifax.visitors.Visitor;
 import me.erikhennig.pipifax.visitors.VisitorException;
 
-public class DoubleLiteralNode extends LiteralNode
+public class UnitDefinitionNode extends NamedNode
 {
-	private double m_value;
 	private UnitNode m_unit;
-
-	public DoubleLiteralNode(double val, UnitNode unit)
+	
+	public UnitDefinitionNode(String name, UnitNode unit)
 	{
-		m_value = val;
-		m_type = TypeNode.getDouble();
+		super(name);
 		m_unit = unit;
 	}
 
@@ -23,11 +20,6 @@ public class DoubleLiteralNode extends LiteralNode
 		v.visit(this);
 	}
 
-	public double getValue()
-	{
-		return m_value;
-	}
-	
 	public UnitNode getUnit()
 	{
 		return m_unit;

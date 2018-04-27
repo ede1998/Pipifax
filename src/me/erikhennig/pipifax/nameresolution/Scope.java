@@ -8,6 +8,7 @@ import me.erikhennig.pipifax.nodes.NamedNode;
 import me.erikhennig.pipifax.nodes.Node;
 import me.erikhennig.pipifax.nodes.StructNode;
 import me.erikhennig.pipifax.nodes.TypeDefinitionNode;
+import me.erikhennig.pipifax.nodes.UnitDefinitionNode;
 import me.erikhennig.pipifax.nodes.VariableNode;
 
 public class Scope
@@ -54,6 +55,14 @@ public class Scope
 		if ((vn == null) && (m_OuterScope != null))
 			vn = m_OuterScope.getVariable(name);
 		return vn;
+	}
+
+	public UnitDefinitionNode getUnitDefinition(String name)
+	{
+		UnitDefinitionNode udn = fetchUnitDefinition(name);
+		if ((udn == null) && (m_OuterScope != null))
+			udn = m_OuterScope.getUnitDefinition(name);
+		return udn;
 	}
 
 	public TypeDefinitionNode getTypeDefinition(String name)
@@ -109,6 +118,14 @@ public class Scope
 		Node n = m_typeSymbols.get(name);
 		if (n instanceof ClassNode)
 			return (ClassNode) n;
+		return null;
+	}
+
+	private UnitDefinitionNode fetchUnitDefinition(String name)
+	{
+		Node n = m_symbols.get(name);
+		if (n instanceof UnitDefinitionNode)
+			return (UnitDefinitionNode) n;
 		return null;
 	}
 

@@ -11,11 +11,9 @@ public abstract class TypeNode extends Node
 		return m_intType;
 	}
 
-	private static DoubleTypeNode m_doubleType = new DoubleTypeNode();
-
 	public static DoubleTypeNode getDouble()
 	{
-		return m_doubleType;
+		return new DoubleTypeNode();
 	}
 
 	private static StringTypeNode m_stringType = new StringTypeNode();

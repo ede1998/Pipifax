@@ -89,7 +89,7 @@ expr: INT # IntLiteral
       | expr '&&' expr # And
       | expr '||' expr # Or
       ;
-unit: '[' (factor=ID '*')? top+=ID ('*' top+=ID)* ('/' bottom+=ID ('*' bottom+=ID)*)?']';
+unit: '[' (factor=DOUBLE'*')? top+=ID ('*' top+=ID)* ('/' bottom+=ID ('*' bottom+=ID)*)?']';
 funccall: ID '(' (expr (',' expr)*)? ')';
 
 NEWLINE : [\r\n]+ -> skip;

@@ -25,6 +25,7 @@ import me.erikhennig.pipifax.visitors.AccessControlVisitor;
 import me.erikhennig.pipifax.visitors.NameResolutionVisitor;
 import me.erikhennig.pipifax.visitors.PrintVisitor;
 import me.erikhennig.pipifax.visitors.TypeCheckingVisitor;
+import me.erikhennig.pipifax.visitors.UnitCheckingVisitor;
 import me.erikhennig.pipifax.visitors.VisitorException;
 
 public class Program
@@ -145,6 +146,22 @@ public class Program
 			System.err.println("In File: " + m_programPath);
 			System.err.println(e);
 			System.out.println("Type checking error.");
+			return;
+		}
+
+		// Type checking
+		UnitCheckingVisitor ucv = new UnitCheckingVisitor();
+		try
+		{
+			m_program.accept(ucv);
+			System.out.println("Unit checking done.");
+		}
+		catch (VisitorException e)
+		{
+			m_checked = true;
+			System.err.println("In File: " + m_programPath);
+			System.err.println(e);
+			System.out.println("Unit checking error.");
 			return;
 		}
 

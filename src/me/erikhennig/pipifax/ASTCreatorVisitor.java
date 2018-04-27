@@ -595,11 +595,54 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	@Override
 	public Node visitDoubleLiteral(PipifaxParser.DoubleLiteralContext ctx)
 	{
-		DoubleLiteralNode dln = new DoubleLiteralNode(Double.parseDouble(ctx.DOUBLE().getText()));
+		DoubleLiteralNode dln = new DoubleLiteralNode(Double.parseDouble(ctx.DOUBLE().getText()), new UnitNode());
 
 		dln.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
 
 		return dln;
+	}
+
+	@Override
+	public Node visitDoubleWithUnitLiteral(PipifaxParser.DoubleWithUnitLiteralContext ctx)
+	{
+		UnitNode un = (UnitNode) ctx.unit().accept(this);
+		DoubleLiteralNode dln = new DoubleLiteralNode(Double.parseDouble(ctx.DOUBLE().getText()), un);
+
+		dln.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return dln;
+	}
+
+	@Override
+	public Node visitUnit(PipifaxParser.UnitContext ctx)
+	{
+		UnitNode un = new UnitNode();
+
+		if (ctx.factor != null)
+			un.setCoefficient(Double.parseDouble(ctx.factor.getText()));
+
+		ctx.top.forEach((token) ->
+		{
+			un.expand(token.getText());
+		});
+		ctx.bottom.forEach((token) ->
+		{
+			un.reduce(token.getText());
+		});
+
+		un.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+		return un;
+	}
+
+	@Override
+	public Node visitUnitdecl(PipifaxParser.UnitdeclContext ctx)
+	{
+		UnitNode un = (UnitNode) ctx.unit().accept(this);
+		UnitDefinitionNode udn = new UnitDefinitionNode(ctx.ID().getText(), un);
+
+		udn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
+		return udn;
 	}
 
 	@Override
@@ -848,7 +891,7 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 
 		return uen;
 	}
-	
+
 	@Override
 	public Node visitClassCast(PipifaxParser.ClassCastContext ctx)
 	{

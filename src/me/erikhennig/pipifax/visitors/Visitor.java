@@ -140,7 +140,7 @@ public abstract class Visitor
 	{
 		n.getOperand().accept(this);
 	}
-	
+
 	public void visit(ClassCastNode n) throws VisitorException
 	{
 		visit((UnaryExpressionNode) n);
@@ -223,5 +223,15 @@ public abstract class Visitor
 	{
 		n.getCall().accept(this);
 		n.getBase().accept(this);
+	}
+
+	public void visit(UnitNode n) throws VisitorException
+	{
+	}
+
+	public void visit(UnitDefinitionNode n) throws VisitorException
+	{
+		if (n.getUnit() != null)
+			n.getUnit().accept(this);
 	}
 }

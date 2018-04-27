@@ -1,5 +1,7 @@
 package me.erikhennig.pipifax.visitors;
 
+import java.util.List;
+
 import me.erikhennig.pipifax.nameresolution.Scope;
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.expressions.ClassCastNode;
@@ -7,6 +9,7 @@ import me.erikhennig.pipifax.nodes.expressions.values.CallNode;
 import me.erikhennig.pipifax.nodes.expressions.values.ClassFunctionAccessNode;
 import me.erikhennig.pipifax.nodes.expressions.values.VariableAccessNode;
 import me.erikhennig.pipifax.nodes.types.CustomTypeNode;
+import me.erikhennig.pipifax.nodes.types.UnitNode;
 
 public class NameResolutionVisitor extends Visitor
 {
@@ -160,5 +163,37 @@ public class NameResolutionVisitor extends Visitor
 			throw new VisitorException(this, n, "Class " + n.getClassName() + " does not exist.");
 
 		n.setClassNode((ClassNode) tdn);
+	}
+
+	@Override
+	public void visit(UnitDefinitionNode n) throws VisitorException
+	{
+		super.visit(n);
+		if (m_onlyAddFunctions)
+			return;
+		if (!m_currentScope.register(n))
+			throw new VisitorException(this, n, "Symbol " + n.getName() + " already defined.");
+	}
+
+	@Override
+	public void visit(UnitNode n) throws VisitorException
+	{
+		List<String> top = n.getTopStr();
+		List<String> bot = n.getBottomStr();
+
+		for (String str : top)
+		{
+			UnitDefinitionNode udn = m_currentScope.getUnitDefinition(str);
+			if (udn == null)
+				throw new VisitorException(this, n, "Unit " + str + " not defined.");
+			n.expand(udn.getUnit());
+		}
+		for (String str : bot)
+		{
+			UnitDefinitionNode udn = m_currentScope.getUnitDefinition(str);
+			if (udn == null)
+				throw new VisitorException(this, n, "Unit " + str + " not defined.");
+			n.reduce(udn.getUnit());
+		}
 	}
 }
