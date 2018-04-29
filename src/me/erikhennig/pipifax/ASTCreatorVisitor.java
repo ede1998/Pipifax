@@ -602,6 +602,8 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		UnitNode un = null;
 		if (ctx.unit() != null)
 			un = (UnitNode) ctx.unit().accept(this);
+		else 
+			un = new UnitNode();
 		DoubleLiteralNode dln = new DoubleLiteralNode(Double.parseDouble(ctx.DOUBLE().getText()), un);
 
 		dln.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());

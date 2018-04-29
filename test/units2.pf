@@ -1,0 +1,8 @@
+unit mC = [0.001 * A * s];
+unit C = [A * s];
+
+func testit(in *[]double [C], out *double[C]) double[C]
+{
+  testit = in[0] - 5.[C];
+  out = testit;
+}

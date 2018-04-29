@@ -188,6 +188,7 @@ public class NameResolutionVisitor extends Visitor
 				throw new VisitorException(this, n, "Unit " + str + " not defined.");
 			n.expand(udn.getUnit());
 		}
+		top.clear();
 		for (String str : bot)
 		{
 			UnitDefinitionNode udn = m_currentScope.getUnitDefinition(str);
@@ -195,5 +196,6 @@ public class NameResolutionVisitor extends Visitor
 				throw new VisitorException(this, n, "Unit " + str + " not defined.");
 			n.reduce(udn.getUnit());
 		}
+		bot.clear();
 	}
 }

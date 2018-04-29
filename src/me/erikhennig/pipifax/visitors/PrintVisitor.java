@@ -14,12 +14,14 @@ import me.erikhennig.pipifax.nodes.expressions.values.ClassDataAccessNode;
 import me.erikhennig.pipifax.nodes.expressions.values.ClassFunctionAccessNode;
 import me.erikhennig.pipifax.nodes.expressions.values.StructAccessNode;
 import me.erikhennig.pipifax.nodes.expressions.values.VariableAccessNode;
+import me.erikhennig.pipifax.nodes.types.BaseUnits;
 import me.erikhennig.pipifax.nodes.types.CustomTypeNode;
 import me.erikhennig.pipifax.nodes.types.DoubleTypeNode;
 import me.erikhennig.pipifax.nodes.types.IntTypeNode;
 import me.erikhennig.pipifax.nodes.types.RefTypeNode;
 import me.erikhennig.pipifax.nodes.types.SizedArrayTypeNode;
 import me.erikhennig.pipifax.nodes.types.StringTypeNode;
+import me.erikhennig.pipifax.nodes.types.UnitNode;
 import me.erikhennig.pipifax.nodes.types.UnsizedArrayTypeNode;
 import me.erikhennig.pipifax.nodes.types.VoidTypeNode;
 
@@ -85,8 +87,34 @@ public class PrintVisitor extends Visitor
 	public void visit(DoubleTypeNode n) throws VisitorException
 	{
 		m_program += "double";
+		super.visit(n);
 	}
 
+	@Override
+	public void visit(UnitDefinitionNode n) throws VisitorException {
+		m_program += "unit " + n.getName() + " :->";
+		super.visit(n);
+		m_program += "\n";
+	}
+	
+	@Override
+	public void visit(UnitNode n) throws VisitorException {
+		m_program += " [" + n.getCoefficient();
+		for (BaseUnits bu: n.getTop())
+		{
+			m_program += " * " + bu.name();
+		}
+		for (String u: n.getTopStr())
+			m_program += " * " + u;
+		for (BaseUnits bu : n.getBottom())
+		{
+			m_program += " / " + bu.name();
+		}
+		for (String u: n.getBottomStr())
+			m_program += " / " + u;
+		m_program += "]";
+	}
+	
 	@Override
 	public void visit(IntTypeNode n) throws VisitorException
 	{
@@ -289,6 +317,7 @@ public class PrintVisitor extends Visitor
 	public void visit(DoubleLiteralNode n) throws VisitorException
 	{
 		m_program += n.getValue();
+		super.visit(n);
 	}
 
 	public void visit(IntegerLiteralNode n) throws VisitorException

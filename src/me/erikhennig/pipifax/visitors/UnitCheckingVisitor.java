@@ -1,6 +1,7 @@
 package me.erikhennig.pipifax.visitors;
 
 import me.erikhennig.pipifax.nodes.AssignmentNode;
+import me.erikhennig.pipifax.nodes.VariableNode;
 import me.erikhennig.pipifax.nodes.expressions.BinaryExpressionNode;
 import me.erikhennig.pipifax.nodes.expressions.UnaryExpressionNode;
 import me.erikhennig.pipifax.nodes.types.DoubleTypeNode;
@@ -26,6 +27,7 @@ public class UnitCheckingVisitor extends Visitor
 		if (!lefttype.checkType(righttype) || !lefttype.checkType(TypeNode.getDouble()))
 			return;
 
+		
 		UnitNode left = ((DoubleTypeNode) n.getLeftSide().getType()).getUnitNode();
 		UnitNode right = ((DoubleTypeNode) n.getRightSide().getType()).getUnitNode();
 
@@ -37,7 +39,7 @@ public class UnitCheckingVisitor extends Visitor
 		case SUBTRACTION:
 			if (!left.check(right))
 				throw new VisitorException(this, n, "Incompatible units in operation");
-			((DoubleTypeNode) n.getType()).setUnitNode(left);
+			((DoubleTypeNode) n.getType()).setUnitNode(new UnitNode(left));
 			break;
 		case MULTIPLICATION:
 			tmp.expand(right);
@@ -48,7 +50,7 @@ public class UnitCheckingVisitor extends Visitor
 			((DoubleTypeNode) n.getType()).setUnitNode(tmp);
 			break;
 		case MODULO:
-			((DoubleTypeNode) n.getType()).setUnitNode(left);
+			((DoubleTypeNode) n.getType()).setUnitNode(new UnitNode(left));
 			break;
 		case EQUALS:
 		case NOTEQUALS:
@@ -64,6 +66,7 @@ public class UnitCheckingVisitor extends Visitor
 		}
 	}
 
+	//TODO unit checking does not work with arrays or maybe only array parameter, check pls
 	@Override
 	public void visit(UnaryExpressionNode n) throws VisitorException
 	{
@@ -75,13 +78,38 @@ public class UnitCheckingVisitor extends Visitor
 		switch (n.getOperation())
 		{
 		case NEGATION:
-			((DoubleTypeNode) n.getType()).setUnitNode(operandUnit);
+			((DoubleTypeNode) n.getType()).setUnitNode(new UnitNode(operandUnit));
 			break;
 		default:
 			return;
 		}
 	}
 
+	@Override
+	public void visit(VariableNode n) throws VisitorException {
+		super.visit(n);
+		if (!n.getType().checkType(TypeNode.getDouble()))
+			return;
+		if (n.getExpression() == null)
+			return;
+		UnitNode varunit = ((DoubleTypeNode) n.getType()).getUnitNode();
+	    UnitNode assignunit = ((DoubleTypeNode) n.getExpression().getType()).getUnitNode();
+	    
+	    //Infer units if one has a unit and one has none
+	    if (varunit.hasNoDimension() != assignunit.hasNoDimension())
+	    {
+	    	if (varunit.hasNoDimension())
+	    		((DoubleTypeNode) n.getType()).setUnitNode(new UnitNode(assignunit));
+		    else if (assignunit.hasNoDimension())
+			    ((DoubleTypeNode) n.getExpression().getType()).setUnitNode(new UnitNode(varunit));
+	    }
+	    
+	    if (!varunit.check(assignunit))
+	    	throw new VisitorException(this, n, "Incompatible units in initial assignment");
+	    if (varunit.getCoefficient() != assignunit.getCoefficient())
+	    	throw new VisitorException(this, n, "Conflicting coefficients in initial assignment: " + 
+	    			varunit.getCoefficient() + " ~ " + assignunit.getCoefficient());
+	}
 	@Override
 	public void visit(AssignmentNode n) throws VisitorException
 	{

@@ -47,6 +47,12 @@ public class UnitNode extends Node
 		
 		return true;
 	}
+	
+	final private static UnitNode m_dimensionless = new UnitNode();
+	public boolean hasNoDimension()
+	{
+		return check(m_dimensionless); 
+	}
 
 	public void expand(String str)
 	{
@@ -69,11 +75,13 @@ public class UnitNode extends Node
 	public void expand(UnitNode un)
 	{
 		un.m_top.forEach((bu) -> expand(bu));
+		m_coefficient *= un.m_coefficient;
 	}
 
 	public void reduce(UnitNode un)
 	{
 		un.m_bottom.forEach((bu) -> reduce(bu));
+		m_coefficient /= un.m_coefficient;
 	}
 
 	public void expand(BaseUnits u)
@@ -88,23 +96,12 @@ public class UnitNode extends Node
 
 	private static BaseUnits parse(String str)
 	{
-		switch (str)
+		try
+		 {
+			return BaseUnits.valueOf(str);
+		 }
+		catch (IllegalArgumentException e)
 		{
-		case "m":
-			return BaseUnits.m;
-		case "s":
-			return BaseUnits.s;
-		case "kg":
-			return BaseUnits.kg;
-		case "A":
-			return BaseUnits.A;
-		case "cd":
-			return BaseUnits.cd;
-		case "K":
-			return BaseUnits.K;
-		case "mol":
-			return BaseUnits.mol;
-		default:
 			return null;
 		}
 	}
@@ -134,6 +131,16 @@ public class UnitNode extends Node
 		m_coefficient = coefficient;
 	}
 
+	public List<BaseUnits> getTop()
+	{
+		return m_top;
+	}
+	
+	public List<BaseUnits> getBottom()
+	{
+		return m_bottom;
+	}
+	
 	public List<String> getTopStr()
 	{
 		return m_topStr;

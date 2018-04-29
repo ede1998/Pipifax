@@ -36,6 +36,7 @@ public abstract class Visitor
 
 	public void visit(DoubleTypeNode n) throws VisitorException
 	{
+		n.getUnitNode().accept(this);
 	}
 
 	public void visit(VoidTypeNode n) throws VisitorException
@@ -79,7 +80,7 @@ public abstract class Visitor
 
 	public void visit(ParameterNode n) throws VisitorException
 	{
-		n.getType().accept(this);
+		visit((VariableNode) n);
 	}
 
 	public void visit(ProgramNode n) throws VisitorException
@@ -154,6 +155,7 @@ public abstract class Visitor
 
 	public void visit(DoubleLiteralNode n) throws VisitorException
 	{
+		n.getUnit().accept(this);
 	}
 
 	public void visit(IntegerLiteralNode n) throws VisitorException
@@ -231,7 +233,6 @@ public abstract class Visitor
 
 	public void visit(UnitDefinitionNode n) throws VisitorException
 	{
-		if (n.getUnit() != null)
 			n.getUnit().accept(this);
 	}
 }
