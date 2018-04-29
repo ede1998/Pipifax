@@ -4,4 +4,6 @@ func myfirstunittest() {
   var dd double = 3.[m*m];
   
   d = dd / d;
+  var k double[s];
+  k = d;
 }  

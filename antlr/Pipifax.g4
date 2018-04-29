@@ -13,7 +13,7 @@ classmemberdecl: ACCESS_MODIFIER funcdecl # classfunction
       ;
 classvardecl: ID type';'?;
 type: 'int' # IntType
-      | 'double' # DoubleType
+      | 'double' unit? # DoubleType
       | 'string' # StringType
       | '['INT']' type # ArrayType
       | ID # CustomType
@@ -62,8 +62,7 @@ lvalue: ID # VarAccess
       | lvalue '->' funccall # ClassFuncAccess
       ; 
 expr: INT # IntLiteral
-      | DOUBLE unit# DoubleWithUnitLiteral
-      | DOUBLE # DoubleLiteral
+      | DOUBLE unit? # DoubleLiteral
       | STRING # StringLiteral
       | lvalue # LValueExpression
       | '(' expr ')' # Parentheses

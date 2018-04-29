@@ -205,7 +205,11 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	@Override
 	public Node visitDoubleType(PipifaxParser.DoubleTypeContext ctx)
 	{
-		return TypeNode.getDouble();
+		DoubleTypeNode dtn = TypeNode.getDouble();
+		if (ctx.unit() != null)
+			dtn.setUnitNode((UnitNode) ctx.unit().accept(this));
+		dtn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+		return dtn;
 	}
 
 	@Override
@@ -595,17 +599,9 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	@Override
 	public Node visitDoubleLiteral(PipifaxParser.DoubleLiteralContext ctx)
 	{
-		DoubleLiteralNode dln = new DoubleLiteralNode(Double.parseDouble(ctx.DOUBLE().getText()), new UnitNode());
-
-		dln.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
-
-		return dln;
-	}
-
-	@Override
-	public Node visitDoubleWithUnitLiteral(PipifaxParser.DoubleWithUnitLiteralContext ctx)
-	{
-		UnitNode un = (UnitNode) ctx.unit().accept(this);
+		UnitNode un = null;
+		if (ctx.unit() != null)
+			un = (UnitNode) ctx.unit().accept(this);
 		DoubleLiteralNode dln = new DoubleLiteralNode(Double.parseDouble(ctx.DOUBLE().getText()), un);
 
 		dln.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());

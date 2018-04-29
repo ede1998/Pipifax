@@ -5,7 +5,7 @@ import me.erikhennig.pipifax.visitors.VisitorException;
 
 public class DoubleTypeNode extends TypeNode
 {
-	private UnitNode m_unitNode;
+	private UnitNode m_unitNode = new UnitNode();
 	
 	DoubleTypeNode()
 	{
