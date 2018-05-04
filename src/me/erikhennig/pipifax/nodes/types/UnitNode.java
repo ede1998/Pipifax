@@ -25,6 +25,8 @@ public class UnitNode extends Node
 	{
 		m_top.addAll(un.m_top);
 		m_bottom.addAll(un.m_bottom);
+		m_topStr.addAll(un.m_topStr);
+		m_bottomStr.addAll(un.m_bottomStr);
 		m_coefficient = un.m_coefficient;
 	}
 	

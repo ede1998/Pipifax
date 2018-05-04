@@ -1,5 +1,6 @@
 package me.erikhennig.pipifax.nodes.expressions;
 
+import me.erikhennig.pipifax.nodes.types.DoubleTypeNode;
 import me.erikhennig.pipifax.nodes.types.TypeNode;
 import me.erikhennig.pipifax.nodes.types.UnitNode;
 import me.erikhennig.pipifax.visitors.Visitor;
@@ -14,6 +15,7 @@ public class DoubleLiteralNode extends LiteralNode
 	{
 		m_value = val;
 		m_type = TypeNode.getDouble();
+		((DoubleTypeNode) m_type).setUnitNode(unit);
 		m_unit = unit;
 	}
 

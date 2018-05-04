@@ -35,6 +35,7 @@ statement: assignment ';'? # StatementAssignment
       | forstmt # StatementFor
       | switchstmt # StatementSwitch
       | dowhilestmt # StatementDoWhile
+      | deletestmt ';'? # StatementDelete
       ;
 ifstmt: 'if' expr statements elsestmt?;
 elsestmt: 'else' statements;
@@ -90,6 +91,8 @@ expr: INT # IntLiteral
       ;
 unit: '[' (factor=DOUBLE'*')? top+=ID ('*' top+=ID)* ('/' bottom+=ID ('*' bottom+=ID)*)?']';
 funccall: ID '(' (expr (',' expr)*)? ')';
+deletestmt: 'delete' ID;
+
 
 NEWLINE : [\r\n]+ -> skip;
 ENDOFFILE : EOF -> skip;

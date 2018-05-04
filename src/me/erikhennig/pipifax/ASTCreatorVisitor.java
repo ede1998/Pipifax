@@ -1,7 +1,10 @@
 package me.erikhennig.pipifax;
 
+import java.io.PipedInputStream;
+
 import me.erikhennig.pipifax.antlr.PipifaxBaseVisitor;
 import me.erikhennig.pipifax.antlr.PipifaxParser;
+import me.erikhennig.pipifax.antlr.PipifaxParser.ExprContext;
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
@@ -602,7 +605,7 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 		UnitNode un = null;
 		if (ctx.unit() != null)
 			un = (UnitNode) ctx.unit().accept(this);
-		else 
+		else
 			un = new UnitNode();
 		DoubleLiteralNode dln = new DoubleLiteralNode(Double.parseDouble(ctx.DOUBLE().getText()), un);
 
@@ -902,6 +905,26 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	}
 
 	@Override
+	public Node visitNew(PipifaxParser.NewContext ctx)
+	{
+		NewNode nn = new NewNode(ctx.ID().getText());
+		for (ExprContext argument : ctx.arg)
+		{
+			nn.addArgument((ExpressionNode) argument.accept(this));
+		}
+		nn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+		return nn;
+	}
+
+	@Override
+	public Node visitDeletestmt(PipifaxParser.DeletestmtContext ctx)
+	{
+		DeleteNode dn = new DeleteNode(ctx.ID().getText());
+		dn.setPosition(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+		return dn;
+	}
+
+	@Override
 	public Node visitFunccall(PipifaxParser.FunccallContext ctx)
 	{
 		CallNode cn = new CallNode(ctx.ID().getText());
@@ -957,5 +980,11 @@ public class ASTCreatorVisitor extends PipifaxBaseVisitor<Node>
 	public Node visitStatementDoWhile(PipifaxParser.StatementDoWhileContext ctx)
 	{
 		return ctx.dowhilestmt().accept(this);
+	}
+
+	@Override
+	public Node visitStatementDelete(PipifaxParser.StatementDeleteContext ctx)
+	{
+		return ctx.deletestmt().accept(this);
 	}
 }

@@ -80,13 +80,6 @@ public class NameResolutionVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(ParameterNode n) throws VisitorException
-	{
-		if (!m_currentScope.register(n))
-			throw new VisitorException(this, n, "Name already defined for parameter " + n.getName());
-	}
-
-	@Override
 	public void visit(VariableNode n) throws VisitorException
 	{
 		if (m_onlyAddFunctions)
@@ -128,30 +121,39 @@ public class NameResolutionVisitor extends Visitor
 		if (m_onlyAddFunctions)
 			return;
 		ClassNode parent = m_currentScope.getClass(n.getParent());
+
+		// inheritance wanted but class no defined
 		if (!n.getParent().isEmpty() && parent == null)
 			throw new VisitorException(this, n, "Parent class " + n.getParent() + " does  not exist.");
 		n.setParent(parent);
+
 		if (!m_currentScope.register(n))
 			throw new VisitorException(this, n, "Name already defined for class " + n.getName());
+
+		m_currentScope = m_currentScope.enterScope();
 		if (parent != null)
 		{
 			for (ClassFieldNode mem : parent.getAllMembers())
 			{
 				if (!m_currentScope.register(mem))
-					throw new VisitorException(this, n, "Member " + mem.getName() + " already defined in parent");
+					throw new VisitorException(this, n, "Member " + mem.getName() + " already defined");
 			}
 
 			for (ClassFunctionNode func : parent.getAllFunctions())
 			{
 				if (!m_currentScope.register(func))
-					throw new VisitorException(this, n, "Function " + func.getName() + " already defined in parent");
+					throw new VisitorException(this, n, "Function " + func.getName() + " already defined");
 			}
 		}
 
 		m_currentScope = m_currentScope.enterScope();
 		super.visit(n);
 		m_currentScope = m_currentScope.leaveScope();
-
+		m_currentScope = m_currentScope.leaveScope();
+		FunctionNode fn = n.getFunctions().get(n.getName());
+		if (fn != null)
+			if (!m_currentScope.register(fn))
+				throw new VisitorException(this, n, "Name " + n.getName() + " for constructor already defined");
 	}
 
 	@Override
@@ -168,9 +170,9 @@ public class NameResolutionVisitor extends Visitor
 	@Override
 	public void visit(UnitDefinitionNode n) throws VisitorException
 	{
-		super.visit(n);
 		if (m_onlyAddFunctions)
 			return;
+		super.visit(n);
 		if (!m_currentScope.register(n))
 			throw new VisitorException(this, n, "Symbol " + n.getName() + " already defined.");
 	}
@@ -197,5 +199,19 @@ public class NameResolutionVisitor extends Visitor
 			n.reduce(udn.getUnit());
 		}
 		bot.clear();
+	}
+
+	@Override
+	public void visit(DeleteNode n) throws VisitorException
+	{
+		n.getDestructorAccess().getBase().accept(this);
+		VariableNode instance = ((VariableAccessNode)n.getDestructorAccess().getBase()).getVariable();
+		String cname = ((CustomTypeNode) instance.getType()).getName();
+		
+		ClassNode classdef = m_currentScope.getClass(cname);
+		if (classdef == null)
+			throw new VisitorException(this, n, "Class " + cname + " not defined in destructor.");
+		
+		n.getDestructorAccess().getCall().setFunction(classdef.getFunctions().get(DeleteNode.getDestructorName()));
 	}
 }

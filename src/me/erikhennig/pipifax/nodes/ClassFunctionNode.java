@@ -13,7 +13,7 @@ public class ClassFunctionNode extends FunctionNode implements IVisibility
 	{
 		super(retType, name, bn);
 	}
-	
+
 	public ClassFunctionNode(FunctionNode fn)
 	{
 		super(fn.getReturnVariable().getType(), fn.m_name, fn.m_statements);

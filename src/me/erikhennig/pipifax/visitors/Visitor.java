@@ -5,12 +5,7 @@ import java.util.Map.Entry;
 import me.erikhennig.pipifax.nodes.*;
 import me.erikhennig.pipifax.nodes.controls.*;
 import me.erikhennig.pipifax.nodes.expressions.*;
-import me.erikhennig.pipifax.nodes.expressions.values.ArrayAccessNode;
-import me.erikhennig.pipifax.nodes.expressions.values.CallNode;
-import me.erikhennig.pipifax.nodes.expressions.values.ClassDataAccessNode;
-import me.erikhennig.pipifax.nodes.expressions.values.ClassFunctionAccessNode;
-import me.erikhennig.pipifax.nodes.expressions.values.StructAccessNode;
-import me.erikhennig.pipifax.nodes.expressions.values.VariableAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.values.*;
 import me.erikhennig.pipifax.nodes.types.*;
 
 public abstract class Visitor
@@ -233,6 +228,16 @@ public abstract class Visitor
 
 	public void visit(UnitDefinitionNode n) throws VisitorException
 	{
-			n.getUnit().accept(this);
+		n.getUnit().accept(this);
+	}
+
+	public void visit(NewNode n) throws VisitorException
+	{
+		visit((CallNode) n);
+	}
+
+	public void visit(DeleteNode n) throws VisitorException
+	{
+		n.getDestructorAccess().accept(this);
 	}
 }

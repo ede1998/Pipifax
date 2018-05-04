@@ -1,5 +1,7 @@
 package me.erikhennig.pipifax.visitors;
 
+import java.nio.channels.NetworkChannel;
+
 import me.erikhennig.pipifax.nodes.AssignmentNode;
 import me.erikhennig.pipifax.nodes.VariableNode;
 import me.erikhennig.pipifax.nodes.expressions.BinaryExpressionNode;
@@ -27,7 +29,6 @@ public class UnitCheckingVisitor extends Visitor
 		if (!lefttype.checkType(righttype) || !lefttype.checkType(TypeNode.getDouble()))
 			return;
 
-		
 		UnitNode left = ((DoubleTypeNode) n.getLeftSide().getType()).getUnitNode();
 		UnitNode right = ((DoubleTypeNode) n.getRightSide().getType()).getUnitNode();
 
@@ -66,7 +67,6 @@ public class UnitCheckingVisitor extends Visitor
 		}
 	}
 
-	//TODO unit checking does not work with arrays or maybe only array parameter, check pls
 	@Override
 	public void visit(UnaryExpressionNode n) throws VisitorException
 	{
@@ -86,34 +86,40 @@ public class UnitCheckingVisitor extends Visitor
 	}
 
 	@Override
-	public void visit(VariableNode n) throws VisitorException {
+	public void visit(VariableNode n) throws VisitorException
+	{
 		super.visit(n);
 		if (!n.getType().checkType(TypeNode.getDouble()))
 			return;
 		if (n.getExpression() == null)
 			return;
 		UnitNode varunit = ((DoubleTypeNode) n.getType()).getUnitNode();
-	    UnitNode assignunit = ((DoubleTypeNode) n.getExpression().getType()).getUnitNode();
-	    
-	    //Infer units if one has a unit and one has none
-	    if (varunit.hasNoDimension() != assignunit.hasNoDimension())
-	    {
-	    	if (varunit.hasNoDimension())
-	    		((DoubleTypeNode) n.getType()).setUnitNode(new UnitNode(assignunit));
-		    else if (assignunit.hasNoDimension())
-			    ((DoubleTypeNode) n.getExpression().getType()).setUnitNode(new UnitNode(varunit));
-	    }
-	    
-	    if (!varunit.check(assignunit))
-	    	throw new VisitorException(this, n, "Incompatible units in initial assignment");
-	    if (varunit.getCoefficient() != assignunit.getCoefficient())
-	    	throw new VisitorException(this, n, "Conflicting coefficients in initial assignment: " + 
-	    			varunit.getCoefficient() + " ~ " + assignunit.getCoefficient());
+		UnitNode assignunit = ((DoubleTypeNode) n.getExpression().getType()).getUnitNode();
+
+		// Infer units if one has a unit and one has none
+		if (varunit.hasNoDimension() != assignunit.hasNoDimension())
+		{
+			if (varunit.hasNoDimension())
+				((DoubleTypeNode) n.getType()).setUnitNode(new UnitNode(assignunit));
+			else if (assignunit.hasNoDimension())
+				((DoubleTypeNode) n.getExpression().getType()).setUnitNode(new UnitNode(varunit));
+			varunit = ((DoubleTypeNode) n.getType()).getUnitNode(); // reload because one has changed in if/else clause
+			assignunit = ((DoubleTypeNode) n.getExpression().getType()).getUnitNode();
+		}
+
+		if (!varunit.check(assignunit))
+			throw new VisitorException(this, n, "Incompatible units in initial assignment");
+		if (varunit.getCoefficient() != assignunit.getCoefficient())
+			throw new VisitorException(this, n, "Conflicting coefficients in initial assignment: "
+					+ varunit.getCoefficient() + " ~ " + assignunit.getCoefficient());
 	}
+
 	@Override
 	public void visit(AssignmentNode n) throws VisitorException
 	{
 		super.visit(n);
+		if (!n.getSource().getType().checkType(TypeNode.getDouble()))
+			return;
 		UnitNode left = ((DoubleTypeNode) n.getSource().getType()).getUnitNode();
 		UnitNode right = ((DoubleTypeNode) n.getDestination().getType()).getUnitNode();
 		if (!left.check(right))

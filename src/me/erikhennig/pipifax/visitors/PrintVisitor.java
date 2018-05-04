@@ -12,6 +12,7 @@ import me.erikhennig.pipifax.nodes.expressions.values.ArrayAccessNode;
 import me.erikhennig.pipifax.nodes.expressions.values.CallNode;
 import me.erikhennig.pipifax.nodes.expressions.values.ClassDataAccessNode;
 import me.erikhennig.pipifax.nodes.expressions.values.ClassFunctionAccessNode;
+import me.erikhennig.pipifax.nodes.expressions.values.NewNode;
 import me.erikhennig.pipifax.nodes.expressions.values.StructAccessNode;
 import me.erikhennig.pipifax.nodes.expressions.values.VariableAccessNode;
 import me.erikhennig.pipifax.nodes.types.BaseUnits;
@@ -430,5 +431,22 @@ public class PrintVisitor extends Visitor
 		super.visit(n);
 		m_program += "\n";
 		m_indentLevel--;
+	}
+	
+	@Override
+	public void visit(NewNode n) throws VisitorException
+	{
+		
+		m_program += "New<<<";
+		super.visit(n);
+		m_program += ">>>";
+	}
+	
+	@Override
+	public void visit(DeleteNode n) throws VisitorException
+	{
+		m_program += genSp() + "Delete: ";
+		n.getDestructorAccess().getBase().accept(this);
+		m_program += "\n";
 	}
 }

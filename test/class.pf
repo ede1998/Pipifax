@@ -6,6 +6,11 @@ class parent {
      m_size = size;
 	 xdd = "default";
    }
+   
+   public func destroy()
+   {
+     m_size = -1.;
+   }
 }
 class myfirstclass : parent{
 
@@ -31,12 +36,18 @@ class myfirstclass : parent{
    }
 }
 
+class test{
+  private i int;
+}
+
 
 func main() int
 {
   var p myfirstclass = new myfirstclass();
-  var j parent = new parent();
+  var j parent = new parent(5.);
   var i int = p->getI();
   j->xdd = "test";
   p->xdd = "test2";
+  delete p;
+  delete j;
 }
