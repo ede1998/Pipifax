@@ -27,7 +27,13 @@ public class CompilerManager
 		buildASTs();
 		printPrograms();
 		checkSemantics();
-		checkSuccess();
+		if (checkSuccess())
+			compilePrograms();
+	}
+
+	private void compilePrograms()
+	{
+		m_programs.forEach((path, p) -> p.generateCode());
 	}
 
 	public void printPrograms()
@@ -85,15 +91,20 @@ public class CompilerManager
 		}
 	}
 
-	private void checkSuccess()
+	private boolean checkSuccess()
 	{
+		boolean result = true;
 		for (Iterator<Program> iter = m_programs.values().iterator(); iter.hasNext();)
 		{
 			Program p = iter.next();
 			if (!p.isChecked())
+			{
 				System.err.println("Could not compile program " + p.getProgramPath() + "\nInvalid includes:"
 						+ p.getIncludes().toString());
+				result = false;
+			}
 		}
+		return result;
 	}
 
 	private void removeFromIncludes(Program prog)

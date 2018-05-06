@@ -1,6 +1,8 @@
 package me.erikhennig.pipifax;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -8,6 +10,7 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 
+import org.antlr.v4.parse.GrammarTreeVisitor.outerAlternative_return;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -22,6 +25,7 @@ import me.erikhennig.pipifax.nodes.NamedNode;
 import me.erikhennig.pipifax.nodes.Node;
 import me.erikhennig.pipifax.nodes.ProgramNode;
 import me.erikhennig.pipifax.visitors.AccessControlVisitor;
+import me.erikhennig.pipifax.visitors.CCodeGenerationVisitor;
 import me.erikhennig.pipifax.visitors.NameResolutionVisitor;
 import me.erikhennig.pipifax.visitors.PrintVisitor;
 import me.erikhennig.pipifax.visitors.TypeCheckingVisitor;
@@ -182,6 +186,37 @@ public class Program
 		{
 			m_checked = true;
 		}
+	}
+
+	public void generateCode()
+	{
+		Path p = Paths.get(m_programPath);
+		String namewithoutext = p.getFileName().toString().replaceFirst("[.][^.]+$", "");
+		CCodeGenerationVisitor ccgv = new CCodeGenerationVisitor(namewithoutext);
+		String src = "";
+		try
+		{
+			m_program.accept(ccgv);
+			src = ccgv.getCode();
+		}
+		catch (VisitorException e)
+		{
+			System.err.println(e);
+		}
+
+		try
+		{
+			String result = p.getParent().resolve(namewithoutext + ".h").toString();
+			PrintWriter out = new PrintWriter(result);
+			out.println(src);
+			out.close();
+		}
+		catch (FileNotFoundException e)
+		{
+			System.err.println("Could not create file?");
+			e.printStackTrace();
+		}
+
 	}
 
 	private Scope constructScope()
