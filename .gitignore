@@ -5,7 +5,8 @@
 # eclipse folders
 .classpath
 .project
-
+# windows files
+*.ini
 # binary data
 bin/
 bin_eclipse/
