@@ -1,6 +1,5 @@
 package me.erikhennig.pipifax.visitors;
 
-import java.nio.channels.NetworkChannel;
 
 import me.erikhennig.pipifax.nodes.AssignmentNode;
 import me.erikhennig.pipifax.nodes.VariableNode;

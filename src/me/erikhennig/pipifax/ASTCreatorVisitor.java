@@ -1,7 +1,5 @@
 package me.erikhennig.pipifax;
 
-import java.io.PipedInputStream;
-
 import me.erikhennig.pipifax.antlr.PipifaxBaseVisitor;
 import me.erikhennig.pipifax.antlr.PipifaxParser;
 import me.erikhennig.pipifax.antlr.PipifaxParser.ExprContext;
