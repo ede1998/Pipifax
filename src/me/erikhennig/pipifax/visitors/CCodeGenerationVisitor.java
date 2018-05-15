@@ -392,7 +392,7 @@ public class CCodeGenerationVisitor extends Visitor
 
 	public void visit(StringLiteralNode n) throws VisitorException
 	{
-		m_code += " \" " + n.getValue() + " \" ";
+		m_code += " \"" + n.getValue() + "\" ";
 	}
 
 	public void visit(StructNode n) throws VisitorException
